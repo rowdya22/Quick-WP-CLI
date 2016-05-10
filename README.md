@@ -11,7 +11,7 @@ After connecting by SSH run the following command in your WordPress directory:
 
 ## Available commands:
 
-### Main Menu
+### qwpcli - Main Menu
 
 ### wpstats - Show Version, URL, DB Info, Number of Available Updates
 
