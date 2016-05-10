@@ -1,0 +1,1354 @@
+#!/bin/bash
+
+###############################
+#                             #
+# Developed by: Rowdy Adams   #
+# Updated on:   09 May 2016   #
+#                             # 
+###############################
+
+###Alias all commands to themselves for security by using which or whereis
+PATH="/home/$USER/perl5/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/home/$USER/bin"
+alias echo='echo';alias sed='sed';alias grep='grep';alias xargs='xargs';alias for='for';alias do='do';alias done='done';
+for cmd in `echo $PATH|sed "s/:/ /g"|xargs ls 2>/dev/null|grep -v '/'`;do alias $cmd="$cmd";done;
+alias ls='/bin/ls --color=tty -F -A -b -T 0'
+###
+
+#echo "alias wp='/usr/php/54/usr/bin/php-cli /usr/php/54/usr/bin/wp'" >> ~/.bashrc && source ~/.bashrc
+
+#alias wp='/usr/php/54/usr/bin/php-cli /usr/php/54/usr/bin/wp'
+alias wp='/usr/php/54/usr/bin/php-cli /usr/local/bin/wp'
+
+DIRS=$(find ~/public_html -maxdepth 5 -type f -name 'wp-config.php')
+
+# Colors
+ESC_SEQ="\x1b["
+COL_RESET=$ESC_SEQ"39;49;00m"
+COL_RED=$ESC_SEQ"31;01m"
+COL_GREEN=$ESC_SEQ"32;01m"
+COL_PURPLE=$ESC_SEQ"38;5;92;01m"
+COL_BLUE=$ESC_SEQ"34;01m"
+COL_MAGENTA=$ESC_SEQ"35;01m"
+COL_CYAN=$ESC_SEQ"36;01m"
+COL_ORANGE=$ESC_SEQ"38;5;208;01m"
+COL_CHERRY=$ESC_SEQ"38;5;124;01m"
+COL_FORREST=$ESC_SEQ"38;5;22;01m"
+# echo -e "\x1b[38;5;92;01m TEXT  \x1b[39;49;00m"
+
+function now() {
+date -u +"%Y%m%d-%H%M%S"
+}
+# WP-CLI is a set of command-line tools for managing WordPress. Quick WP-CLI runs commands in an easy to use wrapper.
+#################### START ####################
+function qwpcli(){
+clear
+echo -e "$COL_GREEN 
+$COL_GREEN   ____       _     __   $COL_GREEN  _      _____      _______   ____
+$COL_GREEN  / __ \__ __(_)___/ /__ $COL_GREEN | | /| / / _ \____/ ___/ /  /  _/$COL_ORANGE  Fixing WordPress $COL_GREEN
+$COL_GREEN / /_/ / // / / __/  '_/ $COL_GREEN | |/ |/ / ___/___/ /__/ /___/ /  $COL_ORANGE      Faster! $COL_GREEN
+$COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $COL_ORANGE  Dev: Rowdy Adams $COL_RESET
+$COL_CHERRY
+What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_RESET\nType$COL_CYAN qwpcli$COL_RESET to return to this menu:
+
+What would you like to work on?                           $COL_GREEN Updated: 09 May 2016
+
+  $COL_CYAN wpstats $COL_RESET  - Show Version, URL, DB Info, Number of Available Updates
+  $COL_CYAN wpcore $COL_RESET   - Check Versions, Verify Checksums, Replace Core Files
+  $COL_CYAN wpdb $COL_RESET     - Optimize and Repair, URL Rewrite
+  $COL_CYAN wpplugin $COL_RESET - List, (De)activate, Update, Install
+  $COL_CYAN wptheme $COL_RESET  - List, Change, Update, Install
+  $COL_CYAN wpurl $COL_RESET    - List and Change URLs
+  $COL_CYAN wpuser $COL_RESET   - Create User, Set Passwords, Change Roles
+  $COL_CYAN wpupdate $COL_RESET - Check For or Run Updates, Configure Auto Updates
+  $COL_CYAN wpbackup $COL_RESET - Backup Site and Database to Folder or tar.gz
+  $COL_CYAN wpworks $COL_RESET  - Install Updates, Optimize DB, Run Fixes
+  $COL_CYAN wpglobal $COL_RESET -$COL_GREEN Run Commands Across All WordPress Installs (Advanced) $COL_RESET
+  $COL_CYAN wpmore $COL_RESET   - More Commands (Global Actions,$COL_CYAN WSOD Fix$COL_RESET, File Count, DB List)
+"
+
+CHECK=$(wp core version | wc -l)
+
+if [ $CHECK != '1' ]; then
+echo -e "$COL_MAGENTA 
+WARNING WPCLI CHECK: [FAILED] 
+$COL_RESET
+WPCLI is having trouble working. Are you in a WordPress directory? If so run:$COL_CYAN wp core version$COL_RESET. If you do not get any results report an error by runing$COL_CYAN qerror$COL_RESET. 
+"
+fi
+
+### CHECK FOR COMING SOON PAGES ###
+if [[ -d $(pwd)/wp-content/plugins/coming-soon/ && ! -L "$(pwd)/wp-content/plugins/coming-soon-page/" && ! -L "$(pwd)/wp-content/plugins/coming-soon-builder/" && ! -L "$(pwd)/wp-content/plugins/ultimate-landing-page-and-coming-soon-page/" && ! -L "$(pwd)/wp-content/plugins/rocket-maintenance-mode/" && ! -L "$(pwd)/wp-content/plugins/simple-maintenance-mode/" && ! -L "$(pwd)/wp-content/plugins/coming-soon-maintenance-mode-from-acurax/" ]]; then
+echo -e "$COL_MAGENTA
+WARNING:
+This site may be using a maintenance mode plugin. Some functions may not work properly. If you have problems try disabling the plugin (rename the folder) and try again. $COL_RESET
+"
+fi
+### END COMING SOON CHECK ###
+}
+
+function wpmore(){
+clear
+echo -e "
+Additional Functions (Most NOT WPCLI Based):
+
+  $COL_CYAN wpfix $COL_RESET    - Run Fixes
+  $COL_CYAN wpwsod $COL_RESET   - Guided Walkthrough to Fix WSOD
+  $COL_CYAN fcount $COL_RESET   - Lists Number of Files in Current Directory
+  $COL_CYAN dirsize $COL_RESET  - Sorts Directory Contents by Size 
+  $COL_CYAN dblist $COL_RESET   - Lists Database Names and wp-config.php Locations
+  $COL_CYAN restore $COL_RESET  - Restores Files From Backups
+  $COL_CYAN slowmysql $COL_RESET- Displays Slow MySQL Queries
+  
+  $COL_CYAN wpeval $COL_RESET   - Runs Check on Plugins and Themes
+
+  $COL_CYAN wpspeed $COL_RESET  - Runs WordPress speed check script
+
+Check out more wpcli commands at $COL_MAGENTA http://wp-cli.org/commands/ $COL_RESET
+"
+}
+
+function wpglobal(){
+clear
+wpLocation=($(find ~/public_html -maxdepth 5 -type f -name 'wp-config.php'))
+# wpLocation=$DIRS
+
+originalDir=($(pwd))
+echo -e "$COL_GREEN
+  _______     __        __  ___      __  _                
+ / ___/ /__  / /  ___ _/ / / _ |____/ /_(_)__  ___  ___      Fixing WordPress  
+/ (_ / / _ \/ _ \/ _  / / / __ / __/ __/ / _ \/ _ \(_-<          Faster!
+\___/_/\___/_.__/\_,_/_/ /_/ |_\__/\__/_/\___/_//_/___/      Dev: Rowdy Adams 
+$COL_RESET
+What global actions would you like to take?
+
+(1) Replace Core With Existing Version
+(2) Install Updates, Flush Rewrite Rules, Flush Cache, Opt & Repair DB
+(3) Clear Transients, Optimize/Repair Database
+(4) Update Core, Plugins, and Themes
+(5) Verify Checksums
+(6) Check For Available Updates
+(7) Disable (Bluehost) Auto Updates
+(8) Check Theme/Plugin Conflicts
+(9) Overhall (Replace Core, Flush Permalinks, Flush Cache, Media Regenerate, Opt & Repair DB)
+(0) Exit
+$COL_MAGENTA
+Want to run another command? use$COL_CYAN gcmd [COMMAND]$COL_MAGENTA to run any comamnd in all WordPress directories!
+$COL_RESET
+\tSelection: \c" ;
+read globalSelect && echo ''
+
+for ((i = 0; i < ${#wpLocation[@]}; i++))
+	do
+	case $globalSelect in
+	1)	wpgReplaceCore ${wpLocation[$i]}
+		(($i+1))
+		;;
+	2)	wpgWorks ${wpLocation[$i]}
+		(($i+1))
+		;;
+	3)	wpgDB ${wpLocation[$i]}
+		(($i+1))
+		;;
+	4)	wpgUpdate ${wpLocation[$i]}
+		(($i+1))
+		;;
+	5)	wpgVerifyCheck ${wpLocation[$i]}
+		(($i+1))
+		;;
+	6)	wpgCheckUpdate ${wpLocation[$i]}
+		(($i+1))
+		;;
+	7)	wpgAutoUpdate ${wpLocation[$i]}
+		(($i+1))
+		;;
+	8)	wpgEval ${wpLocation[$i]}
+		(($i+1))
+		;;
+	9)	wpgOverhall ${wpLocation[$i]}
+		(($i+1))
+		;;
+	0)	return;;
+	*)	invalidOption;;
+	esac
+		
+done
+
+echo -e "$COL_GREEN
+Success:$COL_RESET Global operation completed.\n"
+
+cd $originalDir
+}
+
+unset HISTFILE
+echo -e "\n\tQuick WP-CLI commands added to current SSH session. For details, type$COL_CYAN qwpcli$COL_RESET.\n"
+
+NOW=$(date +"%Y_%m_%d-%H%M")
+if [ -f error_log ]; then mv error_log error_log.$NOW
+fi
+
+qwpcli
+#################### END START ####################
+
+#################### MENUS ####################
+
+### Core Menu ###
+function wpcore() {
+echo -e "$COL_GREEN
+$(wp core version --extra)
+$COL_RESET
+Core Options:
+(1) Check Version
+(2) Verify-Checksums
+(3) Replace Core Files
+(4) Flush Permalinks
+(5) Exit
+
+\tSelection: \c" ; 
+
+read coreSelect && echo ''
+case $coreSelect in
+	1)	wpCoreVersion;; #Shows core version of WordPress
+	2)	wpVerifyCheck;; #Verifys checksums agains WordPress.org
+	3)	coreFresh;; #Ask for version, wget and install
+	4)	wpRewriteFlush;; #Backup .htaccess and flush permalinks
+	5)	return;;
+	*)	invalidOption;;
+esac 
+}
+### Database Menu ###
+function wpdb() {
+###Get the info from the wp-config file
+read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
+
+echo -e "$COL_GREEN"
+###START DB CONNECTION TEST
+if [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! 
+fi
+mysql -u $dbuser -p"$dbpass" -e ";" >/dev/null 2>&1 && printf "DB Conn: Success" || printf "DB Conn:$COL_MAGENTA Failure $COL_GREEN"
+### END DB CONNECTION TEST
+echo -e "
+DB User: $dbuser
+DB Pass: $dbpass
+DB Host: $dbhost
+DB Name: $dbname
+DB Prfx: $dbprefix
+$COL_RESET
+Database Options:
+(1) Optimize and Repair
+(2) URL Rewrite
+(3) Clear Expired Transients
+(4) Exit
+
+\tSelection: \c" ; 
+
+read dbSelect && echo ''
+case $dbSelect in
+	1)	wpdbOpt ;; #Optimize and repair the database
+	2)	wpurlUpdate;; #Change URLs site wide
+	3)	wptransient;; #Clear transients
+	4)	return;;
+	*)	invalidOption;;
+esac
+}
+### Plugin Menu ###
+function wpplugin() {
+PLUGNUM=$(wp plugin list | wc -l)
+ACTIVEPLUG=$(wp plugin list | grep -w active | wc -l)
+TOTALPLUG=$(wp plugin list | grep -w -E "inactive|active" | wc -l)
+
+echo -e "$COL_GREEN
+Active Plugins: $ACTIVEPLUG
+Total Plugins:  $TOTALPLUG
+$COL_RESET
+Plugin Options:
+(1) List
+(2) Activate/Deactivate
+(3) Deactivate All
+(4) Restore Active Plugins
+(5) Install
+(6) Reinstall Mojo (Construction Page will be Active)
+(7) Exit
+
+\tSelection: \c" ; 
+
+read pluginSelect && echo ''
+case $pluginSelect in
+	1)	wpPluginList;; #List plugins in a table
+	2)	wpPluginToggle;; #Toggle plugins on and off
+	3)	wpPluginDeactivate;; #Save active plugin names to a file then deactivate all plugins
+	4)	wpPluginActivate;; #Activate plugins deactivated with wpPluginDeactivate then remove the file
+	5)	wpPluginInstall;; #Install plugins by slug
+	6)	wpMojoInstall;; #Installs the MOJO Marketplace plugin
+	7)	return;;
+	*)	invalidOption;;
+esac
+}
+### Theme Menu ###
+function wptheme() {
+echo -e "$COL_GREEN
+Template: $(wp option get template)
+Stylesheet: $(wp option get stylesheet)
+$COL_RESET
+Theme Options:
+(1) List
+(2) Change
+(3) Install and Activate Default Theme
+(4) Install Themes
+(5) Exit
+
+\tSelection: \c" ; 
+
+read themeSelect && echo ''
+case $themeSelect in
+	1)	wpThemeList;; #List available themes
+	2)	wpThemeActivate;; #Activate theme from list
+	3)	wpThemeDefault;; #Install and activate 2015 theme
+	4)	wpThemeInstall;; #Install theme by slug
+	5)	return;;
+	*)	invalidOption;;
+esac
+}
+### URL Menu ###
+function wpurl() {
+echo -e "$COL_GREEN
+Site URL: $(wp option get siteurl)
+$COL_RESET
+URL Options:
+(1) Change URLs
+(2) List URLs
+(3) Exit
+
+\tSelection: \c" ; 
+
+read urlSelect && echo ''
+case $urlSelect in
+	1)	wpurlUpdate;; #Backup the database and change site URLs
+	2)	wpurlList;; #Lists home and site URLs
+	3)	return;;
+	*)	invalidOption;;
+esac
+}
+### User Menu ###
+function wpuser() {
+echo -e "
+User Options:
+(1) List Users
+(2) Create Temp User
+(3) Remove Temp User
+(4) Change Password
+(5) Send Password Reset Email
+(6) Change User Roles
+(7) Change Username
+(8) Exit
+
+\tSelection: \c" ;
+
+read userSelect && echo ''
+case $userSelect in
+	1)	wp user list --fields=ID,user_login,user_email,roles;; #Only list important information
+	2)	wpUserCreate;; #Create temp user HostAdmin
+	3)	wpuserr;; #Remove HostAdmin as a user
+	4)	wpChangePass;; #Change user password 
+	5)	emailPassReset;; #Send password reset email 
+	6)	wpUserRole;; #Adjust user roles
+	7)	wpChangeUser;; #Change user name
+	8)	return;;
+	*)	invalidOption;;
+esac
+}
+### Update Menu ###
+function wpupdate() {
+echo -e " 
+Update Options:
+(1) Core
+(2) Plugins
+(3) Themes
+(4) All For This Install
+(5) Check Available Updates
+(6) Disable Auto Updates
+(7) Exit
+
+\tSelection: \c" ; 
+
+read updateSelect && echo ''
+case $updateSelect in
+	1)	wpCoreUpdate;; #Update core files
+	2)	wpPluginUpdate;; #Update plugins
+	3)	wpThemeUpdate;; #Update themes
+	4)	wpUpdateInstall;; #Update entire install
+	5)	wpCheckUpdate;; #Show nubmer of missing updates
+	6)	wpAutoUpdate;; #Configure Auto updates
+	7)	return;;
+	*)	invalidOption;;
+esac
+}
+
+#################### COMMAND FUNCTIONS ####################
+
+##### WPSTATS COMMANDS #####
+
+### SHOW GENERAL WORDPRESS INFORMATION ###
+function wpstats(){
+###Get the info from the wp-config file
+read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/") 
+
+PLUGIN=$(wp plugin list | grep -w available | wc -l)
+THEME=$(wp theme list | grep -w available | wc -l)
+CORE=$(wp core check-update | grep -w wordpress | wc -l)
+
+echo -e ""
+
+CHECK=$(wp core version | wc -l)
+
+if [ $CHECK == '1' ]; then
+	echo -e "$COL_GREEN\rWPCLI Check:$COL_GREEN    [OK] $COL_GREEN"
+else
+	echo -e "$COL_GREEN\rWPCLI Check:$COL_MAGENTA [FAILED]   Report Errors with$COL_CYAN qerror$COL_GREEN"
+fi
+
+wp eval --skip-plugins 'echo "Eval Plugins:   [OK]\n";'
+wp eval --skip-themes 'echo "Eval Themes:    [OK]\n";'
+
+echo -e "\n$COL_GREEN\rWP Version:    $COL_CYAN" `cat wp-includes/version.php | grep "wp_version " | sed "s/.*'\(.*\)'.*/\1/"`
+echo -e "$COL_GREEN\rSite URL:     $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'siteurl'"`|sed "s/option_value//" 
+echo -e "$COL_GREEN\rHome URL:     $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'home'"`|sed "s/option_value//" 
+echo -e "$COL_GREEN\rStylesheet:   $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'stylesheet'"`|sed "s/option_value//" 
+echo -e "$COL_GREEN\rTemplate:     $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'template'"`|sed "s/option_value//" 
+echo -e "$COL_GREEN"
+
+###START DB CONNECTION TEST
+if [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! 
+fi
+mysql -u $dbuser -p"$dbpass" -e ";" >/dev/null 2>&1 && printf "Database Conn: $COL_CYAN Success $COL_GREEN \n" || printf "Database Conn: $COL_MAGENTA Failure $COL_GREEN \n"
+### END DB CONNECTION TEST
+
+echo -e "Database User: $COL_CYAN $dbuser" "$COL_GREEN"
+echo -e "Database Pass: $COL_CYAN $dbpass" "$COL_GREEN"
+echo -e "Database Host: $COL_CYAN $dbhost" "$COL_GREEN"
+echo -e "Database Name: $COL_CYAN $dbname" "$COL_GREEN"
+echo -e "Database Prfx: $COL_CYAN $dbprefix" "$COL_GREEN"
+echo -e " "
+
+echo -e "Core Updates:  $COL_CYAN $CORE" "$COL_RESET" "\t $(php -i | grep memory_limit | sed 's/<[^>]*>/ /g')" "$COL_GREEN"
+echo -e "Plugin Updates:$COL_CYAN $PLUGIN" "$COL_RESET" "\t $(php -i | grep post_max_size | sed 's/<[^>]*>/ /g')" "$COL_GREEN"
+echo -e "Theme Updates: $COL_CYAN $THEME" "$COL_RESET" "\t $(php -i | grep upload_max_filesize | sed 's/<[^>]*>/ /g')" "$COL_GREEN"
+echo -e "$COL_RESET"
+
+}
+
+##### END WPSTATS COMMANDS #####
+##### WPCORE COMMANDS #####
+
+### VERSION ###
+function wpCoreVersion(){
+wp core version
+}
+### CHECKSUMS ###
+function wpVerifyCheck(){
+wp core verify-checksums
+}
+### WGET CORE ###
+function coreFresh() {
+###  version=$(sed '7q;d' wp-includes/version.php|egrep -o '[0-9.]+')
+echo -e "Enter version by number or type latest: " ; read wpver
+
+echo -e "$COL_GREEN\rReplacing existing core with fresh $wpver files\n$COL_RESET"
+
+if [[ ! -e "wordpress-$wpver.tar.gz" ]]; then
+	if ! wget -q "https://wordpress.org/wordpress-$wpver.tar.gz"; then
+		echo -e "$COL_RED\rUnable to download wordpress-$wpver.tar.gz $COL_RESET"
+		return 9
+	else echo "Downloading update from https://downloads.wordpress.org/release/wordpress-$wpver.tar.gz..." 
+	fi
+else echo "wordpress-$wpver.tar.gz already exists! Please rename!"
+return 1
+fi
+
+temp=$(date -u +"%Y_%m_%d-%H_%M")
+
+echo "Checking for existing WordPress files..."
+local wpfiles=$(find -maxdepth 1 -name "wp-*" -o -name index.php -o -name license.txt -o -name readme.html -o -name xmlrpc.php)
+
+if [[ -z "$wpfiles" ]]; then
+	echo -e "No existing WordPress files found..."
+	else
+	oldWP="QWPCLI_CORE_$temp" 
+	echo -e "Old WordPress files found! Moving them to$COL_BLUE $oldWP... $COL_RESET"
+	mkdir "$oldWP"
+	while read -r f; do mv "$f" "$oldWP"; done <<< "$wpfiles"
+fi
+
+tar -xf "wordpress-$wpver.tar.gz" --strip-components=1 && echo "Unpacking the update..."
+rm -f "wordpress-$wpver.tar.gz" ### && echo "Removed wordpress-$wpver.tar.gz..."
+
+if [[ -d "$oldWP/wp-content" ]]; then
+	mv wp-content wp-content_"$temp"  ### && echo "Moved default wp-content to wp-content_$temp..." &&
+	mv "$oldWP/wp-content" .  ### && echo "Moved old wp-content back into place..." &&
+	rm -rf wp-content_"$temp"  ### && echo "Removed wp-content_$temp..."
+fi
+
+if [[ -f "$oldWP/wp-config.php" ]]; then
+	cp "$oldWP/wp-config.php" .
+	### echo -e "Copied old wp-config.php back into place..."
+	echo -e "$COL_GREEN\rSuccess:$COL_RESET Core replaced with stock $wpver files"
+	else
+	cp wp-config-sample.php wp-config.php
+	echo -e "$COL_CYAN\rWarning:$COL_RESET No previous wp-config.php found! Used wp-config-sample.php..."
+fi
+echo -e "\nCompressing old WordPress core...$COL_GREEN" && tar -zcf "$oldWP".tar.gz "$oldWP" --remove-files && echo -e "Success:$COL_RESET Old WordPress files located$COL_BLUE $oldWP.tar.gz $COL_RESET"
+wp core update-db --quiet
+}
+### HTACCESS ###
+function wpRewriteFlush(){
+NOW=$(date +"%Y%m%d_%H%M")
+if [ -f .htaccess ]; then mv .htaccess .QWPCLI_htaccess.$NOW
+echo -e "$COL_GREEN
+Current .htaccess renamed to .QWPCLI_htaccess.$NOW $COL_RESET"
+fi
+
+if [ ! -f wp-cli.yml ]; then echo -e "apache_modules:\n\t - mod_rewrite" > wp-cli.yml
+fi
+wp rewrite structure $(wp option get permalink_structure)
+wp rewrite flush --hard
+echo -e "$COL_GREEN\rSuccess:$COL_RESET Rewrite Flushed."
+}
+
+##### END WPCORE COMMANDS #####
+##### WPDB COMMANDS #####
+
+### WPDB ###
+function wpdbOpt(){
+wp db repair && wp db optimize
+}
+
+function wptransient(){
+wp transient delete-expired
+}
+
+##### END WPDB COMMANDS #####
+##### WPPLUGIN COMMANDS #####
+
+### PLUGIN LIST ###
+function wpPluginList(){
+wp plugin list
+}
+### TOGGLE PLUGINS ###
+function wpPluginToggle(){
+echo -e "$COL_GREEN"
+wpPluginList
+echo -e "$COL_RESET
+What plugin(s) would you like to toggle? If multiple separate by spaces..." 
+read PLUGINS
+wp plugin toggle $PLUGINS
+}
+### DEACTIVATE PLUGINS ###
+function wpPluginDeactivate(){
+ACTIVEPLUG=$(wp plugin deactivate --all >.QWPCLI_ACTIVEPLUGINS.txt 2>&1 && <.QWPCLI_ACTIVEPLUGINS.txt awk '$1=="Success:" {print $3}' | tr -d \')
+# '
+wp plugin list
+}
+### ACTIVATE PLUGINS ###
+function wpPluginActivate(){
+ACTIVEPLUGINS=$(<.QWPCLI_ACTIVEPLUGINS.txt awk '$1=="Success:" {print $3}' | tr -d \')
+# '
+wp plugin activate $ACTIVEPLUGINS
+rm -rf .QWPCLI_ACTIVEPLUGINS.txt
+}
+### INSTALL PLUGINS ###
+function wpPluginInstall(){
+echo -e "$COL_GREEN
+Recommended Plugins:
+   captcha
+   velvet-blues-update-urls
+   sucuri-scanner
+   updraftplus
+   
+$COL_RESET
+What plugin(s) would you like to install (and activate)? Enter slug separated by spaces..."
+read INSATALL
+wp plugin install $INSATALL --activate
+}
+
+##### END WPPLUGIN COMMANDS #####
+##### WPTHEME COMMANDS #####
+
+### LIST THEMES ###
+function wpThemeList(){
+wp theme list
+}
+### ACTIVATE THEME ###
+function wpThemeActivate(){
+echo -e "$COL_GREEN"
+wpThemeList
+echo -e "$COL_RESET
+What theme would you like to activate?"
+read THEME
+wp theme activate $THEME
+}
+### INSTALL & ACTIVATE DEFAULT THEME ###
+function wpThemeDefault(){
+wp theme install twentysixteen --force --activate
+}
+### INSTALL THEMES ###
+function wpThemeInstall() {
+echo -e "$COL_GREEN
+Recommended Themes:
+   twentyfifteen
+   twentytwelve
+   vantage 
+   hueman
+     
+Know a good theme? Suggest it!    
+$COL_RESET
+What theme(s) would you like to install? Enter slug separated by spaces..."
+read INSATALL
+wp theme install $INSATALL
+}
+
+##### END WPTHEME COMMANDS #####
+##### WPURL COMMANDS #####
+
+### URL REWRITE ###
+function wpurlUpdate() {
+echo -e "$COL_GREEN
+Backing up the Database...$COL_RESET"
+dbexport
+echo -e "$COL_GREEN
+Site: $(wp option get siteurl)
+$COL_MAGENTA
+WARNING! Old and New URL Prefix should match! For best results only enter domain.com NOT www or http://  
+
+REMEMBER: This is a SEARCH AND REPLACE tool, taking the first value and replacing it with the second
+$COL_RESET
+Enter Old URL: "
+read OLDURL
+echo -e "Enter New URL: "
+read NEWURL
+wp search-replace $OLDURL $NEWURL
+}
+### SHOW SITE/HOME URLS ###
+function wpurlList() {
+echo -e "$COL_GREEN
+Site URL: $(wp option get siteurl)
+Home URL: $(wp option get home)
+$COL_RESET"
+}
+
+##### END WPURL COMMANDS #####
+##### WPUSER COMMANDS #####
+
+### CREATE TEMP USER HOSTADMIN ###
+function wpUserCreate(){
+# pass=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#$%^&*_+,./?' | fold -w 10| head -n 1)
+URL=$(wp option get siteurl)
+NEWPASS="$(wp user create HostAdmin HostAdmin@example.com --role=administrator | tail -1 | awk -F ':' '{ print $2 }')"
+
+echo -e "$COL_GREEN
+Delete the user when done by running$COL_CYAN wpuserr$COL_RESET!
+$COL_RESET
+$URL/wp-admin/
+
+UN:$COL_MAGENTA HostAdmin$COL_RESET
+PW:$COL_MAGENTA$NEWPASS $COL_RESET\n"
+}
+### REMOVE TEMP USER HOSTADMIN ###
+function wpuserr(){
+wp user delete HostAdmin --yes
+}
+### CHANGE USER PASSWORDS ###
+function wpChangePass() {
+echo -e "$COL_GREEN"
+wp user list --role=administrator --fields=ID,user_login,display_name,user_email,roles
+echo -e "$COL_RESET
+User ID: "; read USERID
+echo -e "New Password: "; read NEWPASS
+wp user update $USERID --user_pass=$NEWPASS
+}
+
+function emailPassReset(){
+### Upload file to customer account and run wp --require=emailReset.php emailReset reset_pass --login=username
+rm -rf QWPCLI_emailReset.php
+echo "
+<?php
+
+if( !defined( 'WP_CLI' ) )
+        return;
+
+class QWPCLI_Command extends WP_CLI_Command {
+
+        /**
+         * Sends a reset email to the specified user.
+         */
+        function reset_pass( \$args, \$assoc_args ) {
+                include_once( 'wp-includes/class-phpass.php' );
+                global \$wpdb, \$wp_hasher;
+                \$key = wp_generate_password( 20, false );
+
+                \$user_login = \$assoc_args['login'];
+                if( is_email( \$user_login ) && email_exists( \$user_login ) ) {
+                        \$user = get_user_by( 'email', \$user_login );
+                } else if( username_exists( \$user_login ) ) {
+                        \$user = get_user_by( 'login', \$user_login );
+                } else {
+                        WP_CLI::error(\"The supplied username or email address did not match a valid user.\");
+                }
+
+                \$wp_hasher = new PasswordHash( 8, true );
+                \$hashed = \$wp_hasher->HashPassword( \$key );
+                \$keycheck = \$wpdb->update( \$wpdb->users, array( 'user_activation_key' => \$hashed ), array( 'user_login' => \$user->user_login ) );
+                if( \$keycheck == false ) {
+                        WP_CLI::error(\"There was an error saving your password reset key. Please try again.\");
+                }
+
+                \$message = network_site_url(\"wp-login.php?action=rp&key=\$key&login=\" . rawurlencode(\$user_login), 'login');
+                \$domain = get_option('siteurl');
+                \$domain = preg_replace( '/^https?:\/\//', '', \$domain );
+                \$domain = preg_replace( '/^www\./', '', \$domain );
+                \$headers[] = 'From: WordPress <wordpress@' . gethostname() . '>';
+                \$sent = wp_mail( \$user->user_email, 'Password Reset Link', 'Here is a link to reset the password for ' . \$user->user_login . ': ' . \$message, array( 'From: ' . exec('whoami') . '@' . gethostname() ) );
+                if( !\$sent ) {
+                    WP_CLI::error('There was an error sending the password reset email.');
+                }
+                WP_CLI::success( \$message );
+        }
+
+}
+WP_CLI::add_command( 'QWPCLI_emailReset', 'QWPCLI_Command' );" > QWPCLI_emailReset.php
+
+wp user list --fields=user_login,user_email,roles
+
+echo -e "\nEnter the$COL_GREEN user_login$COL_RESET above to send the reset email to the$COL_GREEN user_email$COL_RESET address:"
+
+read userReset
+
+wp --require=QWPCLI_emailReset.php QWPCLI_emailReset reset_pass --login=$userReset
+
+rm -rf QWPCLI_emailReset.php
+}
+
+### SET USER ROLES ###
+function wpUserRole() {
+wp user list --fields=ID,user_login,user_email,roles
+echo -e "
+Enter ID of User to adjust Role: "; read ID
+echo -e "
+(1)$COL_CYAN Administrator$COL_RESET – access to all the admin features within a single site
+(2)$COL_CYAN Editor$COL_RESET – publish and manage posts including the posts of other users
+(3)$COL_CYAN Author$COL_RESET – publish and manage their own posts
+(4)$COL_CYAN Contributor$COL_RESET – write and manage their own posts but cannot publish them
+(5)$COL_CYAN Subscriber$COL_RESET – only manage their profile 
+(6)$COL_CYAN Exit$COL_RESET
+
+Which Role would you like to assign to user $ID: \c" ; 
+read CHANGE && echo ''
+case $CHANGE in
+	1)	ROLE='administrator'; wp user set-role $ID $ROLE ;;
+	2)	ROLE='editor' ; wp user set-role $ID $ROLE ;;
+	3)	ROLE='author' ; wp user set-role $ID $ROLE ;;
+	4)	ROLE='contributor' ; wp user set-role $ID $ROLE ;;
+	5)	ROLE='subscriber' ; wp user set-role $ID $ROLE ;;
+	6)	return;;
+	*)	invalidOption;;
+esac
+}
+
+function wpChangeUser(){
+# need to request entry of new user and old user
+
+wp user list --fields=ID,user_login,display_name
+
+echo -e "\nWhat user_login (and display_name) would you like to change?" ; read oldUser
+
+echo -e "\nWhat is the new user_login you would like?" ; read newUser
+
+echo -e ""
+
+wp user update $oldUser --display_name=$newUser
+
+read changeUser <<<$(awk -F\' '/table_prefix/ {print $2}' wp-config.php); read db usr ps pre <<<$(awk -F\' '/DB_/ {print $4}' wp-config.php) && mysql -u $usr -p$ps -D $db -e "UPDATE "$changeUser"users SET user_login = '$newUser' WHERE user_login = '$oldUser'";
+
+echo -e "$COL_GREEN\rSuccess:$COL_RESET Updated user_login and display_name.\n"
+
+wp user list --fields=ID,user_login,display_name
+}
+
+##### END WPUSER COMMANDS #####
+##### WPUPDATE COMMANDS #####
+
+### UPDATE CORE FILES TO LATEST VERSION ###
+function wpCoreUpdate(){
+if [ ! -f .automatic_updates_disabled ]; then
+wp core update
+wp core update-db
+else
+echo -e "$COL_MAGENTA UPDATE FUNCTIONS DISABLED as long as .automatic_updates_disabled Exists! $COL_RESET"
+fi
+}
+### UPDATE PLUGINS TO LATEST VERSION ###
+function wpPluginUpdate(){
+if [ ! -f .automatic_updates_disabled ]; then
+wp plugin update --all
+else
+echo -e "$COL_MAGENTA UPDATE FUNCTIONS DISABLED as long as .automatic_updates_disabled Exists! $COL_RESET"
+fi
+}
+### UPDATE THEMES TO LATEST VERSION ###
+function wpThemeUpdate(){
+if [ ! -f .automatic_updates_disabled ]; then
+wp theme update --all
+else
+echo -e "$COL_MAGENTA UPDATE FUNCTIONS DISABLED as long as .automatic_updates_disabled Exists! $COL_RESET"
+fi
+}
+### UPDATE ENTIRE INSTALL TO LATEST VERSION ###
+function wpUpdateInstall(){
+if [ ! -f .automatic_updates_disabled ]; then
+wpCoreUpdate
+wpThemeUpdate
+wpPluginUpdate
+else
+echo -e "$COL_MAGENTA UPDATE FUNCTIONS DISABLED as long as .automatic_updates_disabled Exists! $COL_RESET"
+fi
+}
+### DISPLAY AVAILABLE UPDATES ###
+function wpCheckUpdate(){
+echo -e "$COL_GREEN
+----- Core Updates ----- $COL_RESET"
+wp core check-update
+echo -e "$COL_GREEN
+----- Plugin Updates ----- $COL_RESET"
+wp plugin update --all --dry-run
+echo -e "$COL_GREEN
+----- Theme Updates ----- $COL_RESET"
+wp theme update --all --dry-run
+}
+
+##### END WPUPDATE COMMANDS #####
+##### BACKUP #####
+
+function wpbackup(){
+NOW=$(date +"%Y_%m_%d_%H-%M")
+echo -e "$COL_GREEN
+Starting backup.....\n
+Exporting Database.....\n"
+dbexport
+echo -e "Backing Up Files.....$COL_RESET"
+	# Makes directory and copy all wordpress files into directory
+	mkdir QWPCLI_BACKUP_$NOW && rsync -auvxhr wp* QWPCLI_BACKUP_$NOW;
+    	rsync -auvxh .htaccess QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo .htaccess was present/backed up.";
+	rsync -auvxh index.php QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo index.php was present/backed up.";
+	rsync -auvxh license.txt QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo license.txt was present/backed up.";
+	rsync -auvxh readme.html QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo readme.html was present/backed up.";
+	rsync -auvxh xmlrpc.php QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo xmlrpc.php was present/backed up.";
+
+	mv -f $file QWPCLI_BACKUP_$NOW;
+	
+	# if user would like, compress directory
+	echo -e "\nWould you like to compress (.tar) directory? (y) or (n): \c"; read input;
+	if [ $input == 'y' ]; then 
+		tar -zvcf QWPCLI_BACKUP_$NOW.tar.gz QWPCLI_BACKUP_$NOW;
+		rm -fr QWPCLI_BACKUP_$NOW;
+		echo -e "$COL_GREEN\n\tBackup Completed\n\n\tYour Backup is located in:\n\n\tQWPCLI_BACKUP_$NOW.tar.gz\n\n$COL_RESET";
+	elif [ $input != 'y' ]; then 
+		echo -e "$COL_GREEN\n\tBackup Completed\n\n\tYour Backup is located in:\n\n\tQWPCLI_BACKUP_$NOW\n\n$COL_RESET";
+	fi	
+}
+
+function wpCoreBackup(){
+NOW=$(date +"%Y_%m_%d_%H-%M")
+echo -e "$COL_GREEN
+Starting backup.....\n
+Exporting Database.....\n"
+dbexport
+echo -e "Backing Up Files.....$COL_RESET"
+	# Makes directory and copy all wordpress files into directory
+	mkdir QWPCLI_CORE_$NOW && mkdir QWPCLI_CORE_$NOW/wp-content/ && mkdir QWPCLI_CORE_$NOW/wp-content/mu-plugins/ && mkdir QWPCLI_CORE_$NOW/wp-content/plugins/ && mkdir QWPCLI_CORE_$NOW/wp-content/themes/ ;
+	rsync -auxr --exclude 'wp-content/' wp* QWPCLI_CORE_$NOW;
+	rsync -auxr wp-content/mu-plugins/ QWPCLI_CORE_$NOW/wp-content/mu-plugins/ 2>/dev/null || echo -e "\n\tNo mu-plugins was present/backed up.";
+	rsync -auxr wp-content/plugins/ QWPCLI_CORE_$NOW/wp-content/plugins/ 2>/dev/null || echo -e "\n\tNo plugins was present/backed up.";
+	rsync -auxr wp-content/themes/ QWPCLI_CORE_$NOW/wp-content/themes/ 2>/dev/null || echo -e "\n\tNo themes was present/backed up.";
+    	rsync -auxh {.htaccess,index.php,license.txt,readme.html,xmlrpc.php} QWPCLI_CORE_$NOW 2>/dev/null
+
+	mv -f $file QWPCLI_CORE_$NOW;
+	
+	# if user would like, compress directory
+	# echo -e "\nWould you like to compress (.tar.gz) backup? (y) or (n): \c"; read input;
+	# if [ $input == 'y' ]; then 
+		tar -zcf QWPCLI_CORE_$NOW.tar.gz QWPCLI_CORE_$NOW;
+		rm -fr QWPCLI_CORE_$NOW;
+		echo -e "$COL_GREEN\n\tBackup Completed\n\n\tYour Backup is located in:\n\n\tQWPCLI_CORE_$NOW.tar.gz\n\n$COL_RESET";
+	# elif [ $input != 'y' ]; then 
+	#	echo -e "$COL_GREEN\n\tBackup Completed\n\n\tYour Backup is located in:\n\n\tQWPCLI_CORE_$NOW\n\n$COL_RESET";
+	# fi	
+}
+
+##### END BACKUP #####
+##### WPWORKS #####
+
+function wpworks(){
+wpCoreBackup
+wpCoreUpdate
+wpPluginUpdate
+wpThemeUpdate
+wpfix
+wpdbOpt
+echo -e "$COL_GREEN
+Success:$COL_RESET Ran Updates. $COL_GREEN
+Success:$COL_RESET Transients Cleared. $COL_GREEN
+Success:$COL_RESET Flushed Object Cache. $COL_GREEN
+Success:$COL_RESET Database Repaired/Optimized. $COL_GREEN
+Success:$COL_RESET Rewrite Flushed."
+}
+
+##### END WPWORKS #####
+### GENERAL FIXES ###
+
+function wpfix(){
+echo -e "$COL_BLUE
+This could take a moment....$COL_RESET"
+wp transient delete-expired
+# wp media regenerate --yes --quiet
+wpRewriteFlush
+wp cache flush
+}
+
+### END GENERAL FIXES ###
+
+#################### ADDITIONAL FUNCTIONS ####################
+### COUNT FILES IN CURRENT DIR ###
+function fcount() { 
+find -printf x|wc -c
+}
+### LIST SIZE OF CURRENT DIR ###
+function dirsize() { 
+du -ah --max-depth=1 | sort -h
+}
+### LIST ALL WORDPRESS DATABASES ###
+function dblist() { 
+find2perl -name "wp-config.php" -exec grep --color -iHn DB_NAME {} \; | perl
+}
+### EXPORT DATABASE ###
+function dbexport(){
+read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
+echo "Starting export..."
+file="$2"
+[[ -z "$file" ]] && file="QWPCLI_$dbname"_$(now).sql
+mysqldump -h "$dbhost" -u "$dbuser" -p"$dbpass" "$dbname" > "$file" && echo -e "Exported database '$dbname' to file '$file'\n" || echo -e "Failed to export database '$dbname' to file '$file'!\n"
+}
+### INCORECT MENU OPTION ###
+function invalidOption(){
+echo -e "$COL_RED\rInvalid Option!$COL_RESET" && return
+}
+### REPLACE CORE WITH SAME VERSION ###
+function wpReplaceCore(){
+version=$(sed '7q;d' wp-includes/version.php|egrep -o '[0-9.]+')
+
+echo -e "$COL_GREEN\rReplacing existing core with fresh $version files\n$COL_RESET"
+
+if [[ ! -e "wordpress-$version.tar.gz" ]]; then
+	if ! wget -q "https://wordpress.org/wordpress-$version.tar.gz"; then
+		echo -e "$COL_RED\rUnable to download wordpress-$version.tar.gz $COL_RESET"
+		return 9
+	else echo "Downloaded wordpress-$version.tar.gz..." 
+	fi
+else echo "wordpress-$version.tar.gz already exists! Please rename!"
+return 1
+fi
+
+temp=$(date -u +"%Y_%m_%d-%H_%M")
+
+echo "Checking for existing WordPress files..."
+local wpfiles=$(find -maxdepth 1 -name "wp-*" -o -name index.php -o -name license.txt -o -name readme.html -o -name xmlrpc.php)
+
+if [[ -z "$wpfiles" ]]; then
+	echo -e "No existing WordPress files found..."
+	else
+	oldWP="QWPCLI_CORE_$temp" 
+	echo -e "Old WordPress files found! Moving them to$COL_BLUE $oldWP... $COL_RESET"
+	mkdir "$oldWP"
+	while read -r f; do mv "$f" "$oldWP"; done <<< "$wpfiles"
+fi
+
+tar -xf "wordpress-$version.tar.gz" --strip-components=1 && echo "Unpacking the update..."
+rm -f "wordpress-$version.tar.gz" ### && echo "Removed wordpress-$version.tar.gz..."
+
+if [[ -d "$oldWP/wp-content" ]]; then
+	mv wp-content wp-content_"$temp" ### && echo "Moved default wp-content to wp-content_$temp..." &&
+	mv "$oldWP/wp-content" . ###  && echo "Moved old wp-content back into place..." &&
+	rm -rf wp-content_"$temp" ### && echo "Removed wp-content_$temp..."
+fi
+
+if [[ -f "$oldWP/wp-config.php" ]]; then
+	cp "$oldWP/wp-config.php" .
+ 	### echo -e "Copied old wp-config.php back into place..."
+	echo -e "$COL_GREEN\rSuccess:$COL_RESET Core replaced with stock $version files"
+	else
+	cp wp-config-sample.php wp-config.php
+	echo -e "$COL_CYAN\rWarning:$COL_RESET No previous wp-config.php found! Used wp-config-sample.php..."
+fi
+echo -e "\nCompressing old WordPress core...$COL_GREEN" && tar -zcf "$oldWP".tar.gz "$oldWP" --remove-files && echo -e "Success:$COL_RESET Old WordPress files located$COL_BLUE $oldWP.tar.gz $COL_RESET"
+wp core update-db --quiet
+}
+### WGET LATEST ###
+function coreLatest() {
+###  version=$(sed '7q;d' wp-includes/version.php|egrep -o '[0-9.]+')
+
+echo -e "$COL_GREEN\rReplacing existing core with latest version\n$COL_RESET"
+
+if [[ ! -e "wordpress-$wpver.tar.gz" ]]; then
+	if ! wget -q "https://wordpress.org/wordpress-latest.tar.gz"; then
+		echo -e "$COL_RED\rUnable to download wordpress-latest.tar.gz $COL_RESET"
+		return 9
+	else echo "Downloaded wordpress-latest.tar.gz..." 
+	fi
+else echo "wordpress-latest.tar.gz already exists! Please rename!"
+return 1
+fi
+
+temp=$(date -u +"%Y_%m_%d-%H_%M")
+
+echo "Checking for existing WordPress files..."
+local wpfiles=$(find -maxdepth 1 -name "wp-*" -o -name index.php -o -name license.txt -o -name readme.html -o -name xmlrpc.php)
+
+if [[ -z "$wpfiles" ]]; then
+	echo -e "No existing WordPress files found..."
+	else
+	oldWP="QWPCLI_CORE_$temp" 
+	echo -e "Old WordPress files found! Moving them to$COL_BLUE $oldWP... $COL_RESET"
+	mkdir "$oldWP"
+	while read -r f; do mv "$f" "$oldWP"; done <<< "$wpfiles"
+fi
+
+tar -xf "wordpress-latest.tar.gz" --strip-components=1 && echo "Unpacking the update..."
+rm -f "wordpress-latest.tar.gz" && ### echo "Removed wordpress-latest.tar.gz..."
+
+if [[ -d "$oldWP/wp-content" ]]; then
+	mv wp-content wp-content_"$temp"  ### && echo "Moved default wp-content to wp-content_$temp..." &&
+	mv "$oldWP/wp-content" .  ### && echo "Moved old wp-content back into place..." &&
+	rm -rf wp-content_"$temp" ### && echo "Removed wp-content_$temp..."
+fi
+
+if [[ -f "$oldWP/wp-config.php" ]]; then
+	cp "$oldWP/wp-config.php" .
+	### echo -e "Copied old wp-config.php back into place..."
+	echo -e "$COL_GREEN\rSuccess:$COL_RESET Core updated to latest version"
+	else
+	cp wp-config-sample.php wp-config.php
+	echo -e "$COL_CYAN\rWarning:$COL_RESET No previous wp-config.php found! Used wp-config-sample.php..."
+fi
+echo -e "\nCompressing old WordPress core...$COL_GREEN" && tar -zcf "$oldWP".tar.gz "$oldWP" --remove-files && echo -e "Success:$COL_RESET Old WordPress files located$COL_BLUE $oldWP.tar.gz $COL_RESET"
+wp core update-db --quiet
+}
+### ERROR REPORTING ###
+function qerror(){
+DOMAIN=''
+DESCRIPTION=''
+REPORTED=''
+echo -e "$COL_GREEN
+Please provide the following information...
+
+What is the domain?$COL_RESET" ; read DOMAIN ;
+echo -e "$COL_GREEN
+Describe your error and what you were doing: $COL_RESET" ; read DESCRIPTION ;
+echo -e "$COL_GREEN
+What is your email address?$COL_RESET" ; read REPORTED ;
+
+echo -e "$DOMAIN \n$DESCRIPTION \nReported By: $REPORTED" | mail -s "Quick WPCLI Error Report" radams@bluehost.com && echo -e "\nIssue Report Sent"
+}
+### Install MOJO ###
+function wpMojoInstall(){
+wp plugin uninstall mojo-marketplace mojo-marketplace-wp-plugin mojo-marketplace-wp-plugin-production --deactivate --quiet
+# wp plugin install https://github.com/mojoness/mojo-marketplace-wp-plugin/archive/production.zip --activate
+wp plugin install https://www.mojomarketplace.com/mojo-plugin-assets/updater/release/mojo-marketplace-wp-plugin.zip --activate
+wp option set mm_coming_soon true
+}
+### WSOD Fix ###
+function wpwsod(){
+
+
+# if user would like, make backup
+	echo -e "\nDo you have a backup? (y) or (n): \c"; read input;
+	if [ $input == 'y' ]; then 
+		echo -e "";		
+	elif [ $input != 'y' ]; then 
+		wpCoreBackup
+	fi	
+
+## wpPluginDeactivate
+cd wp-content/ && mv plugins/ plugins.QWPCLI_OFF && cd ..
+echo -e "\nPlugin folder has been renamed and plugins are deactivated. Does the site work? y/n/q \c" ; 
+
+read wsodSelect && echo ''
+case $wsodSelect in
+	[Yy]*) echo -e "\nLooks like it was a plugin issue. Check the error log to see if you can narrow down the plugin causing the issue."
+	;;
+	[Nn]*) ## wpThemeDefault
+		echo -e "$COL_GREEN \nInstalling twentysixteen through wget\n $COL_RESET"
+		wget https://downloads.wordpress.org/theme/twentysixteen.1.1.zip && mv twentysixteen.1.1.zip wp-content/themes/ && unzip wp-content/themes/twentysixteen.1.1.zip -d wp-content/themes/; rm -f wp-content/themes/twentysixteen1.1.zip; read fix <<<$(awk -F\' '/table_prefix/ {print $2}' wp-config.php); read db usr ps pre <<<$(awk -F\' '/DB_/ {print $4}' wp-config.php) && mysql -u $usr -p$ps -D $db -e "UPDATE "$fix"options SET option_value = 'twentysixteen' WHERE option_name = 'template'"; mysql -u $usr -p$ps -D $db -e "UPDATE "$fix"options SET option_value = 'twentysixteen' WHERE option_name = 'stylesheet';"; mysql -u $usr -p$ps -D $db -e "UPDATE "$fix"options SET option_value = 'twentysixteen' WHERE option_name = 'current_theme';" #'
+		  echo -e "\nTheme set to new install of Twentysixteen. Does the site work? y/n/q \c"
+		  read wsodSelect && echo ''
+			case $wsodSelect in
+				[Yy]*) echo -e "\nCould be a theme or plugin issue. Check the error logs. \nTry restoring the plugins first using then try reactivating the theme through$COL_CYAN wptheme$COL_RESET or PhpMyAdmin"
+					;;
+			     [Nn]*) wpRewriteFlush
+					  echo -e "\nPermalinks/Rewrite Rules flushed. Does the site work? y/n/q \c"
+		 			  read wsodSelect && echo ''
+						case $wsodSelect in
+							 [Yy]*) echo -e "\nTry restoring the plugins first then try reactivating the theme through$COL_CYAN wptheme$COL_RESET or PhpMyAdmin"
+								;;
+  					  		 [Nn]*) wpReplaceCore
+								   echo -e "\nCore Files replaced. Does the site work? y/n/q \c"
+									read wsodSelect && echo ''
+									case $wsodSelect in
+										[Yy]*) echo -e "\nTry restoring the plugins first then try reactivating the theme through$COL_CYAN wptheme$COL_RESET or PhpMyAdmin"
+											;;
+ 										[Nn]*) echo -e "\nCheck the PHP Config and if that fails, contact your friendly neighborhood SWA. Be sure to mention anything useful you found in the$COL_MAGENTA error logs! $COL_RESET\n\nFeel free to use the script below:$COL_GREEN \n\nCustomer site is WSOD. I have renamed the plugins folder, defaulted the theme to twentysixteen, replaced the core files, flushed permalinks and generated a new .htaccess file. Site is still WSOD. Anything else you can see that I might have missed? $COL_RESET"
+											;;
+  										[qQ]*)  
+											;;
+   									  	    *) invalidOption;;
+									esac
+								;;
+  					  		 [qQ]*) 
+								;;
+  					 		  	*) invalidOption;;
+						esac 
+					;;
+			     [qQ]*) 
+					;;
+ 			    *)     invalidOption;;
+			esac
+	;;
+	[Qq]*) 
+	;;
+	*)	  invalidOption;;	
+
+esac
+echo -e "
+Reactivate the plugins by renaming the folder back by using:$COL_CYAN \ncd wp-content/ && mv plugins.QWPCLI_OFF plugins && cd ..$COL_RESET
+$COL_MAGENTA
+DONT FORGET:$COL_RESET Clean up after yourself! You may have generated $COL_MAGENTA 
+
+QWPCLI_BACKUP_DATE
+QWPCLI_user_db_date.sql
+QWPCLI_CORE_DATE
+.QWPCLI_ACTIVEPLUGINS.txt
+.QWPCLI_htaccess.DATE
+ $COL_RESET"
+}
+### RESTORE FILES WITH RSYNC ###
+function restore (){
+
+echo -e "
+What backup would you like to restore FILES from? 
+NOTE: Files are restored from/to your current working directory.
+
+$COL_MAGENTA\rYou are currently in $(dirs) $COL_RESET
+
+(1) Daily
+(2) Weekly
+(3) Monthly
+(4) Exit
+
+\tSelection: \c"  
+
+read var && echo ''
+case $var in
+        1) echo -e "Please run: $COL_CYAN \nrsync -auvxh ~/../$(whoami).daily$(dirs | cut -c 2-)/ $(dirs)/ $COL_RESET";;
+        2) echo -e "Please run: $COL_CYAN \nrsync -auvxh ~/../$(whoami).weekly$(dirs | cut -c 2-)/ $(dirs)/ $COL_RESET";;
+        3) echo -e "Please run: $COL_CYAN \nrsync -auvxh ~/../$(whoami).monthly$(dirs | cut -c 2-)/ $(dirs)/ $COL_RESET";;
+        4) return;;
+        *) invalidOption;;
+esac
+}
+
+### Disable Auto Updates ###
+function wpAutoUpdate(){
+echo -e "core\nplugins\nthemes" > .automatic_updates_disabled
+
+echo -e "$COL_GREEN
+Success:$COL_RESET Created .automatic_updates_disabled file."
+ 
+# echo -e "
+# What auto updates do you want to disable?
+
+# (1) Core
+# (2) Plugins
+# (3) Themes
+# (4) All
+# (5) Exit
+
+# \tSelection: \c"
+
+# read var && echo ''
+# case $var in
+#         1) 
+#         ;;
+#         2) 
+#         ;;
+#         3) 
+#         ;;
+#         4) 
+#         ;;
+#         5) return;;        
+#         *) invalidOption;;
+# esac
+}
+
+function wpeval(){
+echo ""
+wp eval --skip-plugins 'echo "Eval Plugins: [OK]\n";'
+wp eval --skip-themes 'echo "Eval Themes:  [OK]\n";'
+wp eval --skip-wordpress 'echo "Eval Core:  [OK]\n";'
+echo ""
+}
+
+function wpOverhall(){
+wpReplaceCore
+wp core update-db
+wpRewriteFlush
+wp transient delete-expired
+wp cache flush
+wp media regenerate --yes
+wp db repair 
+wp db optimize
+
+echo -e "$COL_GREEN\r\nSuccess:$COL_RESET Action Completed."
+}
+
+function slowmysql(){
+echo -e "Total:\n"
+egrep -hRo $USER'_[0-9a-z]+' ~/tmp/mysql_slow_queries/ | sort | uniq -c
+
+echo -e "\nDaily\n"
+awk '/^use/ {print $2}' ~/tmp/mysql_slow_queries/`date +%Y%m%d`* | sort | uniq -c
+}
+
+function wpspeed(){
+# . <(curl -sS http://radams.bluehoststaff.com/script/wpspeed)
+echo -ne "\n\t\t\t\tBuilt by cmiles\n"
+sleep 0.5
+
+# . <(curl -sS https://miles.cm/code/wpspeed)
+. <(curl -sS https://raw.githubusercontent.com/miles-cm/wpspeed/master/wpspeed)
+}
+
+function wpcolors(){
+echo -e "
+$COL_RED This is RED $COL_RESET
+$COL_GREEN This is GREEN $COL_RESET
+$COL_PURPLE This is PURPLE $COL_RESET
+$COL_BLUE This is BLUE $COL_RESET
+$COL_MAGENTA This is MAGENTA $COL_RESET
+$COL_CYAN This is CYAN $COL_RESET
+$COL_ORANGE This is ORANGE $COL_RESET
+$COL_CHERRY This is CHERRY $COL_RESET
+$COL_FORREST This is FORREST $COL_RESET
+"
+}
+
+#################### GLOABAL FUNCTIONS ####################
+function wpgGlobal(){
+NOW=$(date +"%Y_%m_%d")
+if [ -f error_log ]; then mv error_log error_log.$NOW
+fi
+### Determine WordPress location
+if [ $1 == "wp-config.php" ]; then
+	local loc="Current Working Directory"	
+else
+	local loc=${1%wp-config.php*}
+fi
+
+### Change to the WordPress location
+cd ~/public_html${loc##/home*public_html}
+echo -e "\n$COL_BLUE----- Updating $(pwd) -----$COL_RESET"
+### Start Global Actions ###
+}
+############################################################
+
+function wpgReplaceCore(){
+wpgGlobal "$@"
+### Start Global Actions ###
+wpReplaceCore
+}
+
+function wpgWorks(){
+wpgGlobal "$@"
+### Start Global Actions ###
+coreLatest
+wpworks
+}
+
+function wpgDB(){
+wpgGlobal "$@"
+### Start Global Actions ###
+wp transient delete-expired
+wpdbOpt
+}
+
+function wpgWSOD(){
+wpgGlobal "$@"
+### Start Global Actions ###
+wpwsod
+}
+
+function wpgVerifyCheck(){
+wpgGlobal "$@"
+### Start Global Actions ###
+wpVerifyCheck
+}
+
+### Disables Auto Updates For Each Site
+function wpgAutoUpdate(){
+wpgGlobal "$@"
+### Start Global Actions ###
+wpAutoUpdate
+}
+
+### Displays available updates 
+function wpgCheckUpdate(){
+wpgGlobal "$@"
+### Start Global Actions ###
+wpCheckUpdate
+}
+
+function wpgEval(){
+wpgGlobal "$@"
+### Start Global Actions ###
+wpeval
+}
+
+function wpgOverhall(){
+wpgGlobal "$@"
+### Start Global Actions ###
+wpOverhall
+}
+
+function wpgUpdate(){
+wpgGlobal "$@"
+### Start Global Actions ###
+wp core update
+wp core update-db
+wp plugin update --all
+wp theme update --all
+}
+
+function gcmd(){
+#DIRS=$(find ~/public_html -maxdepth 5 -type f -name 'wp-config.php')
+for DIR in $DIRS; do
+    CDIR=$(dirname $DIR)
+    cd $CDIR;
+    echo -e "\n$COL_BLUE----- Updating $(pwd) -----$COL_RESET"
+if [[ "$1" == 'wp' ]];then
+    /usr/php/54/usr/bin/php-cli /usr/local/bin/$@;
+else
+    $@;
+fi
+    cd - >/dev/null
+done
+}
+
+
+#################### END GLOABAL FUNCTIONS ####################
+
+### 
