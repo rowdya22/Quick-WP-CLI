@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   16 May 2016   #
+# Updated on:   18 May 2016   #
 #                             # 
 ###############################
 
@@ -50,7 +50,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_RESET\nType$COL_CYAN qwpcli$COL_RESET to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 16 May 2016
+What would you like to work on?                           $COL_GREEN Updated: 18 May 2016
 
   $COL_CYAN wpstats $COL_RESET  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_RESET   - Check Versions, Verify Checksums, Replace Core Files
@@ -88,20 +88,27 @@ fi
 
 function wpmore(){
 clear
-echo -e "
-Additional Functions (Most NOT WPCLI Based):
-
-  $COL_CYAN wpfix $COL_RESET    - Run Fixes
+echo -e "$COL_GREEN
+WordPress Specific:$COL_RESET
   $COL_CYAN wpwsod $COL_RESET   - Guided Walkthrough to Fix WSOD
+  $COL_CYAN wpfix $COL_RESET    - Run Fixes
+  $COL_CYAN dblist $COL_RESET   - Lists Database Names and wp-config.php Locations
+  $COL_CYAN wpspeed $COL_RESET  - Runs WordPress Speed Checks
+  $COL_CYAN wpopt $COL_RESET    - Basic Site Optimization and Suggestions
+  $COL_CYAN wpinstall $COL_RESET- Install WordPress from scratch 
+  $COL_GREEN
+Helpful Functions:$COL_RESET
   $COL_CYAN fcount $COL_RESET   - Lists Number of Files in Current Directory
   $COL_CYAN dirsize $COL_RESET  - Sorts Directory Contents by Size 
-  $COL_CYAN dblist $COL_RESET   - Lists Database Names and wp-config.php Locations
-  $COL_CYAN restore $COL_RESET  - Restores Files From Backups
+$COL_GREEN
+Troubleshooting: $COL_RESET
+  $COL_CYAN mailtest $COL_RESET - Checks PHP Mail Function
   $COL_CYAN slowmysql $COL_RESET- Displays Slow MySQL Queries
-  
-  $COL_CYAN wpeval $COL_RESET   - Runs Check on Plugins and Themes
-
-  $COL_CYAN wpspeed $COL_RESET  - Runs WordPress speed check script
+$COL_GREEN
+Beta Testing: $COL_RESET 
+  $COL_CYAN wpeval $COL_RESET   - Runs Check on Plugins and Themes $COL_GREEN
+Broken:  $COL_RESET
+  $COL_CYAN restore $COL_RESET  - Restores Files From Backups
 
 Check out more wpcli commands at $COL_MAGENTA http://wp-cli.org/commands/ $COL_RESET
 "
@@ -1231,6 +1238,146 @@ sleep 0.5
 
 # . <(curl -sS https://miles.cm/code/wpspeed)
 . <(curl -sS https://raw.githubusercontent.com/rowdya22/wpspeed/master/wpspeed)
+}
+
+function mailtest(){
+BOXUSER=`whoami`
+ADDRESS=`hostname`
+LOCATION=`pwd`
+PHP_TEMPLATE='
+<?php
+        $to = $_POST['to'];
+        $subject = "Checking Mail Script";
+        $body = "Hello, this is Customer Support testing your mail script.";
+        $user = get_current_user();
+        $address = `hostname`;
+        $headers = "From: " . $_POST['from'] . "\r\n" . "X-Mailer: php";
+        if (isset($_POST['Submit1'])) { 
+                if (mail($to, $subject, $body, $headers)) {
+                        echo("<p>Message was sent!</p>");
+                } else {
+                        echo("<p>Sorry, message delivary failed!</p>");
+                }   
+        } else {
+                echo ("<p>Below is a test that will confirm functionality</br>
+                        of the servers ability to use the PHP mail() function.</br></br></br>
+                        \"To\" Field can be any email address</br></br>
+                        \"From\" Field needs to be a valid email </br>
+                         address on the users Hosting Account</br>
+            		 or $user@$address</p>");
+        }   
+?>
+<html>
+<head>
+<title>Email Test</title>
+<body>
+        <form action="<?php $_PHP_SELF ?>" method="POST">
+        To:   <input type="text" name="to" /></br>
+        From: <input type="text" name="from" /></br>
+        <input type="submit" name= "Submit1" value="Send Mail" />
+        </form>
+</body>
+</html>
+'
+
+# assign IP of box to variable address
+host -t a $ADDRESS > `pwd`/deleteMe;
+awk '{print $4}' deleteMe > deleteMe01;
+ADDRESS=`cat deleteMe01`
+
+# assign path of file to variable location
+echo $LOCATION > `pwd`/deleteMe;
+awk -F public_html '{print $2}' deleteMe > deleteMe01;
+LOCATION=`cat deleteMe01`;
+
+# clean up
+rm -fr deleteMe{,01};
+
+# create test_email.php file
+echo $PHP_TEMPLATE > test_email.php;
+
+URL=$(wp option get siteurl)
+
+# print out url of test_email.php file
+echo -e "\n\tOpen link below by middle clicking on it";
+echo -e "\n\t$URL/test_email.php\n";
+read -t 120 -p "        --Link will be deleted in 2 minutes or by pushing (Enter)";
+rm -fr `pwd`/test_email.php;
+echo -e "\n\t--test_email.php removed\n\n\t...Goodbye\n"
+
+}
+
+function wpinstall(){
+clear
+echo -e "$COL_GREEN
+  _      __   ___         ____             __          __   __
+ | | /| / /  / _ \       /  _/  ___   ___ / /_ ___ _  / /  / /
+ | |/ |/ /  / ___/      _/ /   / _ \ (_-</ __// _ \`/ / /  / / 
+ |__/|__/  /_/         /___/  /_//_//___/\__/ \_,_/ /_/  /_/ "
+
+
+# accept user input for the databse info
+echo -e "$COL_MAGENTA
+This setup will guide you through a manual WordPress install.
+
+Make sure you are in the folder you want to install WordPress and\nthere are no existing WordPress files.\n
+
+---To begin create a database in cPanel and then enter the needed information--- $COL_RESET"
+echo -e "$COL_GREEN
+Database Name: $COL_RESET"
+read -e dbname
+echo -e "$COL_GREEN 
+Database User: $COL_RESET"
+read -e dbuser
+echo -e "$COL_GREEN 
+Database Password: $COL_RESET"
+read -e dbpass
+
+# download the WordPress core files
+wp core download
+
+# create the wp-config file with our standard setup
+wp core config --dbname=$dbname --dbuser=$dbuser --dbpass=$dbpass
+
+wp core install --prompt
+wp plugin uninstall hello --deactivate --quiet
+
+echo -e "$COL_MAGENTA
+Now installing suggested plugins... $COL_RESET"
+sleep 2
+wp plugin install jetpack sucuri-scanner google-captcha updraftplus
+wp plugin update --all
+wp theme update --all
+
+echo -e "$COL_MAGENTA
+Now disabling user registration, comments, and pingpacks... $COL_RESET"
+sleep 2
+# read db usr ps pre <<<$(awk -F\' '/DB_/ {print $4}' wp-config.php) #'
+# mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value = '0' WHERE option_name = 'users_can_register';" 
+# mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value='closed' WHERE option_name='default_comment_status';"
+# mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value='closed' WHERE option_name='default_ping_status'; "
+# mysql -u $usr -p$ps -D $db -e "UPDATE wp_posts SET comment_status='closed', ping_status='closed';"
+
+wp option set users_can_register 0
+wp option set default_comment_status closed
+wp option set default_ping_status closed
+wp option set default_pingback_flag 0
+wp option set comment_moderation 1
+wp option set start_of_week 0
+wp option set posts_per_page 5
+wp option set date_format 'j F Y'
+wp option set time_format 'g:i A'
+
+echo -e "$COL_MAGENTA
+Now disabling comments and pingbacks on existing content... $COL_RESET"
+sleep 1
+wp post update $(wp post list --format=ids) ---comment_status=closed
+wp post update $(wp post list --format=ids) --ping_status=closed
+
+echo -e "$COL_GREEN
+Success:$COL_RESET WordPress installed with recommended plugins and settings."
+sleep 3
+wpstats
 }
 
 function wpcolors(){
