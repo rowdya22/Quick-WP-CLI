@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   23 May 2016   #
+# Updated on:   25 May 2016   #
 #                             # 
 ###############################
 
@@ -19,7 +19,7 @@ alias ls='/bin/ls --color=tty -F -A -b -T 0'
 #alias wp='/usr/php/54/usr/bin/php-cli /usr/php/54/usr/bin/wp'
 alias wp='/usr/php/54/usr/bin/php-cli /usr/local/bin/wp'
 
-DIRS=$(find ~/public_html -maxdepth 5 -type f -name 'wp-config.php')
+#DIRS=$(find ~/public_html -maxdepth 5 -type f -name 'wp-config.php')
 
 # Colors
 ESC_SEQ="\x1b["
@@ -50,7 +50,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_RESET\nType$COL_CYAN qwpcli$COL_RESET to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 23 May 2016
+What would you like to work on?                           $COL_GREEN Updated: 25 May 2016
 
   $COL_CYAN wpstats $COL_RESET  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_RESET   - Check Versions, Verify Checksums, Replace Core Files
@@ -96,20 +96,19 @@ WordPress Specific:$COL_RESET
   $COL_CYAN wpspeed $COL_RESET  - Runs WordPress Speed Checks
   $COL_CYAN wpopt $COL_RESET    - Basic Site Optimization and Suggestions
   $COL_CYAN wpinstall $COL_RESET- Install WordPress from scratch 
-  $COL_GREEN
+  $COL_CYAN wptools $COL_RESET  - Show WordPress Tools Functions $COL_GREEN
 Helpful Functions:$COL_RESET
   $COL_CYAN fcount $COL_RESET   - Lists Number of Files in Current Directory
-  $COL_CYAN dirsize $COL_RESET  - Sorts Directory Contents by Size 
-$COL_GREEN
+  $COL_CYAN dirsize $COL_RESET  - Sorts Directory Contents by Size $COL_GREEN
 Troubleshooting: $COL_RESET
   $COL_CYAN mailtest $COL_RESET - Checks PHP Mail Function
-  $COL_CYAN slowmysql $COL_RESET- Displays Slow MySQL Queries
+  $COL_CYAN slowmysql $COL_RESET- Displays Slow MySQL Queries 
 $COL_GREEN
 Beta Testing: $COL_RESET 
   $COL_CYAN wpeval $COL_RESET   - Runs Check on Plugins and Themes $COL_GREEN
 Broken:  $COL_RESET
   $COL_CYAN restore $COL_RESET  - Restores Files From Backups
-
+  
 Check out more wpcli commands at $COL_MAGENTA http://wp-cli.org/commands/ $COL_RESET
 "
 }
@@ -1673,5 +1672,100 @@ echo -e "\nBe sure to configure the plugins for best results\n"
 }
 
 #################### END OPTIMIZATION FUNCTIONS ####################
+
+#################### START WP-TOOLS FUNCTIONS ####################
+function wptools(){
+clear
+echo -e "$COL_GREEN
+  _      _____    ______          __  
+ | | /| / / _ \  /_  __/__  ___  / /__                    $COL_ORANGE  Fixing WordPress $COL_GREEN  
+ | |/ |/ / ___/   / / / _ \/ _ \/ (_-<                    $COL_ORANGE      Faster! $COL_GREEN
+ |__/|__/_/      /_/  \___/\___/_/___/                    $COL_ORANGE  Dev: Rowdy Adams $COL_RESET
+
+This menu allows you to tap into the power of WordPress Tools. To skip the menu,
+type$COL_CYAN wptools$COL_RESET and press tab twice to view options.$COL_MAGENTA All actions viewable in the 
+WordPress Tools GUI.$COL_RESET Choose a Function below:
+
+(1) Backup  - Backup site through WordPress Tools (May not include all content)
+(2) Restore - Restore site & database from existing WordPress Tools backup
+(3) Upgrade - Backup and update site, plugins, themes. If errors exist revert.
+(4) Exit
+
+\tSelection: \c" ;
+
+read optSelect && echo ''
+case $toolsSelect in
+	1)	wptoolsbackup;; 
+	2)	wptoolsrestore;; 
+	3)	wptoolsupgrade;; 
+	4)	return;;
+	*)	invalidOption;;
+esac
+}
+
+function wptoolsbackup(){
+DIR=$(pwd)
+HASHDIR="$(echo "$(dirs)" | cut -d "~" -f 2)/"
+WPDIR="$(echo "$(dirs)" | sed 's/^..//' )/"
+BACKUPDIR=$(perl -e'my $a = unpack "H*", "$ARGV[0]"; print $a;' $HASHDIR)
+
+echo -e "$COL_GREEN
+Backup running... $COL_RESET"
+cd ~
+wp-tools backup --path=$WPDIR --backupdir=backupwordpress/$BACKUPDIR --wp-cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
+cd $DIR
+}
+
+function wptoolsrestore(){
+DIR=$(pwd)
+WPPATH="/$(echo "$(dirs)" | sed 's/^..//' )/"
+HASHDIR=$(perl -e'my $a = unpack "H*", $ARGV[0];print $a;' $WPPATH)
+
+cd ~
+WPFILES="backupwordpress/$HASHDIR/*.tar.gz"
+
+for i in $WPFILES; do
+
+    TIME=$(perl -e'
+    my $file = $ARGV[0];
+    my ($time) = $file =~ /wp_backup(\d+)/;
+    my $date = "date -d\@$time";
+    print `$date`;
+    ' $i)
+
+    MANIFEST=$(dd bs=8192 count=1 if=$i 2>/dev/null | tar -xOz wp_backup.MANIFEST 2>/dev/null)
+    THINGS=$(echo $MANIFEST | tr " " "\n")
+
+    echo $TIME
+    for thing in $THINGS; do
+        echo $thing
+    done
+    echo ""
+
+done
+
+echo -e "Enter epoch time of the restore point (e.g. time:$COL_MAGENTA 1339826400$COL_RESET):" ; read TIMESTAMP
+
+wp-tools restore --backupfile=backupwordpress/$HASHDIR/wp_backup$TIMESTAMP.tar.gz --wp-cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
+
+cd $DIR
+}
+
+function wptoolsupgrade(){
+#Required Syntax: wp-tools upgrade --path=public_html/site --backupdir=backupwordpress/$BACKUPDIR --wp-cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
+
+DIR=$(pwd)
+HASHDIR="$(echo "$(dirs)" | cut -d "~" -f 2)/"
+WPDIR="$(echo "$(dirs)" | sed 's/^..//' )/"
+BACKUPDIR=$(perl -e'my $a = unpack "H*", "$ARGV[0]"; print $a;' $HASHDIR)
+
+echo -e "$COL_GREEN
+Upgrade running... $COL_RESET"
+cd ~
+wp-tools upgrade --path=$WPDIR --backupdir=backupwordpress/$BACKUPDIR --wp-cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
+cd $DIR
+}
+
+#################### END WP-TOOLS FUNCTIONS ####################
 
 ###
