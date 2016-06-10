@@ -1781,7 +1781,7 @@ echo -e "$COL_GREEN \nChecking for Plugin and Theme Issues...\n $COL_RESET"
 perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 }
 
-clean_up_files () { find ~/public_html/ -maxdepth 5 \( -name "troubleshoot.pl" -o -name "qwpcli*" \)|xargs rm -rf; }
+clean_up_files () { find ~/public_html/ -maxdepth 5 \( -name "troubleshoot.pl" -o -name "qwpcli.md5" \)|xargs rm -rf; }
 trap clean_up_files EXIT
 
 #################### END WP-TOOLS FUNCTIONS ####################
