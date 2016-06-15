@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   08 Jun 2016   #
+# Updated on:   14 Jun 2016   #
 #                             # 
 ###############################
 
@@ -48,7 +48,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_RESET\nType$COL_CYAN qwpcli$COL_RESET to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 08 Jun 2016
+What would you like to work on?                           $COL_GREEN Updated: 14 Jun 2016
 
   $COL_CYAN wpstats $COL_RESET  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_RESET   - Check Versions, Verify Checksums, Replace Core Files
@@ -64,7 +64,7 @@ What would you like to work on?                           $COL_GREEN Updated: 08
   $COL_CYAN wpmore $COL_RESET   - More Commands (Global Actions,$COL_CYAN WSOD Fix$COL_RESET, File Count, DB List)
 "
 
-CHECK=$(wp core version | wc -l)
+CHECK=$(wp --skip-plugins --skip-themes core version | wc -l)
 
 if [ $CHECK != '1' ]; then
 echo -e "$COL_MAGENTA 
@@ -198,7 +198,7 @@ qwpcli
 ### Core Menu ###
 function wpcore() {
 echo -e "$COL_GREEN
-$(wp core version --extra)
+$(wp --skip-plugins --skip-themes core version --extra)
 $COL_RESET
 Core Options:
 (1) Check Version
@@ -290,8 +290,8 @@ esac
 ### Theme Menu ###
 function wptheme() {
 echo -e "$COL_GREEN
-Template: $(wp option get template)
-Stylesheet: $(wp option get stylesheet)
+Template: $(wp --skip-plugins --skip-themes option get template)
+Stylesheet: $(wp --skip-plugins --skip-themes option get stylesheet)
 $COL_RESET
 Theme Options:
 (1) List
@@ -315,7 +315,7 @@ esac
 ### URL Menu ###
 function wpurl() {
 echo -e "$COL_GREEN
-Site URL: $(wp option get siteurl)
+Site URL: $(wp --skip-plugins --skip-themes option get siteurl)
 $COL_RESET
 URL Options:
 (1) Change URLs
@@ -349,7 +349,7 @@ User Options:
 
 read userSelect && echo ''
 case $userSelect in
-	1)	wp user list --fields=ID,user_login,user_email,roles;; #Only list important information
+	1)	wp --skip-plugins --skip-themes user list --fields=ID,user_login,user_email,roles;; #Only list important information
 	2)	wpUserCreate;; #Create temp user HostAdmin
 	3)	wpuserr;; #Remove HostAdmin as a user
 	4)	wpChangePass;; #Change user password 
@@ -397,12 +397,12 @@ function wpstats(){
 read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/") 
 
 PLUGIN=$(wp --skip-plugins --skip-themes plugin list | grep -w available | wc -l)
-THEME=$(wp theme list | grep -w available | wc -l)
-CORE=$(wp core check-update | grep -w wordpress | wc -l)
+THEME=$(wp --skip-plugins --skip-themes theme list | grep -w available | wc -l)
+CORE=$(wp --skip-plugins --skip-themes core check-update | grep -w wordpress | wc -l)
 
 echo -e ""
 
-CHECK=$(wp core version | wc -l)
+CHECK=$(wp --skip-plugins --skip-themes core version | wc -l)
 
 if [ $CHECK == '1' ]; then
 	echo -e "$COL_GREEN\rWPCLI Check:$COL_GREEN    [OK] $COL_GREEN"
@@ -410,7 +410,7 @@ else
 	echo -e "$COL_GREEN\rWPCLI Check:$COL_MAGENTA [FAILED]   Report Errors with$COL_CYAN qerror$COL_GREEN"
 fi
 
-HACK=$(wp core verify-checksums 2>&1 | wc -l)
+HACK=$(wp --skip-plugins --skip-themes core verify-checksums 2>&1 | wc -l)
 if [ $HACK == '1' ]; then
         echo -e "$COL_GREEN\rChecksums:$COL_GREEN      [OK] $COL_GREEN"
 else
@@ -440,9 +440,9 @@ echo -e "Database Name: $COL_CYAN $dbname" "$COL_GREEN"
 echo -e "Database Prfx: $COL_CYAN $dbprefix" "$COL_GREEN"
 echo -e " "
 
-echo -e "Core Updates:  $COL_CYAN $CORE" "$COL_RESET" "\t $(php -i | grep memory_limit | sed 's/<[^>]*>/ /g')" "$COL_GREEN"
-echo -e "Plugin Updates:$COL_CYAN $PLUGIN" "$COL_RESET" "\t $(php -i | grep post_max_size | sed 's/<[^>]*>/ /g')" "$COL_GREEN"
-echo -e "Theme Updates: $COL_CYAN $THEME" "$COL_RESET" "\t $(php -i | grep upload_max_filesize | sed 's/<[^>]*>/ /g')" "$COL_GREEN"
+echo -e "Core Updates:  $COL_CYAN $CORE" "$COL_RESET" "\t $(php -i 2>/dev/null | grep memory_limit | sed 's/<[^>]*>/ /g')" "$COL_GREEN"
+echo -e "Plugin Updates:$COL_CYAN $PLUGIN" "$COL_RESET" "\t $(php -i 2>/dev/null | grep post_max_size | sed 's/<[^>]*>/ /g')" "$COL_GREEN"
+echo -e "Theme Updates: $COL_CYAN $THEME" "$COL_RESET" "\t $(php -i 2>/dev/null | grep upload_max_filesize | sed 's/<[^>]*>/ /g')" "$COL_GREEN"
 echo -e "$COL_RESET"
 
 }
@@ -452,11 +452,11 @@ echo -e "$COL_RESET"
 
 ### VERSION ###
 function wpCoreVersion(){
-wp core version
+wp --skip-plugins --skip-themes core version
 }
 ### CHECKSUMS ###
 function wpVerifyCheck(){
-wp core verify-checksums
+wp --skip-plugins --skip-themes core verify-checksums
 }
 ### WGET CORE ###
 function coreFresh() {
@@ -507,7 +507,7 @@ if [[ -f "$oldWP/wp-config.php" ]]; then
 	echo -e "$COL_CYAN\rWarning:$COL_RESET No previous wp-config.php found! Used wp-config-sample.php..."
 fi
 echo -e "\nCompressing old WordPress core...$COL_GREEN" && tar -zcf "$oldWP".tar.gz "$oldWP" --remove-files && echo -e "Success:$COL_RESET Old WordPress files located$COL_BLUE $oldWP.tar.gz $COL_RESET"
-wp core update-db --quiet
+wp --skip-plugins --skip-themes core update-db --quiet
 }
 ### HTACCESS ###
 function wpRewriteFlush(){
@@ -519,8 +519,8 @@ fi
 
 if [ ! -f wp-cli.yml ]; then echo -e "apache_modules:\n\t - mod_rewrite" > wp-cli.yml
 fi
-wp rewrite structure $(wp option get permalink_structure)
-wp rewrite flush --hard
+wp --skip-plugins --skip-themes rewrite structure $(wp --skip-plugins --skip-themes option get permalink_structure)
+wp --skip-plugins --skip-themes rewrite flush --hard
 echo -e "$COL_GREEN\rSuccess:$COL_RESET Rewrite Flushed."
 }
 
@@ -529,11 +529,11 @@ echo -e "$COL_GREEN\rSuccess:$COL_RESET Rewrite Flushed."
 
 ### WPDB ###
 function wpdbOpt(){
-wp db repair && wp db optimize
+wp --skip-plugins --skip-themes db repair && wp --skip-plugins --skip-themes db optimize
 }
 
 function wptransient(){
-wp transient delete-expired
+wp --skip-plugins --skip-themes transient delete-expired
 }
 
 ##### END WPDB COMMANDS #####
@@ -550,11 +550,11 @@ wpPluginList
 echo -e "$COL_RESET
 What plugin(s) would you like to toggle? If multiple separate by spaces..." 
 read PLUGINS
-wp plugin toggle $PLUGINS
+wp --skip-plugins --skip-themes plugin toggle $PLUGINS
 }
 ### DEACTIVATE PLUGINS ###
 function wpPluginDeactivate(){
-ACTIVEPLUG=$(wp plugin deactivate --all >.QWPCLI_ACTIVEPLUGINS.txt 2>&1 && <.QWPCLI_ACTIVEPLUGINS.txt awk '$1=="Success:" {print $3}' | tr -d \')
+ACTIVEPLUG=$(wp --skip-plugins --skip-themes plugin deactivate --all >.QWPCLI_ACTIVEPLUGINS.txt 2>&1 && <.QWPCLI_ACTIVEPLUGINS.txt awk '$1=="Success:" {print $3}' | tr -d \')
 # '
 wp --skip-plugins --skip-themes plugin list
 }
@@ -562,7 +562,7 @@ wp --skip-plugins --skip-themes plugin list
 function wpPluginActivate(){
 ACTIVEPLUGINS=$(<.QWPCLI_ACTIVEPLUGINS.txt awk '$1=="Success:" {print $3}' | tr -d \')
 # '
-wp plugin activate $ACTIVEPLUGINS
+wp --skip-plugins --skip-themes plugin activate $ACTIVEPLUGINS
 rm -rf .QWPCLI_ACTIVEPLUGINS.txt
 }
 ### INSTALL PLUGINS ###
@@ -577,7 +577,7 @@ Recommended Plugins:
 $COL_RESET
 What plugin(s) would you like to install (and activate)? Enter slug separated by spaces..."
 read INSATALL
-wp plugin install $INSATALL --activate
+wp --skip-plugins --skip-themes plugin install $INSATALL --activate
 }
 
 ##### END WPPLUGIN COMMANDS #####
@@ -585,7 +585,7 @@ wp plugin install $INSATALL --activate
 
 ### LIST THEMES ###
 function wpThemeList(){
-wp theme list
+wp --skip-plugins --skip-themes theme list
 }
 ### ACTIVATE THEME ###
 function wpThemeActivate(){
@@ -594,11 +594,11 @@ wpThemeList
 echo -e "$COL_RESET
 What theme would you like to activate?"
 read THEME
-wp theme activate $THEME
+wp --skip-plugins --skip-themes theme activate $THEME
 }
 ### INSTALL & ACTIVATE DEFAULT THEME ###
 function wpThemeDefault(){
-wp theme install twentysixteen --force --activate
+wp --skip-plugins --skip-themes theme install twentysixteen --force --activate
 }
 ### INSTALL THEMES ###
 function wpThemeInstall() {
@@ -613,7 +613,7 @@ Know a good theme? Suggest it!
 $COL_RESET
 What theme(s) would you like to install? Enter slug separated by spaces..."
 read INSATALL
-wp theme install $INSATALL
+wp --skip-plugins --skip-themes theme install $INSATALL
 }
 
 ##### END WPTHEME COMMANDS #####
@@ -625,7 +625,7 @@ echo -e "$COL_GREEN
 Backing up the Database...$COL_RESET"
 dbexport
 echo -e "$COL_GREEN
-Site: $(wp option get siteurl)
+Site: $(wp --skip-plugins --skip-themes option get siteurl)
 $COL_MAGENTA
 WARNING! Old and New URL Prefix should match! For best results only enter domain.com NOT www or http://  
 
@@ -635,13 +635,13 @@ Enter Old URL: "
 read OLDURL
 echo -e "Enter New URL: "
 read NEWURL
-wp search-replace $OLDURL $NEWURL
+wp --skip-plugins --skip-themes search-replace $OLDURL $NEWURL
 }
 ### SHOW SITE/HOME URLS ###
 function wpurlList() {
 echo -e "$COL_GREEN
-Site URL: $(wp option get siteurl)
-Home URL: $(wp option get home)
+Site URL: $(wp --skip-plugins --skip-themes option get siteurl)
+Home URL: $(wp --skip-plugins --skip-themes option get home)
 $COL_RESET"
 }
 
@@ -651,8 +651,8 @@ $COL_RESET"
 ### CREATE TEMP USER HOSTADMIN ###
 function wpUserCreate(){
 # pass=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#$%^&*_+,./?' | fold -w 10| head -n 1)
-URL=$(wp option get siteurl)
-NEWPASS="$(wp user create HostAdmin HostAdmin@example.com --role=administrator | tail -1 | awk -F ':' '{ print $2 }')"
+URL=$(wp --skip-plugins --skip-themes option get siteurl)
+NEWPASS="$(wp --skip-plugins --skip-themes user create HostAdmin HostAdmin@example.com --role=administrator | tail -1 | awk -F ':' '{ print $2 }')"
 
 echo -e "$COL_GREEN
 Delete the user when done by running$COL_CYAN wpuserr$COL_RESET!
@@ -661,19 +661,23 @@ $URL/wp-admin/
 
 UN:$COL_MAGENTA HostAdmin$COL_RESET
 PW:$COL_MAGENTA$NEWPASS $COL_RESET\n"
+
+remove_temp_user () { gcmd wpuserr; }
+trap remove_temp_user EXIT
 }
+
 ### REMOVE TEMP USER HOSTADMIN ###
 function wpuserr(){
-wp user delete HostAdmin --yes
+wp --skip-plugins --skip-themes user delete HostAdmin --yes
 }
 ### CHANGE USER PASSWORDS ###
 function wpChangePass() {
 echo -e "$COL_GREEN"
-wp user list --role=administrator --fields=ID,user_login,display_name,user_email,roles
+wp --skip-plugins --skip-themes user list --role=administrator --fields=ID,user_login,display_name,user_email,roles
 echo -e "$COL_RESET
 User ID: "; read USERID
 echo -e "New Password: "; read NEWPASS
-wp user update $USERID --user_pass=$NEWPASS
+wp --skip-plugins --skip-themes user update $USERID --user_pass=$NEWPASS
 }
 
 function emailPassReset(){
@@ -726,20 +730,20 @@ class QWPCLI_Command extends WP_CLI_Command {
 }
 WP_CLI::add_command( 'QWPCLI_emailReset', 'QWPCLI_Command' );" > QWPCLI_emailReset.php
 
-wp user list --fields=user_login,user_email,roles
+wp --skip-plugins --skip-themes user list --fields=user_login,user_email,roles
 
 echo -e "\nEnter the$COL_GREEN user_login$COL_RESET above to send the reset email to the$COL_GREEN user_email$COL_RESET address:"
 
 read userReset
 
-wp --require=QWPCLI_emailReset.php QWPCLI_emailReset reset_pass --login=$userReset
+wp --skip-plugins --skip-themes --require=QWPCLI_emailReset.php QWPCLI_emailReset reset_pass --login=$userReset
 
 rm -rf QWPCLI_emailReset.php
 }
 
 ### SET USER ROLES ###
 function wpUserRole() {
-wp user list --fields=ID,user_login,user_email,roles
+wp --skip-plugins --skip-themes user list --fields=ID,user_login,user_email,roles
 echo -e "
 Enter ID of User to adjust Role: "; read ID
 echo -e "
@@ -753,11 +757,11 @@ echo -e "
 Which Role would you like to assign to user $ID: \c" ; 
 read CHANGE && echo ''
 case $CHANGE in
-	1)	ROLE='administrator'; wp user set-role $ID $ROLE ;;
-	2)	ROLE='editor' ; wp user set-role $ID $ROLE ;;
-	3)	ROLE='author' ; wp user set-role $ID $ROLE ;;
-	4)	ROLE='contributor' ; wp user set-role $ID $ROLE ;;
-	5)	ROLE='subscriber' ; wp user set-role $ID $ROLE ;;
+	1)	ROLE='administrator'; wp --skip-plugins --skip-themes user set-role $ID $ROLE ;;
+	2)	ROLE='editor' ; wp --skip-plugins --skip-themes user set-role $ID $ROLE ;;
+	3)	ROLE='author' ; wp --skip-plugins --skip-themes user set-role $ID $ROLE ;;
+	4)	ROLE='contributor' ; wp --skip-plugins --skip-themes user set-role $ID $ROLE ;;
+	5)	ROLE='subscriber' ; wp --skip-plugins --skip-themes user set-role $ID $ROLE ;;
 	6)	return;;
 	*)	invalidOption;;
 esac
@@ -766,7 +770,7 @@ esac
 function wpChangeUser(){
 # need to request entry of new user and old user
 
-wp user list --fields=ID,user_login,display_name
+wp --skip-plugins --skip-themes user list --fields=ID,user_login,display_name
 
 echo -e "\nWhat user_login (and display_name) would you like to change?" ; read oldUser
 
@@ -774,13 +778,13 @@ echo -e "\nWhat is the new user_login you would like?" ; read newUser
 
 echo -e ""
 
-wp user update $oldUser --display_name=$newUser
+wp --skip-plugins --skip-themes user update $oldUser --display_name=$newUser
 
 read changeUser <<<$(awk -F\' '/table_prefix/ {print $2}' wp-config.php); read db usr ps pre <<<$(awk -F\' '/DB_/ {print $4}' wp-config.php) && mysql -u $usr -p$ps -D $db -e "UPDATE "$changeUser"users SET user_login = '$newUser' WHERE user_login = '$oldUser'";
 
 echo -e "$COL_GREEN\rSuccess:$COL_RESET Updated user_login and display_name.\n"
 
-wp user list --fields=ID,user_login,display_name
+wp --skip-plugins --skip-themes user list --fields=ID,user_login,display_name
 }
 
 ##### END WPUSER COMMANDS #####
@@ -789,8 +793,8 @@ wp user list --fields=ID,user_login,display_name
 ### UPDATE CORE FILES TO LATEST VERSION ###
 function wpCoreUpdate(){
 if [ ! -f .automatic_updates_disabled ]; then
-wp core update
-wp core update-db
+wp --skip-plugins --skip-themes core update
+wp --skip-plugins --skip-themes core update-db
 else
 echo -e "$COL_MAGENTA UPDATE FUNCTIONS DISABLED as long as .automatic_updates_disabled Exists! $COL_RESET"
 fi
@@ -798,7 +802,7 @@ fi
 ### UPDATE PLUGINS TO LATEST VERSION ###
 function wpPluginUpdate(){
 if [ ! -f .automatic_updates_disabled ]; then
-wp plugin update --all
+wp --skip-plugins --skip-themes plugin update --all
 else
 echo -e "$COL_MAGENTA UPDATE FUNCTIONS DISABLED as long as .automatic_updates_disabled Exists! $COL_RESET"
 fi
@@ -806,7 +810,7 @@ fi
 ### UPDATE THEMES TO LATEST VERSION ###
 function wpThemeUpdate(){
 if [ ! -f .automatic_updates_disabled ]; then
-wp theme update --all
+wp --skip-plugins --skip-themes theme update --all
 else
 echo -e "$COL_MAGENTA UPDATE FUNCTIONS DISABLED as long as .automatic_updates_disabled Exists! $COL_RESET"
 fi
@@ -825,13 +829,13 @@ fi
 function wpCheckUpdate(){
 echo -e "$COL_GREEN
 ----- Core Updates ----- $COL_RESET"
-wp core check-update
+wp --skip-plugins --skip-themes core check-update
 echo -e "$COL_GREEN
 ----- Plugin Updates ----- $COL_RESET"
-wp plugin update --all --dry-run
+wp --skip-plugins --skip-themes plugin update --all --dry-run
 echo -e "$COL_GREEN
 ----- Theme Updates ----- $COL_RESET"
-wp theme update --all --dry-run
+wp --skip-plugins --skip-themes theme update --all --dry-run
 }
 
 ##### END WPUPDATE COMMANDS #####
@@ -917,10 +921,10 @@ Success:$COL_RESET Rewrite Flushed."
 function wpfix(){
 echo -e "$COL_BLUE
 This could take a moment....$COL_RESET"
-wp transient delete-expired
-# wp media regenerate --yes --quiet
+wp --skip-plugins --skip-themes transient delete-expired
+# wp --skip-plugins --skip-themes media regenerate --yes --quiet
 wpRewriteFlush
-wp cache flush
+wp --skip-plugins --skip-themes cache flush
 }
 
 ### END GENERAL FIXES ###
@@ -998,7 +1002,7 @@ if [[ -f "$oldWP/wp-config.php" ]]; then
 	echo -e "$COL_CYAN\rWarning:$COL_RESET No previous wp-config.php found! Used wp-config-sample.php..."
 fi
 echo -e "\nCompressing old WordPress core...$COL_GREEN" && tar -zcf "$oldWP".tar.gz "$oldWP" --remove-files && echo -e "Success:$COL_RESET Old WordPress files located$COL_BLUE $oldWP.tar.gz $COL_RESET"
-wp core update-db --quiet
+wp --skip-plugins --skip-themes core update-db --quiet
 }
 ### WGET LATEST ###
 function coreLatest() {
@@ -1048,7 +1052,7 @@ if [[ -f "$oldWP/wp-config.php" ]]; then
 	echo -e "$COL_CYAN\rWarning:$COL_RESET No previous wp-config.php found! Used wp-config-sample.php..."
 fi
 echo -e "\nCompressing old WordPress core...$COL_GREEN" && tar -zcf "$oldWP".tar.gz "$oldWP" --remove-files && echo -e "Success:$COL_RESET Old WordPress files located$COL_BLUE $oldWP.tar.gz $COL_RESET"
-wp core update-db --quiet
+wp --skip-plugins --skip-themes core update-db --quiet
 }
 ### ERROR REPORTING ###
 function qerror(){
@@ -1068,10 +1072,10 @@ echo -e "$DOMAIN \n$DESCRIPTION \nReported By: $REPORTED" | mail -s "Quick WPCLI
 }
 ### Install MOJO ###
 function wpMojoInstall(){
-wp plugin uninstall mojo-marketplace mojo-marketplace-wp-plugin mojo-marketplace-wp-plugin-production --deactivate --quiet
-# wp plugin install https://github.com/mojoness/mojo-marketplace-wp-plugin/archive/production.zip --activate
-wp plugin install https://www.mojomarketplace.com/mojo-plugin-assets/updater/release/mojo-marketplace-wp-plugin.zip --activate
-wp option set mm_coming_soon true
+wp --skip-plugins --skip-themes plugin uninstall mojo-marketplace mojo-marketplace-wp-plugin mojo-marketplace-wp-plugin-production --deactivate --quiet
+# wp --skip-plugins --skip-themes plugin install https://github.com/mojoness/mojo-marketplace-wp-plugin/archive/production.zip --activate
+wp --skip-plugins --skip-themes plugin install https://www.mojomarketplace.com/mojo-plugin-assets/updater/release/mojo-marketplace-wp-plugin.zip --activate
+wp --skip-plugins --skip-themes option set mm_coming_soon true
 }
 ### WSOD Fix ###
 function wpwsod(){
@@ -1216,13 +1220,13 @@ echo ""
 
 function wpOverhall(){
 wpReplaceCore
-wp core update-db
+wp --skip-plugins --skip-themes core update-db
 wpRewriteFlush
-wp transient delete-expired
-wp cache flush
-wp media regenerate --yes
-wp db repair 
-wp db optimize
+wp --skip-plugins --skip-themes transient delete-expired
+wp --skip-plugins --skip-themes cache flush
+wp --skip-plugins --skip-themes media regenerate --yes
+wp --skip-plugins --skip-themes db repair 
+wp --skip-plugins --skip-themes db optimize
 
 echo -e "$COL_GREEN\r\nSuccess:$COL_RESET Action Completed."
 }
@@ -1300,7 +1304,7 @@ rm -fr deleteMe{,01};
 # create test_email.php file
 echo $PHP_TEMPLATE > test_email.php;
 
-URL=$(wp option get siteurl)
+URL=$(wp --skip-plugins --skip-themes option get siteurl)
 
 # print out url of test_email.php file
 echo -e "\n\tOpen link below by middle clicking on it";
@@ -1338,20 +1342,20 @@ Database Password: $COL_RESET"
 read -e dbpass
 
 # download the WordPress core files
-wp core download
+wp --skip-plugins --skip-themes core download
 
 # create the wp-config file with our standard setup
-wp core config --dbname=$dbname --dbuser=$dbuser --dbpass=$dbpass
+wp --skip-plugins --skip-themes core config --dbname=$dbname --dbuser=$dbuser --dbpass=$dbpass
 
-wp core install --prompt
-wp plugin uninstall hello --deactivate --quiet
+wp --skip-plugins --skip-themes core install --prompt
+wp --skip-plugins --skip-themes plugin uninstall hello --deactivate --quiet
 
 echo -e "$COL_MAGENTA
 Now installing suggested plugins... $COL_RESET"
 sleep 2
-wp plugin install jetpack sucuri-scanner google-captcha updraftplus
-wp plugin update --all
-wp theme update --all
+wp --skip-plugins --skip-themes plugin install jetpack sucuri-scanner google-captcha updraftplus
+wp --skip-plugins --skip-themes plugin update --all
+wp --skip-plugins --skip-themes theme update --all
 
 echo -e "$COL_MAGENTA
 Now disabling user registration, comments, and pingpacks... $COL_RESET"
@@ -1362,21 +1366,21 @@ sleep 2
 # mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value='closed' WHERE option_name='default_ping_status'; "
 # mysql -u $usr -p$ps -D $db -e "UPDATE wp_posts SET comment_status='closed', ping_status='closed';"
 
-wp option set users_can_register 0
-wp option set default_comment_status closed
-wp option set default_ping_status closed
-wp option set default_pingback_flag 0
-wp option set comment_moderation 1
-wp option set start_of_week 0
-wp option set posts_per_page 5
-wp option set date_format 'j F Y'
-wp option set time_format 'g:i A'
+wp --skip-plugins --skip-themes option set users_can_register 0
+wp --skip-plugins --skip-themes option set default_comment_status closed
+wp --skip-plugins --skip-themes option set default_ping_status closed
+wp --skip-plugins --skip-themes option set default_pingback_flag 0
+wp --skip-plugins --skip-themes option set comment_moderation 1
+wp --skip-plugins --skip-themes option set start_of_week 0
+wp --skip-plugins --skip-themes option set posts_per_page 5
+wp --skip-plugins --skip-themes option set date_format 'j F Y'
+wp --skip-plugins --skip-themes option set time_format 'g:i A'
 
 echo -e "$COL_MAGENTA
 Now disabling comments and pingbacks on existing content... $COL_RESET"
 sleep 1
-wp post update $(wp post list --format=ids) --comment_status=closed
-wp post update $(wp post list --format=ids) --ping_status=closed
+wp --skip-plugins --skip-themes post update $(wp --skip-plugins --skip-themes post list --format=ids) --comment_status=closed
+wp --skip-plugins --skip-themes post update $(wp --skip-plugins --skip-themes post list --format=ids) --ping_status=closed
 
 echo -e "$COL_GREEN
 Success:$COL_RESET WordPress installed with recommended plugins and settings."
@@ -1389,17 +1393,18 @@ echo -e "$COL_MAGENTA
 Now disabling user registration, comments, and pingpacks... $COL_RESET"
 sleep 2
 
-wp option set default_comment_status closed
-wp option set default_ping_status closed
-wp option set default_pingback_flag 0
-wp option set comment_moderation 1
-wp option set posts_per_page 5
+wp --skip-plugins --skip-themes option set default_comment_status closed
+wp --skip-plugins --skip-themes option set default_ping_status closed
+wp --skip-plugins --skip-themes option set default_pingback_flag 0
+wp --skip-plugins --skip-themes option set users_can_register 0
+wp --skip-plugins --skip-themes option set comment_moderation 1
+wp --skip-plugins --skip-themes option set posts_per_page 5
 
 echo -e "$COL_MAGENTA
 Now disabling comments and pingbacks on existing content... $COL_RESET"
 sleep 1
-wp post update $(wp post list --format=ids) --comment_status=closed
-wp post update $(wp post list --format=ids) --ping_status=closed
+wp --skip-plugins --skip-themes post update $(wp --skip-plugins --skip-themes post list --format=ids) --comment_status=closed
+wp --skip-plugins --skip-themes post update $(wp --skip-plugins --skip-themes post list --format=ids) --ping_status=closed
 
 echo -e "$COL_GREEN
 Success:$COL_RESET WordPress updated with recommended settings."
@@ -1454,7 +1459,7 @@ wpworks
 function wpgDB(){
 wpgGlobal "$@"
 ### Start Global Actions ###
-wp transient delete-expired
+wp --skip-plugins --skip-themes transient delete-expired
 wpdbOpt
 }
 
@@ -1499,10 +1504,10 @@ wpOverhall
 function wpgUpdate(){
 wpgGlobal "$@"
 ### Start Global Actions ###
-wp core update
-wp core update-db
-wp plugin update --all
-wp theme update --all
+wp --skip-plugins --skip-themes core update
+wp --skip-plugins --skip-themes core update-db
+wp --skip-plugins --skip-themes plugin update --all
+wp --skip-plugins --skip-themes theme update --all
 }
 
 function gcmd(){
@@ -1671,7 +1676,7 @@ wpdbOpt
 }
 
 function wpOptPlugInstall(){
-wp plugin install wp-super-cache wp-optimize ewww-image-optimizer --activate
+wp --skip-plugins --skip-themes plugin install wp-super-cache wp-optimize ewww-image-optimizer --activate
 
 echo -e "\nBe sure to configure the plugins for best results\n"
 }
@@ -1779,10 +1784,10 @@ fi
 
 echo -e "$COL_GREEN \nChecking for Plugin and Theme Issues...\n $COL_RESET"
 perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
-}
 
 clean_up_files () { find ~/public_html/ -maxdepth 5 \( -name "troubleshoot.pl" -o -name "qwpcli.md5" \)|xargs rm -rf; }
 trap clean_up_files EXIT
+}
 
 #################### END WP-TOOLS FUNCTIONS ####################
 
