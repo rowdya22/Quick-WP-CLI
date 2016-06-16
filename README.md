@@ -138,3 +138,33 @@ Update Options:
 (0) Exit
 
 ### wpmore - More Commands (Global Actions, WSOD Fix, File Count, DB List)
+
+### WordPress Specific:
+
+   wpwsod    - Guided Walkthrough to Fix WSOD
+   
+   wpfix     - Run Fixes
+   
+   dblist    - Lists Database Names and wp-config.php Locations
+   
+   wpspeed   - Runs WordPress Speed Checks
+   
+   wpopt     - Basic Site Optimization and Suggestions
+   
+   wpinstall - Install WordPress From Scratch 
+   
+   wptools   - Show WordPress Tools Functions 
+   
+   wpdbcheck - PHP Based DB Tests 
+   
+### Helpful Functions:
+
+   fcount    - Lists Number of Files in Current Directory
+   
+   dirsize   - Sorts Directory Contents by Size 
+   
+### Troubleshooting: 
+
+   mailtest  - Checks PHP Mail Function
+   
+   slowmysql - Displays Slow MySQL Queries
