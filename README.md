@@ -1,3 +1,6 @@
+# DEPENDENCIES
+Quick WP-CLI requires WP-CLI to be installed in order to do its work (duh).
+
 # Quick-WP-CLI
 Wrapper for WP-CLI commands used for troubleshooting WordPress sites. Also contains useful bash functions.
 
