@@ -3,11 +3,11 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   14 Jun 2016   #
+# Updated on:   23 Jun 2016   #
 #                             # 
 ###############################
 
-###Alias all commands to themselves for security by using which or whereis
+### Alias all commands to themselves for security by using which or whereis
 PATH="/home/$USER/perl5/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/home/$USER/bin"
 alias echo='echo';alias sed='sed';alias grep='grep';alias xargs='xargs';alias for='for';alias do='do';alias done='done';
 for cmd in `echo $PATH|sed "s/:/ /g"|xargs ls 2>/dev/null|grep -v '/'`;do alias $cmd="$cmd";done;
@@ -36,6 +36,7 @@ COL_FORREST=$ESC_SEQ"38;5;22;01m"
 function now() {
 date -u +"%Y%m%d-%H%M%S"
 }
+
 # WP-CLI is a set of command-line tools for managing WordPress. Quick WP-CLI runs commands in an easy to use wrapper.
 #################### START ####################
 function qwpcli(){
@@ -48,7 +49,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_RESET\nType$COL_CYAN qwpcli$COL_RESET to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 14 Jun 2016
+What would you like to work on?                           $COL_GREEN Updated: 23 Jun 2016
 
   $COL_CYAN wpstats $COL_RESET  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_RESET   - Check Versions, Verify Checksums, Replace Core Files
@@ -60,25 +61,27 @@ What would you like to work on?                           $COL_GREEN Updated: 14
   $COL_CYAN wpupdate $COL_RESET - Check For or Run Updates, Configure Auto Updates
   $COL_CYAN wpbackup $COL_RESET - Backup Site and Database to Folder or tar.gz
   $COL_CYAN wpworks $COL_RESET  - Install Updates, Optimize DB, Run Fixes
-  $COL_CYAN wpglobal $COL_RESET -$COL_GREEN Run Commands Across All WordPress Installs (Advanced) $COL_RESET
+  $COL_CYAN wpglobal $COL_RESET - Run Commands Across All WordPress Installs (Advanced)
   $COL_CYAN wpmore $COL_RESET   - More Commands (Global Actions,$COL_CYAN WSOD Fix$COL_RESET, File Count, DB List)
 "
 
+### WPCLI FUNCTIONALITY CHECK ###
 CHECK=$(wp --skip-plugins --skip-themes core version | wc -l)
 
 if [ $CHECK != '1' ]; then
 echo -e "$COL_MAGENTA 
 WARNING WPCLI CHECK: [FAILED]
 $COL_RESET
-WPCLI is having trouble working. Are you in a WordPress directory? If so run:$COL_CYAN wp core version$COL_RESET. If you do not get any results report an error by runing$COL_CYAN qerror$COL_RESET. 
+WPCLI is having trouble working. Are you in a WordPress directory? If so check for a Coming Soon or Maintenance Mode Plugin. Report this error by runing$COL_CYAN qerror$COL_RESET. 
 "
 fi
+### END WPCLI FUNCTIONALITY CHECK ###
 
 ### CHECK FOR COMING SOON PAGES ###
-if [[ -d $(pwd)/wp-content/plugins/coming-soon/ && ! -L "$(pwd)/wp-content/plugins/coming-soon-page/" && ! -L "$(pwd)/wp-content/plugins/coming-soon-builder/" && ! -L "$(pwd)/wp-content/plugins/ultimate-landing-page-and-coming-soon-page/" && ! -L "$(pwd)/wp-content/plugins/rocket-maintenance-mode/" && ! -L "$(pwd)/wp-content/plugins/simple-maintenance-mode/" && ! -L "$(pwd)/wp-content/plugins/coming-soon-maintenance-mode-from-acurax/" ]]; then
+if [[ -d "$(pwd)/wp-content/plugins/coming-soon/" ]] || [[ -d "$(pwd)/wp-content/plugins/coming-soon-page/" ]] || [[ -d "$(pwd)/wp-content/plugins/coming-soon-builder/" ]] || [[ -d "$(pwd)/wp-content/plugins/ultimate-landing-page-and-coming-soon-page/" ]] || [[ -d "$(pwd)/wp-content/plugins/rocket-maintenance-mode/" ]] || [[ -d "$(pwd)/wp-content/plugins/simple-maintenance-mode/" ]] || [[ -d "$(pwd)/wp-content/plugins/coming-soon-maintenance-mode-from-acurax/" ]] || [[ -d "$(pwd)/wp-content/plugins/indeed-coming-soon/" ]]; then
 echo -e "$COL_MAGENTA
 WARNING:
-This site may be using a maintenance mode plugin. Some functions may not work properly. If you have problems try disabling the plugin (rename the folder) and try again. $COL_RESET
+This site may be using a maintenance mode plugin. Some functions may not work \nproperly.  If you have problems disable the plugin and try again. $COL_RESET
 "
 fi
 ### END COMING SOON CHECK ###
@@ -94,102 +97,33 @@ WordPress Specific:$COL_RESET
   $COL_CYAN wpspeed $COL_RESET  - Runs WordPress Speed Checks
   $COL_CYAN wpopt $COL_RESET    - Basic Site Optimization and Suggestions
   $COL_CYAN wpinstall $COL_RESET- Install WordPress From Scratch 
-  $COL_CYAN wptools $COL_RESET  - Show WordPress Tools Functions $COL_GREEN
+  $COL_CYAN wptools $COL_RESET  - Show WordPress Tools Functions 
+  $COL_CYAN wpdbcheck $COL_RESET- PHP Based DB Tests 
+  $COL_CYAN wpcheck $COL_RESET  - Perl Based Plugin/Theme Check 
+  $COL_GREEN
 Helpful Functions:$COL_RESET
   $COL_CYAN fcount $COL_RESET   - Lists Number of Files in Current Directory
-  $COL_CYAN dirsize $COL_RESET  - Sorts Directory Contents by Size $COL_GREEN
+  $COL_CYAN dirsize $COL_RESET  - Sorts Directory Contents by Size
+  $COL_CYAN wpcleanup $COL_RESET- Removes All QWPCLI Files 
+  $COL_GREEN  
 Troubleshooting: $COL_RESET
   $COL_CYAN mailtest $COL_RESET - Checks PHP Mail Function
-  $COL_CYAN slowmysql $COL_RESET- Displays Slow MySQL Queries 
-$COL_GREEN
-Beta Testing: $COL_RESET 
-  $COL_CYAN wpeval $COL_RESET   - Runs Check on Plugins and Themes $COL_GREEN
-Broken:  $COL_RESET
-  $COL_CYAN restore $COL_RESET  - Restores Files From Backups
+  $COL_CYAN slowmysql $COL_RESET- Displays Slow MySQL Queries
   
 Check out more wpcli commands at $COL_MAGENTA http://wp-cli.org/commands/ $COL_RESET
 "
 }
 
-function wpglobal(){
-clear
-wpLocation=($(find ~/public_html -maxdepth 5 -type f -name 'wp-config.php'))
-# wpLocation=$DIRS
-
-originalDir=($(pwd))
-echo -e "$COL_GREEN
-   _______     __        __  ___      __  _                
-  / ___/ /__  / /  ___ _/ / / _ |____/ /_(_)__  ___  ___  $COL_ORANGE  Fixing WordPress $COL_GREEN  
- / (_ / / _ \/ _ \/ _  / / / __ / __/ __/ / _ \/ _ \(_-<  $COL_ORANGE      Faster! $COL_GREEN
- \___/_/\___/_.__/\_,_/_/ /_/ |_\__/\__/_/\___/_//_/___/  $COL_ORANGE  Dev: Rowdy Adams $COL_RESET
-$COL_RESET
-What global actions would you like to take?
-
-(1) Replace Core With Existing Version
-(2) Install Updates, Flush Rewrite Rules, Flush Cache, Opt & Repair DB
-(3) Clear Transients, Optimize/Repair Database
-(4) Update Core, Plugins, and Themes
-(5) Verify Checksums
-(6) Check For Available Updates
-(7) Disable (Bluehost) Auto Updates
-(8) Check Theme/Plugin Conflicts
-(9) Overhall (Replace Core, Flush Permalinks, Flush Cache, Media Regenerate, Opt & Repair DB)
-(0) Exit
-$COL_MAGENTA
-Want to run another command? use$COL_CYAN gcmd [COMMAND]$COL_MAGENTA to run any command in all WordPress directories!
-$COL_RESET
-\tSelection: \c" ;
-read globalSelect && echo ''
-
-for ((i = 0; i < ${#wpLocation[@]}; i++))
-	do
-	case $globalSelect in
-	1)	wpgReplaceCore ${wpLocation[$i]}
-		(($i+1))
-		;;
-	2)	wpgWorks ${wpLocation[$i]}
-		(($i+1))
-		;;
-	3)	wpgDB ${wpLocation[$i]}
-		(($i+1))
-		;;
-	4)	wpgUpdate ${wpLocation[$i]}
-		(($i+1))
-		;;
-	5)	wpgVerifyCheck ${wpLocation[$i]}
-		(($i+1))
-		;;
-	6)	wpgCheckUpdate ${wpLocation[$i]}
-		(($i+1))
-		;;
-	7)	wpgAutoUpdate ${wpLocation[$i]}
-		(($i+1))
-		;;
-	8)	wpgEval ${wpLocation[$i]}
-		(($i+1))
-		;;
-	9)	wpgOverhall ${wpLocation[$i]}
-		(($i+1))
-		;;
-	0)	return;;
-	*)	invalidOption;;
-	esac
-		
-done
-
-echo -e "$COL_GREEN
-Success:$COL_RESET Global operation completed.\n"
-
-cd $originalDir
-}
-
 unset HISTFILE
 echo -e "\n\tQuick WP-CLI commands added to current SSH session. For details, type$COL_CYAN qwpcli$COL_RESET.\n"
 
+### MOVE ERROR LOG AS WPCLI DELETES IT OFTEN ###
 NOW=$(date +"%Y_%m_%d-%H%M")
 if [ -f error_log ]; then mv error_log error_log.$NOW
 fi
+### END ERROR LOG RENAME ###
 
+### SHOW MENU ON STARTUP ###
 qwpcli
 #################### END START ####################
 
@@ -306,7 +240,7 @@ read themeSelect && echo ''
 case $themeSelect in
 	1)	wpThemeList;; #List available themes
 	2)	wpThemeActivate;; #Activate theme from list
-	3)	wpThemeDefault;; #Install and activate 2015 theme
+	3)	wpThemeDefault;; #Install and activate 2016 theme
 	4)	wpThemeInstall;; #Install theme by slug
 	5)	return;;
 	*)	invalidOption;;
@@ -402,6 +336,7 @@ CORE=$(wp --skip-plugins --skip-themes core check-update | grep -w wordpress | w
 
 echo -e ""
 
+### WPCLI CHECK
 CHECK=$(wp --skip-plugins --skip-themes core version | wc -l)
 
 if [ $CHECK == '1' ]; then
@@ -410,6 +345,7 @@ else
 	echo -e "$COL_GREEN\rWPCLI Check:$COL_MAGENTA [FAILED]   Report Errors with$COL_CYAN qerror$COL_GREEN"
 fi
 
+### CHECKSUM VERIFICATION
 HACK=$(wp --skip-plugins --skip-themes core verify-checksums 2>&1 | wc -l)
 if [ $HACK == '1' ]; then
         echo -e "$COL_GREEN\rChecksums:$COL_GREEN      [OK] $COL_GREEN"
@@ -417,6 +353,7 @@ else
         echo -e "$COL_GREEN\rChecksums:$COL_MAGENTA      [FAILED]   Run Full Report From$COL_CYAN wpcore$COL_MAGENTA Menu $COL_GREEN"
 fi
 
+### EVAL PLUGINS/THEMES LOOKING FOR ERRORS
 wp eval --skip-plugins 'echo "Eval Plugins:   [OK]\n";'
 wp eval --skip-themes 'echo "Eval Themes:    [OK]\n";'
 
@@ -433,16 +370,16 @@ fi
 mysql -u $dbuser -p"$dbpass" -e ";" >/dev/null 2>&1 && printf "Database Conn: $COL_CYAN Success $COL_GREEN \n" || printf "Database Conn: $COL_MAGENTA Failure $COL_GREEN \n"
 ### END DB CONNECTION TEST
 
-echo -e "Database User: $COL_CYAN $dbuser" "$COL_GREEN"
-echo -e "Database Pass: $COL_CYAN $dbpass" "$COL_GREEN"
-echo -e "Database Host: $COL_CYAN $dbhost" "$COL_GREEN"
-echo -e "Database Name: $COL_CYAN $dbname" "$COL_GREEN"
-echo -e "Database Prfx: $COL_CYAN $dbprefix" "$COL_GREEN"
+echo -e "Database User: $COL_CYAN $dbuser $COL_GREEN"
+echo -e "Database Pass: $COL_CYAN $dbpass $COL_GREEN"
+echo -e "Database Host: $COL_CYAN $dbhost $COL_GREEN"
+echo -e "Database Name: $COL_CYAN $dbname $COL_GREEN"
+echo -e "Database Prfx: $COL_CYAN $dbprefix $COL_GREEN"
 echo -e " "
 
-echo -e "Core Updates:  $COL_CYAN $CORE" "$COL_RESET" "\t $(php -i 2>/dev/null | grep memory_limit | sed 's/<[^>]*>/ /g')" "$COL_GREEN"
-echo -e "Plugin Updates:$COL_CYAN $PLUGIN" "$COL_RESET" "\t $(php -i 2>/dev/null | grep post_max_size | sed 's/<[^>]*>/ /g')" "$COL_GREEN"
-echo -e "Theme Updates: $COL_CYAN $THEME" "$COL_RESET" "\t $(php -i 2>/dev/null | grep upload_max_filesize | sed 's/<[^>]*>/ /g')" "$COL_GREEN"
+echo -e "Core Updates:  $COL_CYAN $CORE $COL_RESET \t $(php -i 2>/dev/null | grep memory_limit | sed 's/<[^>]*>/ /g') $COL_GREEN"
+echo -e "Plugin Updates:$COL_CYAN $PLUGIN $COL_RESET \t $(php -i 2>/dev/null | grep post_max_size | sed 's/<[^>]*>/ /g') $COL_GREEN"
+echo -e "Theme Updates: $COL_CYAN $THEME $COL_RESET \t $(php -i 2>/dev/null | grep upload_max_filesize | sed 's/<[^>]*>/ /g') $COL_GREEN"
 echo -e "$COL_RESET"
 
 }
@@ -569,7 +506,9 @@ rm -rf .QWPCLI_ACTIVEPLUGINS.txt
 function wpPluginInstall(){
 echo -e "$COL_GREEN
 Recommended Plugins:
-   captcha
+   jetpack
+   google-captcha
+   shortcodes-ultimate
    velvet-blues-update-urls
    sucuri-scanner
    updraftplus
@@ -604,10 +543,11 @@ wp --skip-plugins --skip-themes theme install twentysixteen --force --activate
 function wpThemeInstall() {
 echo -e "$COL_GREEN
 Recommended Themes:
-   twentyfifteen
+   twentysixteen
    twentytwelve
    vantage 
    hueman
+   generatepress
      
 Know a good theme? Suggest it!    
 $COL_RESET
@@ -781,7 +721,7 @@ echo -e ""
 wp --skip-plugins --skip-themes user update $oldUser --display_name=$newUser
 
 read changeUser <<<$(awk -F\' '/table_prefix/ {print $2}' wp-config.php); read db usr ps pre <<<$(awk -F\' '/DB_/ {print $4}' wp-config.php) && mysql -u $usr -p$ps -D $db -e "UPDATE "$changeUser"users SET user_login = '$newUser' WHERE user_login = '$oldUser'";
-
+#'
 echo -e "$COL_GREEN\rSuccess:$COL_RESET Updated user_login and display_name.\n"
 
 wp --skip-plugins --skip-themes user list --fields=ID,user_login,display_name
@@ -1035,7 +975,7 @@ if [[ -z "$wpfiles" ]]; then
 fi
 
 tar -xf "wordpress-latest.tar.gz" --strip-components=1 && echo "Unpacking the update..."
-rm -f "wordpress-latest.tar.gz" && ### echo "Removed wordpress-latest.tar.gz..."
+rm -f "wordpress-latest.tar.gz" ### && echo "Removed wordpress-latest.tar.gz..."
 
 if [[ -d "$oldWP/wp-content" ]]; then
 	mv wp-content wp-content_"$temp"  ### && echo "Moved default wp-content to wp-content_$temp..." &&
@@ -1240,11 +1180,8 @@ awk '/^use/ {print $2}' ~/tmp/mysql_slow_queries/`date +%Y%m%d`* | sort | uniq -
 }
 
 function wpspeed(){
-# . <(curl -sS http://radams.bluehoststaff.com/script/wpspeed)
 echo -ne "\n\t\t\t\tBuilt by cmiles\n"
 sleep 0.5
-
-# . <(curl -sS https://miles.cm/code/wpspeed)
 . <(curl -sS https://raw.githubusercontent.com/rowdya22/wpspeed/master/wpspeed)
 }
 
@@ -1315,79 +1252,6 @@ echo -e "\n\t--test_email.php removed\n\n\t...Goodbye\n"
 
 }
 
-function wpinstall(){
-clear
-echo -e "$COL_GREEN
-  _      _____    ____           __         __ __   
- | | /| / / _ \  /  _/___   ___ / /_ ___ _ / // /         $COL_ORANGE  Fixing WordPress $COL_GREEN
- | |/ |/ / ___/ _/ / / _ \ (_-</ __// _ \`// // /         $COL_ORANGE      Faster! $COL_GREEN 
- |__/|__/_/    /___//_//_//___/\__/ \_,_//_//_/           $COL_ORANGE  Dev: Rowdy Adams $COL_RESET"
-
-
-# accept user input for the databse info
-echo -e "$COL_MAGENTA
-This setup will guide you through a manual WordPress install.
-
-Make sure you are in the folder you want to install WordPress and\nthere are no existing WordPress files.\n
-
----To begin create a database in cPanel and then enter the needed information--- $COL_RESET"
-echo -e "$COL_GREEN
-Database Name: $COL_RESET"
-read -e dbname
-echo -e "$COL_GREEN 
-Database User: $COL_RESET"
-read -e dbuser
-echo -e "$COL_GREEN 
-Database Password: $COL_RESET"
-read -e dbpass
-
-# download the WordPress core files
-wp --skip-plugins --skip-themes core download
-
-# create the wp-config file with our standard setup
-wp --skip-plugins --skip-themes core config --dbname=$dbname --dbuser=$dbuser --dbpass=$dbpass
-
-wp --skip-plugins --skip-themes core install --prompt
-wp --skip-plugins --skip-themes plugin uninstall hello --deactivate --quiet
-
-echo -e "$COL_MAGENTA
-Now installing suggested plugins... $COL_RESET"
-sleep 2
-wp --skip-plugins --skip-themes plugin install jetpack sucuri-scanner google-captcha updraftplus
-wp --skip-plugins --skip-themes plugin update --all
-wp --skip-plugins --skip-themes theme update --all
-
-echo -e "$COL_MAGENTA
-Now disabling user registration, comments, and pingpacks... $COL_RESET"
-sleep 2
-# read db usr ps pre <<<$(awk -F\' '/DB_/ {print $4}' wp-config.php) #'
-# mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value = '0' WHERE option_name = 'users_can_register';" 
-# mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value='closed' WHERE option_name='default_comment_status';"
-# mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value='closed' WHERE option_name='default_ping_status'; "
-# mysql -u $usr -p$ps -D $db -e "UPDATE wp_posts SET comment_status='closed', ping_status='closed';"
-
-wp --skip-plugins --skip-themes option set users_can_register 0
-wp --skip-plugins --skip-themes option set default_comment_status closed
-wp --skip-plugins --skip-themes option set default_ping_status closed
-wp --skip-plugins --skip-themes option set default_pingback_flag 0
-wp --skip-plugins --skip-themes option set comment_moderation 1
-wp --skip-plugins --skip-themes option set start_of_week 0
-wp --skip-plugins --skip-themes option set posts_per_page 5
-wp --skip-plugins --skip-themes option set date_format 'j F Y'
-wp --skip-plugins --skip-themes option set time_format 'g:i A'
-
-echo -e "$COL_MAGENTA
-Now disabling comments and pingbacks on existing content... $COL_RESET"
-sleep 1
-wp --skip-plugins --skip-themes post update $(wp --skip-plugins --skip-themes post list --format=ids) --comment_status=closed
-wp --skip-plugins --skip-themes post update $(wp --skip-plugins --skip-themes post list --format=ids) --ping_status=closed
-
-echo -e "$COL_GREEN
-Success:$COL_RESET WordPress installed with recommended plugins and settings."
-sleep 3
-wpstats
-}
-
 function wptweak(){
 echo -e "$COL_MAGENTA
 Now disabling user registration, comments, and pingpacks... $COL_RESET"
@@ -1410,6 +1274,37 @@ echo -e "$COL_GREEN
 Success:$COL_RESET WordPress updated with recommended settings."
 }
 
+### CLEAN UP QWPCLI FILES ###
+function wpcleanup(){
+unset HISTFILE && find ~/public_html/ -maxdepth 5 \( -name "QWPCLI_*" -o -name ".QWPCLI_*" \)|xargs rm -rfv
+}
+
+function wpcheck(){
+if [ ! -f troubleshoot.pl ]; then
+wget https://github.com/voldemortensen/wcslc-2015/raw/master/troubleshoot.pl
+echo -e "$COL_GREEN \nLatest troubleshoot.pl downloaded $COL_RESET"
+fi
+
+echo -e "$COL_GREEN \nChecking for Plugin and Theme Issues...\n $COL_RESET"
+perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
+
+clean_up_files () { find ~/public_html/ -maxdepth 5 \( -name "troubleshoot.pl" -o -name "qwpcli.md5" \)|xargs rm -rf; }
+trap clean_up_files EXIT
+}
+
+function wpdbcheck(){
+if [ ! -f wpdbtest.php ]; then
+wget http://radams.bluehoststaff.com/script/databasetest
+mv databasetest wpdbtest.php
+echo -e "$COL_GREEN \nLatest wpdbtest.php downloaded $COL_RESET"
+fi
+
+echo -e "$COL_GREEN \nBegin Test by visting http://domain.com/wpdbtest.php \n $COL_RESET"
+
+clean_up_wpdbcheck () { find ~/public_html/ -maxdepth 5 \( -name "wpdbtest.php" \)|xargs rm -rf; }
+trap clean_up_wpdbcheck EXIT
+}
+
 function wpcolors(){
 echo -e "
 $COL_RED This is RED $COL_RESET
@@ -1425,6 +1320,79 @@ $COL_FORREST This is FORREST $COL_RESET
 }
 
 #################### GLOABAL FUNCTIONS ####################
+function wpglobal(){
+clear
+wpLocation=($(find ~/public_html -maxdepth 5 -type f -name 'wp-config.php'))
+# wpLocation=$DIRS
+
+originalDir=($(pwd))
+echo -e "$COL_GREEN
+   _______     __        __  ___      __  _                
+  / ___/ /__  / /  ___ _/ / / _ |____/ /_(_)__  ___  ___  $COL_ORANGE  Fixing WordPress $COL_GREEN  
+ / (_ / / _ \/ _ \/ _  / / / __ / __/ __/ / _ \/ _ \(_-<  $COL_ORANGE      Faster! $COL_GREEN
+ \___/_/\___/_.__/\_,_/_/ /_/ |_\__/\__/_/\___/_//_/___/  $COL_ORANGE  Dev: Rowdy Adams $COL_RESET
+$COL_RESET
+What global actions would you like to take?
+
+(1) Replace Core With Existing Version
+(2) Install Updates, Flush Rewrite Rules, Flush Cache, Opt & Repair DB
+(3) Clear Transients, Optimize/Repair Database
+(4) Update Core, Plugins, and Themes
+(5) Verify Checksums
+(6) Check For Available Updates
+(7) Disable (Bluehost) Auto Updates
+(8) Check Theme/Plugin Conflicts
+(9) Overhall (Replace Core, Flush Permalinks, Flush Cache, Media Regenerate, Opt & Repair DB)
+(0) Exit
+$COL_MAGENTA
+Want to run another command? use$COL_CYAN gcmd [COMMAND]$COL_MAGENTA to run any command in all WordPress directories!
+$COL_RESET
+\tSelection: \c" ;
+read globalSelect && echo ''
+
+for ((i = 0; i < ${#wpLocation[@]}; i++))
+	do
+	case $globalSelect in
+	1)	wpgReplaceCore ${wpLocation[$i]}
+		(($i+1))
+		;;
+	2)	wpgWorks ${wpLocation[$i]}
+		(($i+1))
+		;;
+	3)	wpgDB ${wpLocation[$i]}
+		(($i+1))
+		;;
+	4)	wpgUpdate ${wpLocation[$i]}
+		(($i+1))
+		;;
+	5)	wpgVerifyCheck ${wpLocation[$i]}
+		(($i+1))
+		;;
+	6)	wpgCheckUpdate ${wpLocation[$i]}
+		(($i+1))
+		;;
+	7)	wpgAutoUpdate ${wpLocation[$i]}
+		(($i+1))
+		;;
+	8)	wpgEval ${wpLocation[$i]}
+		(($i+1))
+		;;
+	9)	wpgOverhall ${wpLocation[$i]}
+		(($i+1))
+		;;
+	0)	return;;
+	*)	invalidOption;;
+	esac
+		
+done
+
+echo -e "$COL_GREEN
+Success:$COL_RESET Global operation completed.\n"
+
+cd $originalDir
+}
+
+
 function wpgGlobal(){
 NOW=$(date +"%Y_%m_%d")
 if [ -f error_log ]; then mv error_log error_log.$NOW
@@ -1524,9 +1492,82 @@ fi
     cd - >/dev/null
 done
 }
-
-
 #################### END GLOABAL FUNCTIONS ####################
+
+#################### START INSTALL FUNCTIONS ####################
+function wpinstall(){
+clear
+echo -e "$COL_GREEN
+  _      _____    ____           __         __ __   
+ | | /| / / _ \  /  _/___   ___ / /_ ___ _ / // /         $COL_ORANGE  Fixing WordPress $COL_GREEN
+ | |/ |/ / ___/ _/ / / _ \ (_-</ __// _ \`// // /         $COL_ORANGE      Faster! $COL_GREEN 
+ |__/|__/_/    /___//_//_//___/\__/ \_,_//_//_/           $COL_ORANGE  Dev: Rowdy Adams $COL_RESET"
+
+
+# accept user input for the databse info
+echo -e "$COL_MAGENTA
+This setup will guide you through a manual WordPress install.
+
+Make sure you are in the folder you want to install WordPress and\nthere are no existing WordPress files.\n
+
+---To begin create a database in cPanel and then enter the needed information--- $COL_RESET"
+echo -e "$COL_GREEN
+Database Name: $COL_RESET"
+read -e dbname
+echo -e "$COL_GREEN 
+Database User: $COL_RESET"
+read -e dbuser
+echo -e "$COL_GREEN 
+Database Password: $COL_RESET"
+read -e dbpass
+
+# download the WordPress core files
+wp --skip-plugins --skip-themes core download
+
+# create the wp-config file with our standard setup
+wp --skip-plugins --skip-themes core config --dbname=$dbname --dbuser=$dbuser --dbpass=$dbpass
+
+wp --skip-plugins --skip-themes core install --prompt
+wp --skip-plugins --skip-themes plugin uninstall hello --deactivate --quiet
+
+echo -e "$COL_MAGENTA
+Now installing suggested plugins... $COL_RESET"
+sleep 2
+wp --skip-plugins --skip-themes plugin install jetpack sucuri-scanner google-captcha updraftplus
+wp --skip-plugins --skip-themes plugin update --all
+wp --skip-plugins --skip-themes theme update --all
+
+echo -e "$COL_MAGENTA
+Now disabling user registration, comments, and pingpacks... $COL_RESET"
+sleep 2
+# read db usr ps pre <<<$(awk -F\' '/DB_/ {print $4}' wp-config.php) #'
+# mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value = '0' WHERE option_name = 'users_can_register';" 
+# mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value='closed' WHERE option_name='default_comment_status';"
+# mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value='closed' WHERE option_name='default_ping_status'; "
+# mysql -u $usr -p$ps -D $db -e "UPDATE wp_posts SET comment_status='closed', ping_status='closed';"
+
+wp --skip-plugins --skip-themes option set users_can_register 0
+wp --skip-plugins --skip-themes option set default_comment_status closed
+wp --skip-plugins --skip-themes option set default_ping_status closed
+wp --skip-plugins --skip-themes option set default_pingback_flag 0
+wp --skip-plugins --skip-themes option set comment_moderation 1
+wp --skip-plugins --skip-themes option set start_of_week 0
+wp --skip-plugins --skip-themes option set posts_per_page 5
+wp --skip-plugins --skip-themes option set date_format 'j F Y'
+wp --skip-plugins --skip-themes option set time_format 'g:i A'
+
+echo -e "$COL_MAGENTA
+Now disabling comments and pingbacks on existing content... $COL_RESET"
+sleep 1
+wp --skip-plugins --skip-themes post update $(wp --skip-plugins --skip-themes post list --format=ids) --comment_status=closed
+wp --skip-plugins --skip-themes post update $(wp --skip-plugins --skip-themes post list --format=ids) --ping_status=closed
+
+echo -e "$COL_GREEN
+Success:$COL_RESET WordPress installed with recommended plugins and settings."
+sleep 3
+wpstats
+}
+#################### END INSTALL FUNCTIONS ####################
 
 #################### START OPTIMIZATION FUNCTIONS ####################
 function wpopt(){
@@ -1774,19 +1815,6 @@ Upgrade running... $COL_RESET"
 cd ~
 wp-tools upgrade --path=$WPDIR --backupdir=backupwordpress/$BACKUPDIR --wp-cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 cd $DIR
-}
-
-function wpcheck(){
-if [ ! -f troubleshoot.pl ]; then
-wget https://github.com/voldemortensen/wcslc-2015/raw/master/troubleshoot.pl
-echo -e "$COL_GREEN \nLatest troubleshoot.pl downloaded $COL_RESET"
-fi
-
-echo -e "$COL_GREEN \nChecking for Plugin and Theme Issues...\n $COL_RESET"
-perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
-
-clean_up_files () { find ~/public_html/ -maxdepth 5 \( -name "troubleshoot.pl" -o -name "qwpcli.md5" \)|xargs rm -rf; }
-trap clean_up_files EXIT
 }
 
 #################### END WP-TOOLS FUNCTIONS ####################
