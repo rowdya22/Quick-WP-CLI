@@ -1602,7 +1602,10 @@ Database User: $COL_RESET"
 read -e dbuser
 echo -e "$COL_GREEN 
 Database Password: $COL_RESET"
-read -e dbpass
+read -e dbpass 
+echo -e "$COL_GREEN
+Table Prefix (default: wp_ ): $COL_RESET"
+read -i "wp_" -e dbprefix
 
 # download the WordPress core files
 wp --skip-plugins --skip-themes core download
