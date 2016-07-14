@@ -119,7 +119,7 @@ echo -e "\n\n   Quick WP-CLI commands added to current SSH session. For menu, ty
 
 ### MOVE ERROR LOG AS WPCLI DELETES IT OFTEN ###
 NOW=$(date +"%Y_%m_%d-%H%M")
-if [ -f error_log ]; then mv error_log error_log.$NOW.wpcli_backup
+if [ -f error_log ]; then mv error_log error_log.$NOW."wpcli_backup"
 fi
 ### END ERROR LOG RENAME ###
 
