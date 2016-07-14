@@ -1611,7 +1611,7 @@ read -i "wp_" -e dbprefix
 wp --skip-plugins --skip-themes core download
 
 # create the wp-config file with our standard setup
-wp --skip-plugins --skip-themes core config --dbname=$dbname --dbuser=$dbuser --dbpass=$dbpass
+wp --skip-plugins --skip-themes core config --dbname=$dbname --dbuser=$dbuser --dbpass=$dbpass --dbprefix=$dbprefix
 
 wp --skip-plugins --skip-themes core install --prompt
 wp --skip-plugins --skip-themes plugin uninstall hello --deactivate --quiet
