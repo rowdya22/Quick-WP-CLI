@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   14 Jul 2016   #
+# Updated on:   18 Jul 2016   #
 #                             # 
 ###############################
 
@@ -49,7 +49,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_RESET\nType$COL_CYAN qwpcli$COL_RESET to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 14 Jul 2016
+What would you like to work on?                           $COL_GREEN Updated: 18 Jul 2016
 
   $COL_CYAN wpstats $COL_RESET  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_RESET   - Check Versions, Verify Checksums, Replace Core Files
@@ -1896,13 +1896,126 @@ HASHDIR="$(echo "$(dirs)" | cut -d "~" -f 2)/"
 WPDIR="$(echo "$(dirs)" | sed 's/^..//' )/"
 BACKUPDIR=$(perl -e'my $a = unpack "H*", "$ARGV[0]"; print $a;' $HASHDIR)
 
+if [ ! -f .automatic_updates_disabled ]; then
 echo -e "$COL_GREEN
 Upgrade running... $COL_RESET"
 cd ~
 wp-tools upgrade --path=$WPDIR --backupdir=backupwordpress/$BACKUPDIR --wp-cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 cd $DIR
+else
+echo -e "$COL_MAGENTA UPDATE FUNCTIONS DISABLED as long as .automatic_updates_disabled Exists! $COL_RESET"
+fi
 }
 
 #################### END WP-TOOLS FUNCTIONS ####################
 
 ###
+
+
+
+##########UNDER CONSTRUCTION##########
+function wpGlobalTemplate(){
+wpLocation=($(find ~/public_html -maxdepth 5 -type f -name 'wp-config.php'))
+originalDir=($(pwd))
+for ((i = 0; i < ${#wpLocation[@]}; i++))
+	do
+		functionname ${wpLocation[$i]}
+		(($i+1))
+	done
+echo -e "$COL_GREEN
+Success:$COL_RESET Operation completed.\n"
+
+cd $originalDir
+}
+
+function check(){
+if [ ! -f .automatic_updates_disabled ]; then
+echo "Auto Updates not disabled. Continue as Normal"
+else
+echo -e "$COL_MAGENTA Auto Updates DISABLED. Not Updating $COL_RESET"
+fi
+}
+
+function enableSSL(){
+sslredirect="test"
+#sslredirect="
+# Custom subdomain .htaccess SSL + WordPress
+#RewriteEngine On
+#RewriteCond %{HTTP_HOST} ^subdomain.maindomain.com$
+#RewriteCond %{REQUEST_URI} !^/subfolder/
+#RewriteRule ^(.*)$ /subfolder/$1
+#RewriteCond %{HTTP_HOST} ^subdomain.maindomain.com$
+#RewriteRule ^(/)?$ subfolder/index.php [L]
+# End custom subdomain .htaccess
+#"
+
+sed -ei "s/# END WordPress/# END WordPress\n$sslredriect/" .htaccess
+}
+
+function wpRevert(){
+read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
+
+if [[ ! -f QWPCLI_BACKUP_* && ! -f QWPCLI_CORE_* ]]; then
+echo -e "$COL_MAGENTA
+Warning:$COL_RESET No backup found!\n"
+fi
+
+if [[ -f QWPCLI_BACKUP_* ]]; then
+	tar -zxvf QWPCLI_BACKUP_* --strip-components=1
+	wp --skip-plugins --skip-themes db import QWPCLI_$dbname_*
+	rm -rf QWPCLI_BACKUP_* QWPCLI_$dbname_*
+echo -e "$COL_GREEN
+Success:$COL_RESET Files and Database restored from backup.\n"
+fi
+
+if [[ -f QWPCLI_CORE_* ]]; then
+	tar -zxvf QWPCLI_CORE_* --strip-components=1
+	rm -rf QWPCLI_CORE_*
+echo -e "$COL_GREEN
+Success:$COL_RESET Core files restored from backup.\n"
+fi
+}
+
+# use_notification_emails () { echo -e "Quick WPCLI Used on This Site: $(pwd)\n$(wp --skip-plugins --skip-themes option get siteurl)" | mail -s "Quick WPCLI Usage Notifcation" radams@bluehost.com; }
+# trap use_notification_emails EXIT
+
+
+#####
+function improvewp(){
+EMAIL=''
+echo -e "\nDo you want Bluehost to improve its WordPress troubleshooting tools? (y) or (n): \c"; read input;
+if [ $input == 'y' ]; then 
+echo -e "$COL_GREEN
+What is your email address?$COL_RESET" ; read EMAIL
+echo -e "
+Please email the following information to radams@bluehost.com 
+------------------------------------------------------------------
+Site: $(wp --skip-plugins --skip-themes option get siteurl)
+
+What was the main issue?
+
+How did you correct the problem?
+
+What tools/information do you use when troubleshooting WordPress?
+
+Where do you find that information?
+
+What information do you wish was more easily accessible?
+	
+What are your most common issues with WordPress?	
+
+------------------------------------------------------------------
+
+Please be as detailed as possible in order to help our insternal tools to improve.
+" | mail -s "WordPress Feedback Report" $EMAIL && echo -e ''
+
+echo -e "$COL_ORANGE
+Please answer the questions which were just emailed to you after troubleshooting to help us improve our internal tools. 
+Send all answers to:$COL_GREEN radams@bluehost.com $COL_RESET"
+
+elif [ $input != 'y' ]; then 
+echo -e "$COL_GREEN
+Please view: https://media.giphy.com/media/1iTpx5PpzRugcrZK/giphy.gif $COL_RESET"
+fi
+}
+# improvewp
