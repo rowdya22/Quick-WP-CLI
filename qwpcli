@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   25 Jul 2016   #
+# Updated on:   26 Jul 2016   #
 #                             # 
 ###############################
 
@@ -24,6 +24,7 @@ ESC_SEQ="\x1b["
 COL_RESET=$ESC_SEQ"39;49;00m"
 COL_RED=$ESC_SEQ"31;01m"
 COL_GREEN=$ESC_SEQ"32;01m"
+COL_MGREEN=$ESC_SEQ"32;00m"
 COL_PURPLE=$ESC_SEQ"38;5;92;01m"
 COL_BLUE=$ESC_SEQ"34;01m"
 COL_MAGENTA=$ESC_SEQ"35;01m"
@@ -47,22 +48,22 @@ $COL_GREEN  / __ \__ __(_)___/ /__ $COL_GREEN | | /| / / _ \____/ ___/ /  /  _/$
 $COL_GREEN / /_/ / // / / __/  '_/ $COL_GREEN | |/ |/ / ___/___/ /__/ /___/ /  $COL_ORANGE      Faster! $COL_GREEN
 $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $COL_ORANGE  Dev: Rowdy Adams $COL_RESET
 $COL_CHERRY
-What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_RESET\nType$COL_CYAN qwpcli$COL_RESET to return to this menu:
+What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 25 Jul 2016
+What would you like to work on?                           $COL_GREEN Updated: 26 Jul 2016
 
-  $COL_CYAN wpstats $COL_GREEN  - Show Version, URL, DB Info, Number of Available Updates
-  $COL_CYAN wpcore $COL_GREEN   - Check Versions, Verify Checksums, Replace Core Files
-  $COL_CYAN wpdb $COL_GREEN     - Optimize and Repair, URL Rewrite
-  $COL_CYAN wpplugin $COL_GREEN - List, (De)activate, Update, Install
-  $COL_CYAN wptheme $COL_GREEN  - List, Change, Update, Install
-  $COL_CYAN wpurl $COL_GREEN    - List and Change URLs
-  $COL_CYAN wpuser $COL_GREEN   - Create User, Set Passwords, Change Roles
-  $COL_CYAN wpupdate $COL_GREEN - Check For or Run Updates, Configure Auto Updates
-  $COL_CYAN wpbackup $COL_GREEN - Backup Site and Database to Folder or tar.gz
-  $COL_CYAN wpworks $COL_GREEN  - Install Updates, Optimize DB, Run Fixes
-  $COL_CYAN wpglobal $COL_GREEN - Run Commands Across All WordPress Installs (Advanced)
-  $COL_CYAN wpmore $COL_GREEN   - More Commands (Global Actions,$COL_CYAN WSOD Fix$COL_GREEN, WP Tools, DB List)
+  $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
+  $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
+  $COL_CYAN wpdb $COL_MGREEN     - Optimize and Repair, URL Rewrite
+  $COL_CYAN wpplugin $COL_MGREEN - List, (De)activate, Update, Install
+  $COL_CYAN wptheme $COL_MGREEN  - List, Change, Update, Install
+  $COL_CYAN wpurl $COL_MGREEN    - List and Change URLs
+  $COL_CYAN wpuser $COL_MGREEN   - Create User, Set Passwords, Change Roles
+  $COL_CYAN wpupdate $COL_MGREEN - Check For or Run Updates, Configure Auto Updates
+  $COL_CYAN wpbackup $COL_MGREEN - Backup Site and Database to Folder or tar.gz
+  $COL_CYAN wpworks $COL_MGREEN  - Install Updates, Optimize DB, Run Fixes
+  $COL_CYAN wpglobal $COL_MGREEN - Run Commands Across All WordPress Installs (Advanced)
+  $COL_CYAN wpmore $COL_MGREEN   - More Commands (Global Actions,$COL_CYAN WSOD Fix$COL_MGREEN, WP Tools, DB List)
 $COL_RESET"
 
 ### WPCLI FUNCTIONALITY CHECK ###
@@ -89,26 +90,26 @@ fi
 
 function wpmore(){
 clear
-echo -e "$COL_GREEN
+echo -e "$COL_MGREEN
 WordPress Specific:
-  $COL_CYAN wpwsod $COL_GREEN   - Guided Walkthrough to Fix WSOD
-  $COL_CYAN wpfix $COL_GREEN    - Run Fixes
-  $COL_CYAN dblist $COL_GREEN   - Lists Database Names and wp-config.php Locations
-  $COL_CYAN wpspeed $COL_GREEN  - Runs WordPress Speed Checks
-  $COL_CYAN wpopt $COL_GREEN    - Basic Site Optimization and Suggestions
-  $COL_CYAN wpinstall $COL_GREEN- Install WordPress From Scratch 
-  $COL_CYAN wptools $COL_GREEN  - Show WordPress Tools Functions 
-  $COL_CYAN wpdbcheck $COL_GREEN- PHP Based DB Tests 
-  $COL_CYAN wpcheck $COL_GREEN  - Perl Based Plugin/Theme Check 
+  $COL_CYAN wpwsod $COL_MGREEN   - Guided Walkthrough to Fix WSOD
+  $COL_CYAN wpfix $COL_MGREEN    - Run Fixes
+  $COL_CYAN dblist $COL_MGREEN   - Lists Database Names and wp-config.php Locations
+  $COL_CYAN wpspeed $COL_MGREEN  - Runs WordPress Speed Checks
+  $COL_CYAN wpopt $COL_MGREEN    - Basic Site Optimization and Suggestions
+  $COL_CYAN wpinstall $COL_MGREEN- Install WordPress From Scratch 
+  $COL_CYAN wptools $COL_MGREEN  - Show WordPress Tools Functions 
+  $COL_CYAN wpdbcheck $COL_MGREEN- PHP Based DB Tests 
+  $COL_CYAN wpcheck $COL_MGREEN  - Perl Based Plugin/Theme Check 
 
 Helpful Functions:
-  $COL_CYAN fcount $COL_GREEN   - Lists Number of Files in Current Directory
-  $COL_CYAN dirsize $COL_GREEN  - Sorts Directory Contents by Size
-  $COL_CYAN wpcleanup $COL_GREEN- Removes All QWPCLI Files 
+  $COL_CYAN fcount $COL_MGREEN   - Lists Number of Files in Current Directory
+  $COL_CYAN dirsize $COL_MGREEN  - Sorts Directory Contents by Size
+  $COL_CYAN wpcleanup $COL_MGREEN- Removes All QWPCLI Files 
   
 Troubleshooting:
-  $COL_CYAN mailtest $COL_GREEN - Checks PHP Mail Function
-  $COL_CYAN slowmysql $COL_GREEN- Displays Slow MySQL Queries
+  $COL_CYAN mailtest $COL_MGREEN - Checks PHP Mail Function
+  $COL_CYAN slowmysql $COL_MGREEN- Displays Slow MySQL Queries
   
 Check out more wpcli commands at $COL_MAGENTA http://wp-cli.org/commands/ $COL_RESET
 "
@@ -512,7 +513,7 @@ Recommended Plugins:
    velvet-blues-update-urls
    sucuri-scanner
    updraftplus
-   
+  
 $COL_RESET
 What plugin(s) would you like to install (and activate)? Enter slug separated by spaces..."
 read INSATALL
@@ -545,8 +546,8 @@ echo -e "$COL_GREEN
 Recommended Themes:
    twentysixteen
    twentytwelve
-   vantage 
    hueman
+   customizr
    generatepress
      
 Know a good theme? Suggest it!    
@@ -1392,6 +1393,7 @@ function wpcolors(){
 echo -e "
 $COL_RED This is RED $COL_RESET
 $COL_GREEN This is GREEN $COL_RESET
+$COL_MGREEN This is MGREEN $COL_RESET
 $COL_PURPLE This is PURPLE $COL_RESET
 $COL_BLUE This is BLUE $COL_RESET
 $COL_MAGENTA This is MAGENTA $COL_RESET
@@ -1413,8 +1415,8 @@ echo -e "$COL_GREEN
    _______     __        __  ___      __  _                
   / ___/ /__  / /  ___ _/ / / _ |____/ /_(_)__  ___  ___  $COL_ORANGE  Fixing WordPress $COL_GREEN  
  / (_ / / _ \/ _ \/ _  / / / __ / __/ __/ / _ \/ _ \(_-<  $COL_ORANGE      Faster! $COL_GREEN
- \___/_/\___/_.__/\_,_/_/ /_/ |_\__/\__/_/\___/_//_/___/  $COL_ORANGE  Dev: Rowdy Adams $COL_RESET
-$COL_GREEN
+ \___/_/\___/_.__/\_,_/_/ /_/ |_\__/\__/_/\___/_//_/___/  $COL_ORANGE  Dev: Rowdy Adams 
+$COL_MGREEN
 What global actions would you like to take? 
 
 (1) Replace Core With Existing Version
@@ -1619,7 +1621,7 @@ wp --skip-plugins --skip-themes plugin uninstall hello --deactivate --quiet
 echo -e "$COL_MAGENTA
 Now installing suggested plugins... $COL_RESET"
 sleep 2
-wp --skip-plugins --skip-themes plugin install jetpack sucuri-scanner google-captcha updraftplus
+wp --skip-plugins --skip-themes plugin install jetpack sucuri-scanner google-captcha shortcodes-ultimate
 wp --skip-plugins --skip-themes plugin update --all
 wp --skip-plugins --skip-themes theme update --all
 
@@ -1817,11 +1819,11 @@ echo -e "$COL_GREEN
   _      _____    ______          __  
  | | /| / / _ \  /_  __/__  ___  / /__                    $COL_ORANGE  Fixing WordPress $COL_GREEN  
  | |/ |/ / ___/   / / / _ \/ _ \/ (_-<                    $COL_ORANGE      Faster! $COL_GREEN
- |__/|__/_/      /_/  \___/\___/_/___/                    $COL_ORANGE  Dev: Rowdy Adams $COL_RESET
+ |__/|__/_/      /_/  \___/\___/_/___/                    $COL_ORANGE  Dev: Rowdy Adams $COL_MGREEN
 
 This menu allows you to tap into the power of WordPress Tools. To skip the menu,
-type$COL_CYAN wptools$COL_GREEN and press tab twice to view options.$COL_MAGENTA All actions viewable in the 
-WordPress Tools GUI.$COL_GREEN Choose a Function below:$COL_RESET
+type$COL_CYAN wptools$COL_MGREEN and press tab twice to view options.$COL_MAGENTA All actions viewable in the 
+WordPress Tools GUI.$COL_MGREEN Choose a Function below:$COL_RESET
 
 (1) Backup  - Backup site through WordPress Tools (May not include all content)
 (2) Restore - Restore site & database from existing WordPress Tools backup
