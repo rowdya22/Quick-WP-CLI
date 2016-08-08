@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   26 Jul 2016   #
+# Updated on:   08 Aug 2016   #
 #                             # 
 ###############################
 
@@ -17,7 +17,7 @@ alias ls='/bin/ls --color=tty -F -A -b -T 0'
 alias wp='/usr/php/54/usr/bin/php-cli /usr/local/bin/wp'
 
 # Required for gcmd commands #
-DIRS=$(find ~/public_html -maxdepth 5 -type f -name 'wp-config.php')
+DIRS=$(find ~/public_html* -maxdepth 5 -type f -name 'wp-config.php')
 
 # Colors
 ESC_SEQ="\x1b["
@@ -50,7 +50,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 26 Jul 2016
+What would you like to work on?                           $COL_GREEN Updated: 08 Aug 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -513,6 +513,7 @@ Recommended Plugins:
    velvet-blues-update-urls
    sucuri-scanner
    updraftplus
+   tk-google-fonts
   
 $COL_RESET
 What plugin(s) would you like to install (and activate)? Enter slug separated by spaces..."
@@ -1335,7 +1336,7 @@ Success:$COL_RESET WordPress updated with recommended settings."
 
 ### CLEAN UP QWPCLI FILES ###
 function wpcleanup(){
-unset HISTFILE && find ~/public_html/ -maxdepth 5 \( -name "QWPCLI_*" -o -name ".QWPCLI_*" \)|xargs rm -rfv
+unset HISTFILE && find ~/public_html*/ -maxdepth 5 \( -name "QWPCLI_*" -o -name ".QWPCLI_*" \)|xargs rm -rfv
 }
 
 function Downloadwpcheck(){
@@ -1344,7 +1345,7 @@ wget https://github.com/voldemortensen/wcslc-2015/raw/master/troubleshoot.pl
 echo -e "$COL_GREEN \nLatest troubleshoot.pl downloaded $COL_RESET"
 fi
 
-clean_up_files () { find ~/public_html/ -maxdepth 5 \( -name "troubleshoot.pl" -o -name "qwpcli.md5" \)|xargs rm -rf; }
+clean_up_files () { find ~/public_html*/ -maxdepth 5 \( -name "troubleshoot.pl" -o -name "qwpcli.md5" \)|xargs rm -rf; }
 trap clean_up_files EXIT
 }
 
@@ -1380,7 +1381,7 @@ fi
 
 echo -e "$COL_GREEN \nBegin Test by visting http://domain.com/wpdbtest.php \n $COL_RESET"
 
-clean_up_wpdbcheck () { find ~/public_html/ -maxdepth 5 \( -name "wpdbtest.php" \)|xargs rm -rf; }
+clean_up_wpdbcheck () { find ~/public_html*/ -maxdepth 5 \( -name "wpdbtest.php" \)|xargs rm -rf; }
 trap clean_up_wpdbcheck EXIT
 }
 
@@ -1407,7 +1408,7 @@ $COL_FORREST This is FORREST $COL_RESET
 #################### GLOABAL FUNCTIONS ####################
 function wpglobal(){
 clear
-wpLocation=($(find ~/public_html -maxdepth 5 -type f -name 'wp-config.php'))
+wpLocation=($(find ~/public_html* -maxdepth 5 -type f -name 'wp-config.php'))
 # wpLocation=$DIRS
 
 originalDir=($(pwd))
@@ -1564,7 +1565,7 @@ wp --skip-plugins --skip-themes theme update --all
 }
 
 function gcmd(){
-#DIRS=$(find ~/public_html -maxdepth 5 -type f -name 'wp-config.php')
+#DIRS=$(find ~/public_html* -maxdepth 5 -type f -name 'wp-config.php')
 for DIR in $DIRS; do
     CDIR=$(dirname $DIR)
     cd $CDIR;
