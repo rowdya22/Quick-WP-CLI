@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   08 Aug 2016   #
+# Updated on:   25 Aug 2016   #
 #                             # 
 ###############################
 
@@ -50,7 +50,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 08 Aug 2016
+What would you like to work on?                           $COL_GREEN Updated: 25 Aug 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -614,12 +614,18 @@ wp --skip-plugins --skip-themes user delete HostAdmin --yes
 }
 ### CHANGE USER PASSWORDS ###
 function wpChangePass() {
+read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/") 
+
 echo -e "$COL_GREEN"
 wp --skip-plugins --skip-themes user list --role=administrator --fields=ID,user_login,display_name,user_email,roles
 echo -e "$COL_RESET
 User ID: "; read USERID
 echo -e "New Password: "; read NEWPASS
-wp --skip-plugins --skip-themes user update $USERID --user_pass=$NEWPASS
+# wp --skip-plugins --skip-themes user update $USERID --user_pass=$NEWPASS
+# wp --skip-plugins --skip-themes db query "UPDATE "$dbprefix"users SET user_pass = MD5('$NEWPASS') WHERE ID = $USERID;"
+mysql -u $dbuser -p$dbpass -D $dbname -e "UPDATE "$dbprefix"users SET user_pass = MD5('$NEWPASS') WHERE ID = $USERID;"
+
+echo -e "\n$COL_GREEN\rSuccess:$COL_RESET Password reset using MySQL\n" 
 }
 
 function emailPassReset(){
@@ -1046,7 +1052,7 @@ case $wsodSelect in
 		Downloadwpcheck
 		echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 		errl1
-		perl troubleshoot.pl --plugins --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
+		#perl troubleshoot.pl --plugins --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 		echo -e "\nLooks like it was a Plugin issue. \nCheck the error_log to see if you can narrow down the cause."
 	;;
 	
@@ -1062,7 +1068,7 @@ case $wsodSelect in
 				Downloadwpcheck
 				echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 				errl1
-				perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
+				#perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 				echo -e "\nCould be a Theme or Plugin issue. \nCheck the error_log to see if you can narrow down the cause." 
 			;;
 				
@@ -1079,7 +1085,7 @@ case $wsodSelect in
 					Downloadwpcheck
 					echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 					errl1
-					perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
+					#perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 					echo -e "\nPlugins and Theme reactivated. \nCheck the error_log to see if you can narrow down the cause."
 				;;
 		
@@ -1096,7 +1102,7 @@ case $wsodSelect in
 						Downloadwpcheck
 						echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 						errl1
-						perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
+						#perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 						echo -e "\nPlugins and Theme reactivated. \nCheck the error_log to see if you can narrow down the cause."
 					;;
 			
@@ -1105,7 +1111,7 @@ case $wsodSelect in
 						Downloadwpcheck
 						echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 						errl1
-						perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
+						#perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 						echo -e "\nResave the PHP Config and if that fails, contact your friendly neighborhood SWA. \nBe sure to mention anything useful you found in the$COL_MAGENTA error_logs$COL_RESET.\n\nFeel free to use the script below:$COL_GREEN \n\nCustomer site is WSOD. I have deactivated the plugins, defaulted the theme to twentysixteen, replaced the core files, flushed permalinks and generated a new .htaccess file through cPanel by saving the PHP Config. Site is still WSOD. Anything else you can see that I might have missed? $COL_RESET"
 					echo -e "\nRevert site back to original state? (Reset Plugins and Theme) y/n/q \c"
 					read wsodSelect && echo ''
@@ -1620,17 +1626,19 @@ wp --skip-plugins --skip-themes core install --prompt
 wp --skip-plugins --skip-themes plugin uninstall hello --deactivate --quiet
 
 echo -e "$COL_MAGENTA
-Now installing suggested plugins... $COL_RESET"
+Now installing suggested plugins and themes.... $COL_RESET"
 sleep 2
-wp --skip-plugins --skip-themes plugin install jetpack sucuri-scanner google-captcha shortcodes-ultimate
+## wp --skip-plugins --skip-themes plugin install jetpack sucuri-scanner google-captcha shortcodes-ultimate
+wpPluginInstall
+wpThemeInstall
 wp --skip-plugins --skip-themes plugin update --all
 wp --skip-plugins --skip-themes theme update --all
 
 echo -e "$COL_MAGENTA
 Now disabling user registration, comments, and pingpacks... $COL_RESET"
 sleep 2
-# read db usr ps pre <<<$(awk -F\' '/DB_/ {print $4}' wp-config.php) #'
-# mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value = '0' WHERE option_name = 'users_can_register';" 
+# read db usr ps pre <<<$(awk -F\' '/DB_/ {print $4}' wp-config.php) MySQL
+ -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value = '0' WHERE option_name = 'users_can_register';" 
 # mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value='closed' WHERE option_name='default_comment_status';"
 # mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value='closed' WHERE option_name='default_ping_status'; "
 # mysql -u $usr -p$ps -D $db -e "UPDATE wp_posts SET comment_status='closed', ping_status='closed';"
@@ -1852,7 +1860,7 @@ BACKUPDIR=$(perl -e'my $a = unpack "H*", "$ARGV[0]"; print $a;' $HASHDIR)
 echo -e "$COL_GREEN
 Backup running... $COL_RESET"
 cd ~
-wp-tools backup --path=$WPDIR --backupdir=backupwordpress/$BACKUPDIR --wp-cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
+wp-tools backup --force --path=$WPDIR --backupdir=backupwordpress/$BACKUPDIR --wp-cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 cd $DIR
 }
 
@@ -1886,7 +1894,7 @@ done
 
 echo -e "Enter epoch time of the restore point (e.g. time:$COL_MAGENTA 1339826400$COL_RESET):" ; read TIMESTAMP
 
-wp-tools restore --backupfile=backupwordpress/$HASHDIR/wp_backup$TIMESTAMP.tar.gz --wp-cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
+wp-tools restore --force --backupfile=backupwordpress/$HASHDIR/wp_backup$TIMESTAMP.tar.gz --wp-cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 
 cd $DIR
 }
@@ -1903,7 +1911,7 @@ if [ ! -f .automatic_updates_disabled ]; then
 echo -e "$COL_GREEN
 Upgrade running... $COL_RESET"
 cd ~
-wp-tools upgrade --path=$WPDIR --backupdir=backupwordpress/$BACKUPDIR --wp-cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
+wp-tools upgrade --force --path=$WPDIR --backupdir=backupwordpress/$BACKUPDIR --wp-cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 cd $DIR
 else
 echo -e "$COL_MAGENTA UPDATE FUNCTIONS DISABLED as long as .automatic_updates_disabled Exists! $COL_RESET"
@@ -1913,8 +1921,6 @@ fi
 #################### END WP-TOOLS FUNCTIONS ####################
 
 ###
-
-
 
 ##########UNDER CONSTRUCTION##########
 function wpGlobalTemplate(){
@@ -2022,3 +2028,135 @@ Please view: https://media.giphy.com/media/1iTpx5PpzRugcrZK/giphy.gif $COL_RESET
 fi
 }
 # improvewp
+
+# REMOVE ORPHANDED POSTMETA
+function killorphans(){
+wp db query "DELETE pm FROM "$dbprefix"postmeta pm LEFT JOIN "$dbprefix"posts wp ON wp.ID = pm.post_id WHERE wp.ID IS NULL";
+
+echo -e "\n$COL_GREEN\rSuccess:$COL_RESET Orphanded post_meta data removed using MySQL\n" 
+}
+
+function mkdev(){
+read -r dbhost dbname dbpass dbuser dbprodprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
+
+wpbackup
+
+# EXPORT DB TABLES THAT MATCH PROD PREFIX
+wp db export dev.sql --tables=$(wp db tables --all-tables-with-prefix --format=csv) 
+
+echo -e "What directory would you like to have your staging environment created in?\n"; read devdir
+
+# SETUP UP STAGING FOLDER
+mkdir $devdir
+
+# CLONE FILES INTO THE DEV FOLDER
+cp -Rv wp* $devdir;
+cp -v .htaccess $devdir 2>/dev/null || echo -e "\n\tNo .htaccess was present";
+cp -v index.php $devdir 2>/dev/null || echo -e "\n\tNo index.php was present";
+cp -v license.txt $devdir 2>/dev/null || echo -e "\n\tNo license.txt was present";
+cp -v readme.html $devdir 2>/dev/null || echo -e "\n\tNo readme.html was present";
+cp -v xmlrpc.php $devdir 2>/dev/null || echo -e "\n\tNo xmlrpc.php was present";
+cp -v dev.sql $devdir  2>/dev/null || echo -e "\n\tNo Prod database was present";
+
+cd $devdir
+
+sleep 5 
+
+echo -e "$COL_GREEN
+Success:$COL_RESET WordPress files copied to /$devdir"
+
+# SETUP DB
+dbdevprefix="dev_"
+sed -i "s/$dbprodprefix/$dbdevprefix/" dev.sql
+
+echo -e "$COL_GREEN
+Success:$COL_RESET Database prefix updated to $dbdevprefix\n"
+
+# IMPORT DB W/ NEW PREFIX
+wp db import dev.sql
+
+rm -rf dev.sql
+
+# UPDATE WP-CONFIG.PHP PREFIX
+sed -i "s/$dbprodprefix/$dbdevprefix/" wp-config.php
+
+sleep 5
+
+echo -e "$COL_GREEN
+Success:$COL_RESET Database prefix updated in the wp-config.php file"
+
+# UPDATE SITE URLS TO DEV
+wp --skip-plugins --skip-themes search-replace $(wp option get siteurl) $(wp option get siteurl)/$devdir --precise --recurse-objects
+
+sleep 5
+
+echo -e "$COL_GREEN
+Success:$COL_RESET Site URLs updated to reflect /$devdir"
+
+# NOTICE
+echo -e "$COL_GREEN
+Success:$COL_RESET Staging environment created in /$devdir\n"
+
+echo -e "Long Explanation:\n- WordPress site files have been copied to /$devdir\n- A copy of the Database was made and imported using the $dbdevprefix prefix\n- The dbprefix was updated in the wp-config.php file to $dbdevprefix\n- Site URLs updated to include /$devdir\n"
+}
+
+function pushprod(){
+# EXPORT DEV DB
+wp db export prod.sql
+
+DEVURL=$(wp option get siteurl)
+
+# SYNC FILES DEV --> PROD
+rsync -auvxhr --delete wp* /.. ;
+rsync -auvxh --delete .htaccess /.. 2>/dev/null || echo -e "\n\tNo index.php was present/pushed.";
+rsync -auvxh --delete license.txt /.. 2>/dev/null || echo -e "\n\tNo license.txt was present/pushed.";
+rsync -auvxh --delete readme.html /.. 2>/dev/null || echo -e "\n\tNo readme.html was present/pushed.";
+rsync -auvxh --delete xmlrpc.php /.. 2>/dev/null || echo -e "\n\tNo xmlrpc.php was present/pushed.";
+rsync -auvxh --delete prod.sql /.. 2>/dev/null || echo -e "\n\tNo prod.sql was present/pushed.";
+
+cd ..
+
+PRODURL=$(wp option get siteurl)
+
+read -r dbhost dbname dbpass dbuser dbprodprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
+
+dbdevprefix="dev_"
+
+# UPDATE DB PREFIX
+sed -i "s/$dbdevprefix/$dbprodprefix/" prod.sql
+
+# UPDATE WP-CONFIG.PHP PREFIX
+sed -i "s/$dbdevprefix/$dbprodprefix/" wp-config.php
+
+# SET UP THE DATABASE
+wp db import prod.sql
+
+rm -rf prod.sql
+
+echo -e "Dev URL updating from $DEVURL to $PRODURL\nIs this correct? (y/n)\n"; read input;
+
+case $input in
+	[Yy]*) wp --skip-plugins --skip-themes search-replace $DEVURL $PRODURL --precise --recurse-objects
+	echo -e "$COL_GREEN
+	Success:$COL_RESET Staging environment pushed to production \n"
+	;;
+	[Nn]*) 
+	echo -e "What is the correct URL? (must match format):"; read $NEWURL
+        wp --skip-plugins --skip-themes search-replace $DEVURL $NEWURL --precise --recurse-objects
+	echo -e "$COL_GREEN
+	Success:$COL_RESET Staging environment pushed to production \n"
+	;;
+	[Qq]*) 
+	echo -e "Operations quit\n"
+	;;
+	*) invalidOption;;
+esac
+
+}
+
+#function pushdev(){
+#}
+
+#function removedev(){
+#}
+
