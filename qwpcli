@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   26 Aug 2016   #
+# Updated on:   29 Aug 2016   #
 #                             # 
 ###############################
 
@@ -50,7 +50,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 26 Aug 2016
+What would you like to work on?                           $COL_GREEN Updated: 29 Aug 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -157,7 +157,6 @@ esac
 ### Database Menu ###
 function wpdb() {
 ###Get the info from the wp-config file
-#read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
 
 dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
 dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
@@ -337,7 +336,6 @@ esac
 ### SHOW GENERAL WORDPRESS INFORMATION ###
 function wpstats(){
 ###Get the info from the wp-config file
-#read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/") 
 
 dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
 dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
@@ -628,7 +626,6 @@ wp --skip-plugins --skip-themes user delete HostAdmin --yes
 }
 ### CHANGE USER PASSWORDS ###
 function wpChangePass() {
-# read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/") 
 
 dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
 dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
@@ -912,7 +909,6 @@ find2perl -name "wp-config.php" -exec grep --color -iHn DB_NAME {} \; | perl
 }
 ### EXPORT DATABASE ###
 function dbexport(){
-#read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
 
 dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
 dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
@@ -1055,7 +1051,6 @@ wp --skip-plugins --skip-themes option set mm_brand BlueHost
 }
 ### WSOD Fix ###
 function wpwsod(){
-# read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/")
 dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
 dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
 dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
@@ -1416,7 +1411,7 @@ function rmorphanmeta(){
 dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
 wp --skip-plugins --skip-themes db query "DELETE pm FROM ${dbprefix}postmeta pm LEFT JOIN ${dbprefix}posts wp ON wp.ID = pm.post_id WHERE wp.ID IS NULL";
 
-echo -e "$COL_GREEN\rSuccess:$COL_RESET Orphanded post_meta data removed using MySQL\n" 
+echo -e "$COL_GREEN\rSuccess:$COL_RESET Orphanded post_meta data removed using MySQL" 
 }
 
 function wpdbcheck(){
@@ -2003,7 +1998,6 @@ sed -ei "s/# END WordPress/# END WordPress\n$sslredriect/" .htaccess
 }
 
 function wpRevert(){
-# read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
 
 dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
 dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
@@ -2169,8 +2163,6 @@ dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ;
 dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
 dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
 dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
-
-# read -r dbhost dbname dbpass dbuser dbprodprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
 
 dbdevprefix="dev_"
 
