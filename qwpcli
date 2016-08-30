@@ -507,7 +507,7 @@ function wpPluginDeactivate(){
 ACTIVEPLUG=$(wp --skip-plugins --skip-themes plugin deactivate --all >.QWPCLI_ACTIVEPLUGINS.txt 2>&1 && <.QWPCLI_ACTIVEPLUGINS.txt awk '$1=="Success:" {print $3}' | tr -d \')
 # ALTERNATE wp --skip-plugins --skip-themes option get active_plugins --format=json >.QWPCLI_ACTIVEPLUGINS.txt
 # wp --skip-plugins --skip-themes plugin deactivate --all
-# '
+# '"
 wp --skip-plugins --skip-themes plugin list
 }
 ### ACTIVATE PLUGINS ###
@@ -515,8 +515,9 @@ function wpPluginActivate(){
 ACTIVEPLUGINS=$(<.QWPCLI_ACTIVEPLUGINS.txt awk '$1=="Success:" {print $3}' | tr -d \')
 # '
 wp --skip-plugins --skip-themes plugin activate $ACTIVEPLUGINS
-# ALTERNATE wp --skip-plugins --skip-themes option set active_plugins --format=json < .QWPCLI_ACTIVEPLUGINS.txt
 rm -rf .QWPCLI_ACTIVEPLUGINS.txt
+# ALTERNATE wp --skip-plugins --skip-themes option set active_plugins --format=json < .QWPCLI_ACTIVEPLUGINS.txt
+
 }
 ### INSTALL PLUGINS ###
 function wpPluginInstall(){
@@ -1060,8 +1061,8 @@ dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ;
 dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
 dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
 
-THEMENAME=$(echo -e "" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'stylesheet'"`|sed "s/option_value//")
-
+# THEMENAME=$(echo -e "" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'stylesheet'"`|sed "s/option_value//")
+THEMENAME=$(wp --skip-plugins --skip-themes option get sytelsheet)
 ### OPTION TO BACKUP ###
 echo -e "\nWould you like to make a backup? (Does not include wp-content) (y) or (n): \c"; read input;
 if [ $input == 'y' ]; then 
@@ -1079,7 +1080,7 @@ case $wsodSelect in
 		wpPluginActivate
 		wp --skip--plugins --skip-themes theme activate $THEMENAME
 		# TAIL ERROR LOG AND WPCHECK PLUGINS #
-		Downloadwpcheck
+		# Downloadwpcheck
 		echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 		errl1
 		#perl troubleshoot.pl --plugins --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
@@ -1095,7 +1096,7 @@ case $wsodSelect in
 				wpPluginActivate
 				wp --skip-plugins --skip-themes theme activate $THEMENAME
 				# WPCHECK ALL AND TAIL ERROR LOG #
-				Downloadwpcheck
+				# Downloadwpcheck
 				echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 				errl1
 				#perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
@@ -1112,7 +1113,7 @@ case $wsodSelect in
 					wpPluginActivate
 					wp --skip-plugins --skip-themes theme activate $THEMENAME
 					# WPCHECK ALL AND TAIL ERROR LOG #
-					Downloadwpcheck
+					# Downloadwpcheck
 					echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 					errl1
 					#perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
@@ -1129,7 +1130,7 @@ case $wsodSelect in
 						wpPluginActivate
 						wp --skip-plugins --skip-themes theme activate $THEMENAME
 						# WPCHECK ALL AND TAIL ERROR LOG #
-						Downloadwpcheck
+						# Downloadwpcheck
 						echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 						errl1
 						#perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
@@ -1138,7 +1139,7 @@ case $wsodSelect in
 			
 					### ADDITIONAL CHECKS ###
 					[Nn]*) 
-						Downloadwpcheck
+						# Downloadwpcheck
 						echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 						errl1
 						#perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
