@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   30 Aug 2016   #
+# Updated on:   05 Sep 2016   #
 #                             # 
 ###############################
 
@@ -15,6 +15,7 @@ alias ls='/bin/ls --color=tty -F -A -b -T 0'
 ###
 
 alias wp='/usr/php/54/usr/bin/php-cli /usr/local/bin/wp'
+shopt -s expand_aliases
 
 # Required for gcmd commands #
 DIRS=$(find ~/public_html* -maxdepth 5 -type f -name 'wp-config.php')
@@ -50,7 +51,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 30 Aug 2016
+What would you like to work on?                           $COL_GREEN Updated: 05 Sep 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -60,7 +61,7 @@ What would you like to work on?                           $COL_GREEN Updated: 30
   $COL_CYAN wpurl $COL_MGREEN    - List and Change URLs
   $COL_CYAN wpuser $COL_MGREEN   - Create User, Set Passwords, Change Roles
   $COL_CYAN wpupdate $COL_MGREEN - Check For or Run Updates, Configure Auto Updates
-  $COL_CYAN wpbackup $COL_MGREEN - Backup Site and Database to Folder or tar.gz
+  $COL_CYAN wpcleanup $COL_MGREEN- Remove All QWPCLI Generate Files
   $COL_CYAN wpworks $COL_MGREEN  - Install Updates, Optimize DB, Run Fixes
   $COL_CYAN wpglobal $COL_MGREEN - Run Commands Across All WordPress Installs (Advanced)
   $COL_CYAN wpmore $COL_MGREEN   - More Commands (Global Actions,$COL_CYAN WSOD Fix$COL_MGREEN, WP Tools, DB List)
@@ -94,6 +95,7 @@ echo -e "$COL_MGREEN
 WordPress Specific:
   $COL_CYAN wpwsod $COL_MGREEN   - Guided Walkthrough to Fix WSOD
   $COL_CYAN wpfix $COL_MGREEN    - Run Fixes
+  $COL_CYAN wpbackup $COL_MGREEN - Backup Files and Database to Folder or tar.gz
   $COL_CYAN dblist $COL_MGREEN   - Lists Database Names and wp-config.php Locations
   $COL_CYAN wpspeed $COL_MGREEN  - Runs WordPress Speed Checks
   $COL_CYAN wpopt $COL_MGREEN    - Basic Site Optimization and Suggestions
@@ -105,7 +107,6 @@ WordPress Specific:
 Helpful Functions:
   $COL_CYAN fcount $COL_MGREEN   - Lists Number of Files in Current Directory
   $COL_CYAN dirsize $COL_MGREEN  - Sorts Directory Contents by Size
-  $COL_CYAN wpcleanup $COL_MGREEN- Removes All QWPCLI Files 
   
 Troubleshooting:
   $COL_CYAN mailtest $COL_MGREEN - Checks PHP Mail Function
@@ -892,8 +893,11 @@ echo -e "$COL_BLUE
 This could take a moment....$COL_RESET"
 wp --skip-plugins --skip-themes transient delete-expired
 # wp --skip-plugins --skip-themes media regenerate --yes --quiet
-wpRewriteFlush
+# wpRewriteFlush
+rmorphanmeta
 wp --skip-plugins --skip-themes cache flush
+wp --skip-plugins --skip-themes db repair 
+wp --skip-plugins --skip-themes db optimize 
 }
 
 ### END GENERAL FIXES ###
@@ -2208,3 +2212,53 @@ esac
 #function removedev(){
 #}
 
+
+function cliinstall(){
+### Side Load WP-CLI ###
+DIR=$(pwd)
+
+cd
+
+wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+chmod +x wp-cli.phar
+
+cd $DIR
+
+echo -e "$COL_GREEN
+Choose Server Type:
+$COL_RESET
+(1) Shared/Cloud
+(2) OHWP/VPS/DEDICATED
+
+\tSelection: \c" ; 
+
+read cliSelect && echo ''
+case $cliSelect in
+	1)	
+	OLDALIAS='source `alias wp=/usr/php/54/usr/bin/php-cli /usr/local/bin/wp`'
+	source `alias wp='/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini ~/wp-cli.phar'`
+	;; 
+	2)	
+	OLDALIAS='source `alias wp=/usr/local/bin/wp`'
+	source `alias wp='~/wp-cli.phar'`
+	;; 
+	3)	return;;
+	*)	invalidOption;;
+esac 
+
+trap reset_alias EXIT
+
+echo -e "Install additional modules? y/n \c" ; 
+read modSelect 
+case $modSelect in
+	[Yy]*) modInstall ;;
+	[Nn]*) echo -e "WP-CLI Installed and Aliased\n";;
+	*)	invalidOption;;
+esac 
+}
+
+# reset_alias () { $OLDALIAS }
+
+#function modInstall(){
+#
+#}
