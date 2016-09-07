@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   05 Sep 2016   #
+# Updated on:   07 Sep 2016   #
 #                             # 
 ###############################
 
@@ -51,7 +51,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 05 Sep 2016
+What would you like to work on?                           $COL_GREEN Updated: 07 Sep 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -61,7 +61,7 @@ What would you like to work on?                           $COL_GREEN Updated: 05
   $COL_CYAN wpurl $COL_MGREEN    - List and Change URLs
   $COL_CYAN wpuser $COL_MGREEN   - Create User, Set Passwords, Change Roles
   $COL_CYAN wpupdate $COL_MGREEN - Check For or Run Updates, Configure Auto Updates
-  $COL_CYAN wpcleanup $COL_MGREEN- Remove All QWPCLI Generate Files
+  $COL_CYAN wpcleanup $COL_MGREEN- Remove All QWPCLI Generated Files
   $COL_CYAN wpworks $COL_MGREEN  - Install Updates, Optimize DB, Run Fixes
   $COL_CYAN wpglobal $COL_MGREEN - Run Commands Across All WordPress Installs (Advanced)
   $COL_CYAN wpmore $COL_MGREEN   - More Commands (Global Actions,$COL_CYAN WSOD Fix$COL_MGREEN, WP Tools, DB List)
@@ -516,9 +516,13 @@ function wpPluginActivate(){
 ACTIVEPLUGINS=$(<.QWPCLI_ACTIVEPLUGINS.txt awk '$1=="Success:" {print $3}' | tr -d \')
 # '
 wp --skip-plugins --skip-themes plugin activate $ACTIVEPLUGINS
-rm -rf .QWPCLI_ACTIVEPLUGINS.txt
-# ALTERNATE wp --skip-plugins --skip-themes option set active_plugins --format=json < .QWPCLI_ACTIVEPLUGINS.txt
 
+echo -e "$COL_GREEN\rAttemped plugin reactivation. If errors exist review .QWPCLI_ACTIVEPLUGINS.txt and activate manually. $COL_RESET"
+
+remove_plug_file () { gcmd rm -rf .QWPCLI_ACTIVEPLUGINS.txt; }
+trap remove_plug_file EXIT
+
+# ALTERNATE wp --skip-plugins --skip-themes option set active_plugins --format=json < .QWPCLI_ACTIVEPLUGINS.txt
 }
 ### INSTALL PLUGINS ###
 function wpPluginInstall(){
@@ -1681,8 +1685,8 @@ wp --skip-plugins --skip-themes theme update --all
 echo -e "$COL_MAGENTA
 Now disabling user registration, comments, and pingpacks... $COL_RESET"
 sleep 2
-# read db usr ps pre <<<$(awk -F\' '/DB_/ {print $4}' wp-config.php) MySQL
- -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value = '0' WHERE option_name = 'users_can_register';" 
+# read db usr ps pre <<<$(awk -F\' '/DB_/ {print $4}' wp-config.php) 
+# mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value = '0' WHERE option_name = 'users_can_register';" 
 # mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value='closed' WHERE option_name='default_comment_status';"
 # mysql -u $usr -p$ps -D $db -e "UPDATE wp_options SET option_value='closed' WHERE option_name='default_ping_status'; "
 # mysql -u $usr -p$ps -D $db -e "UPDATE wp_posts SET comment_status='closed', ping_status='closed';"
