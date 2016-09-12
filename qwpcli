@@ -1059,7 +1059,14 @@ wp --skip-plugins --skip-themes plugin uninstall mojo-marketplace mojo-marketpla
 # wp --skip-plugins --skip-themes plugin install https://github.com/mojoness/mojo-marketplace-wp-plugin/archive/production.zip --activate
 wp --skip-plugins --skip-themes plugin install https://www.mojomarketplace.com/mojo-plugin-assets/updater/release/mojo-marketplace-wp-plugin.zip --activate
 wp --skip-plugins --skip-themes option set mm_coming_soon true
-wp --skip-plugins --skip-themes option set mm_brand BlueHost
+serv=$(hostname | cut -d '.' -f 2)
+case "$serv" in
+	'justhost')	brand=$'Justhost';;
+	'hostmonster')	brand=$'Hostmonster';;
+	'fastdomain')	brand=$'FastDomain';;
+	*)		brand=$'Bluehost';;
+esac
+wp --skip-plugins --skip-themes option set mm_brand $brand
 }
 ### WSOD Fix ###
 function wpwsod(){
