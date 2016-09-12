@@ -1070,11 +1070,11 @@ FatCow
 Brand not listed? type default (or press enter)...$COL_RESET";
 
 read brandSelect && echo ''
-case $brandSelect in
-	'BlueHost')	wp mojo branding --update=BlueHost;;
-        'iPower')	wp mojo branding --update=iPower;;
-        'iPage')	wp mojo branding --update=iPage;;
-        'FatCow')	wp mojo branding --update=FatCow;;
+case ${brandSelect,,} in
+	'bluehost')	wp mojo branding --update=BlueHost;;
+        'ipower')	wp mojo branding --update=iPower;;
+        'ipage')	wp mojo branding --update=iPage;;
+        'fatcow')	wp mojo branding --update=FatCow;;
         *)		echo -e "$COL_GREEN\rSuccess:$COL_RESET Generic branding set";;
 esac
 }
