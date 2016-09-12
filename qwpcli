@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   07 Sep 2016   #
+# Updated on:   12 Sep 2016   #
 #                             # 
 ###############################
 
@@ -51,7 +51,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 07 Sep 2016
+What would you like to work on?                           $COL_GREEN Updated: 12 Sep 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -213,7 +213,7 @@ Plugin Options:
 (3) Deactivate All
 (4) Restore Active Plugins
 (5) Install
-(6) Reinstall Mojo (Construction Page will be Active)
+(6) Install Mojo (Construction Page will be Active)
 (7) Exit
 
 \tSelection: \c" ; 
@@ -1059,14 +1059,24 @@ wp --skip-plugins --skip-themes plugin uninstall mojo-marketplace mojo-marketpla
 # wp --skip-plugins --skip-themes plugin install https://github.com/mojoness/mojo-marketplace-wp-plugin/archive/production.zip --activate
 wp --skip-plugins --skip-themes plugin install https://www.mojomarketplace.com/mojo-plugin-assets/updater/release/mojo-marketplace-wp-plugin.zip --activate
 wp --skip-plugins --skip-themes option set mm_coming_soon true
-serv=$(hostname | cut -d '.' -f 2)
-case "$serv" in
-	'justhost')	brand=$'Justhost';;
-	'hostmonster')	brand=$'Hostmonster';;
-	'fastdomain')	brand=$'FastDomain';;
-	*)		brand=$'Bluehost';;
+# view options by running wp mojo branding --update=
+echo -e "$COL_GREEN
+Choose a brand for the Mojo Plugin below:
+BlueHost
+iPower
+iPage
+FatCow
+
+Brand not listed? type default (or press enter)...$COL_RESET";
+
+read brandSelect && echo ''
+case $brandSelect in
+	'BlueHost')	wp mojo branding --update=BlueHost;;
+        'iPower')	wp mojo branding --update=iPower;;
+        'iPage')	wp mojo branding --update=iPage;;
+        'FatCow')	wp mojo branding --update=FatCow;;
+        *)		echo -e "$COL_GREEN\rSuccess:$COL_RESET Generic branding set";;
 esac
-wp --skip-plugins --skip-themes option set mm_brand $brand
 }
 ### WSOD Fix ###
 function wpwsod(){
@@ -1093,7 +1103,6 @@ read wsodSelect && echo ''
 case $wsodSelect in
 	[Yy]*)
 		wpPluginActivate
-		wp --skip--plugins --skip-themes theme activate $THEMENAME
 		# TAIL ERROR LOG AND WPCHECK PLUGINS #
 		# Downloadwpcheck
 		echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
@@ -1108,8 +1117,8 @@ case $wsodSelect in
 		read wsodSelect && echo ''
 		case $wsodSelect in
 			[Yy]*) 
-				wpPluginActivate
 				wp --skip-plugins --skip-themes theme activate $THEMENAME
+				wpPluginActivate
 				# WPCHECK ALL AND TAIL ERROR LOG #
 				# Downloadwpcheck
 				echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
@@ -1125,8 +1134,8 @@ case $wsodSelect in
 				read wsodSelect && echo ''
 				case $wsodSelect in
 				[Yy]*) 
-					wpPluginActivate
 					wp --skip-plugins --skip-themes theme activate $THEMENAME
+					wpPluginActivate
 					# WPCHECK ALL AND TAIL ERROR LOG #
 					# Downloadwpcheck
 					echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
@@ -1142,8 +1151,8 @@ case $wsodSelect in
 					read wsodSelect && echo ''
 					case $wsodSelect in
 					[Yy]*) 
-						wpPluginActivate
 						wp --skip-plugins --skip-themes theme activate $THEMENAME
+						wpPluginActivate
 						# WPCHECK ALL AND TAIL ERROR LOG #
 						# Downloadwpcheck
 						echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
@@ -1163,8 +1172,8 @@ case $wsodSelect in
 					read wsodSelect && echo ''
 					case $wsodSelect in
 					[Yy]*) 
-						wpPluginActivate
 						wp --skip-plugins --skip-themes theme activate $THEMENAME
+						wpPluginActivate
 						echo -e "$COL_GREEN\nPlugins and Theme restored. $COL_RESET"
 					;;	
 				
@@ -1203,7 +1212,6 @@ If done run$COL_CYAN wpcleanup$COL_RESET to remove all QWPCLI files.
 function restore (){
 
 echo -e "
-What backup would you like to restore FILES from? 
 NOTE: Files are restored from/to your current working directory.
 
 $COL_MAGENTA\rYou are currently in $(dirs) $COL_RESET
