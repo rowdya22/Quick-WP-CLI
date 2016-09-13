@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   12 Sep 2016   #
+# Updated on:   13 Sep 2016   #
 #                             # 
 ###############################
 
@@ -51,7 +51,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 12 Sep 2016
+What would you like to work on?                           $COL_GREEN Updated: 13 Sep 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -1071,11 +1071,11 @@ Brand not listed? type default (or press enter)...$COL_RESET";
 
 read brandSelect && echo ''
 case $brandSelect in
-	'BlueHost')	wp mojo branding --update=BlueHost;;
-        'iPower')	wp mojo branding --update=iPower;;
-        'iPage')	wp mojo branding --update=iPage;;
-        'FatCow')	wp mojo branding --update=FatCow;;
-        *)		echo -e "$COL_GREEN\rSuccess:$COL_RESET Generic branding set";;
+	[Bb][Ll][Uu][Ee][Hh][Oo][Ss][Tt])	wp mojo branding --update=BlueHost;;
+        [Ff][Aa][Tt][Cc][Oo][Ww])               wp mojo branding --update=FatCow;;
+        [Ii][Pp][Oo][Ww][Ee][Rr])		wp mojo branding --update=iPower;;
+        [Ii][Pp][Aa][Gg][Ee])                   wp mojo branding --update=iPage;;
+        *)					echo -e "$COL_GREEN\rSuccess:$COL_RESET Generic branding set";;
 esac
 }
 ### WSOD Fix ###
@@ -1212,6 +1212,7 @@ If done run$COL_CYAN wpcleanup$COL_RESET to remove all QWPCLI files.
 function restore (){
 
 echo -e "
+What backup would you like to restore FILES from?
 NOTE: Files are restored from/to your current working directory.
 
 $COL_MAGENTA\rYou are currently in $(dirs) $COL_RESET
