@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   13 Sep 2016   #
+# Updated on:   04 Oct 2016   #
 #                             # 
 ###############################
 
@@ -51,7 +51,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE http://goo.gl/forms/R2h7aTZXrX$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 13 Sep 2016
+What would you like to work on?                           $COL_GREEN Updated: 04 Oct 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -567,10 +567,9 @@ function wpThemeInstall() {
 echo -e "$COL_GREEN
 Recommended Themes:
    twentysixteen
-   twentytwelve
    hueman
+   evolve
    customizr
-   generatepress
      
 Know a good theme? Suggest it!    
 $COL_RESET
@@ -1167,7 +1166,7 @@ case $wsodSelect in
 						echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 						errl1
 						#perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
-						echo -e "\nResave the PHP Config and if that fails, contact your friendly neighborhood SWA. \nBe sure to mention anything useful you found in the$COL_MAGENTA error_logs$COL_RESET.\n\nFeel free to use the script below:$COL_GREEN \n\nCustomer site is WSOD. I have deactivated the plugins, defaulted the theme to twentysixteen, replaced the core files, flushed permalinks and generated a new .htaccess file through cPanel by saving the PHP Config. Site is still WSOD. Anything else you can see that I might have missed? $COL_RESET"
+						echo -e "\nResave the PHP Config and if that fails, seek additional assistance. $COL_RESET"
 					echo -e "\nRevert site back to original state? (Reset Plugins and Theme) y/n/q \c"
 					read wsodSelect && echo ''
 					case $wsodSelect in
@@ -1240,31 +1239,6 @@ echo -e "core\nplugins\nthemes" > .automatic_updates_disabled
 
 echo -e "$COL_GREEN
 Success:$COL_RESET Created .automatic_updates_disabled file."
- 
-# echo -e "
-# What auto updates do you want to disable?
-
-# (1) Core
-# (2) Plugins
-# (3) Themes
-# (4) All
-# (5) Exit
-
-# \tSelection: \c"
-
-# read var && echo ''
-# case $var in
-#         1) 
-#         ;;
-#         2) 
-#         ;;
-#         3) 
-#         ;;
-#         4) 
-#         ;;
-#         5) return;;        
-#         *) invalidOption;;
-# esac
 }
 
 function wpeval(){
@@ -1297,8 +1271,6 @@ awk '/^use/ {print $2}' ~/tmp/mysql_slow_queries/`date +%Y%m%d`* | sort | uniq -
 }
 
 function wpspeed(){
-echo -ne "\n\t\t\t\tBuilt by cmiles\n"
-sleep 0.5
 . <(curl -sS https://raw.githubusercontent.com/rowdya22/wpspeed/master/wpspeed)
 }
 
