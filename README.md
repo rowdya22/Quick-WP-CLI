@@ -1,7 +1,9 @@
 # DEPENDENCIES
-Quick WP-CLI requires WP-CLI to be installed in order to do its work (duh).
+[Quick WP-CLI requires WP-CLI to be installed in order to function](http://wp-cli.org/)
 
-Integrates with https://github.com/bluehost/wp-tools for using WordPress Tools
+[Integrates with wp-tools](https://github.com/bluehost/wp-tools)
+
+[Pulls from wpspeed](https://github.com/miles-cm/wpspeed)
 
 # Quick-WP-CLI
 Wrapper for WP-CLI commands used for troubleshooting WordPress sites. Also contains useful bash functions.
