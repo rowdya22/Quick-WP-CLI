@@ -879,7 +879,6 @@ wpCoreUpdate
 wpPluginUpdate
 wpThemeUpdate
 wpfix
-wpdbOpt
 echo -e "$COL_GREEN
 Success:$COL_RESET Ran Updates. $COL_GREEN
 Success:$COL_RESET Transients Cleared. $COL_GREEN
