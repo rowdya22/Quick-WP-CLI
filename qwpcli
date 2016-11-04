@@ -216,7 +216,8 @@ Plugin Options:
 (4) Restore Active Plugins
 (5) Install
 (6) Install Mojo
-(7) Exit
+(7) Install Endurance Caching
+(8) Exit
 
 \tSelection: \c" ; 
 
@@ -228,7 +229,8 @@ case $pluginSelect in
 	4)	wpPluginActivate;; #Activate plugins deactivated with wpPluginDeactivate then remove the file
 	5)	wpPluginInstall;; #Install plugins by slug
 	6)	wpMojoInstall;; #Installs the MOJO Marketplace plugin
-	7)	return;;
+	7)	wpEnduranceCache;; #Installs EIG mu caching plugin
+	8)	return;;
 	*)	invalidOption;;
 esac
 }
@@ -1070,6 +1072,23 @@ case $comingSoonSelect in
         *)          echo -e "$COL_GREEN\rNotice: Coming Soon page inactive.$COL_RESET ";;
 esac
 }
+
+function wpEnduranceCache(){
+echo -e "$COL_GREEN
+This will install a mu caching plugin that requires zero configuration.
+
+After install permalinks are regenerated to activate the caching. Continue? y/n $COL_RESET";
+read cachingSelect && echo ''
+case $cachingSelect in
+        [Yy])       mkdir wp-content/mu-plugins/
+		    wget https://raw.githubusercontent.com/bluehost/endurance-page-cache/production/endurance-page-cache.php -O wp-content/mu-plugins/endurance-page-cache.php; 
+		    wget https://raw.githubusercontent.com/bluehost/endurance-browser-cache/production/endurance-browser-cache.php -O wp-content/mu-plugins/endurance-browser-cache.php; 
+		    wpfix
+        ;;
+        *)          echo -e "$COL_CYAN\rWarning: Caching not installed.$COL_RESET ";;
+esac
+}
+
 ### WSOD Fix ###
 function wpwsod(){
 dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
