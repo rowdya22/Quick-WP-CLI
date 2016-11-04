@@ -8,23 +8,16 @@
 ###############################
 
 ### Alias all commands to themselves for security by using which or whereis
-#PATH="/home/$USER/perl5/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/home/$USER/bin"
-#alias echo='echo';alias sed='sed';alias grep='grep';alias xargs='xargs';alias for='for';alias do='do';alias done='done';
-#for cmd in `echo $PATH|sed "s/:/ /g"|xargs ls 2>/dev/null|grep -v '/'`;do alias $cmd="$cmd";done;
-#alias ls='/bin/ls --color=tty -F -A -b -T 0'
+PATH="/home/$USER/perl5/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/home/$USER/bin"
+alias echo='echo';alias sed='sed';alias grep='grep';alias xargs='xargs';alias for='for';alias do='do';alias done='done';
+for cmd in `echo $PATH|sed "s/:/ /g"|xargs ls 2>/dev/null|grep -v '/'`;do alias $cmd="$cmd";done;
+alias ls='/bin/ls --color=tty -F -A -b -T 0'
 ###
 
 ### Alias WP-CLI
-#alias wp='/usr/php/54/usr/bin/php-cli /usr/local/bin/wp'
+alias wp='/usr/php/54/usr/bin/php-cli /usr/local/bin/wp'
 
-#shopt -s expand_aliases
-
-
-
-### INSTALL WP-CLI ###
-
-
-
+shopt -s expand_aliases
 
 # Required for gcmd commands #
 DIRS=$(find ~/public_html* -maxdepth 5 -type f -name 'wp-config.php')
