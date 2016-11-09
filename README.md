@@ -44,7 +44,9 @@ Database Options:
 
 (3) Clear Expired Transients
 
-(4) Exit
+(4) Clear Orphaned Post Meta
+
+(5) Exit
 
 ### wpplugin - List, (De)activate, Update, Install
 Plugin Options:
@@ -59,9 +61,11 @@ Plugin Options:
 
 (5) Install
 
-(6) Reinstall Mojo (Construction Page will be Active)
+(6) Install Mojo
 
-(7) Exit
+(7) Install Endurance Caching
+
+(8) Exit
 
 ### wptheme - List, Change, Update, Install
 Theme Options:
@@ -78,6 +82,7 @@ Theme Options:
 
 ### wpurl - List and Change URLs
 URL Options:
+
 (1) Change URLs
 
 (2) List URLs
@@ -152,6 +157,8 @@ Update Options:
    
    wpfix     - Run Fixes
    
+   wpbackup  - Backup Files and Database to Folder or tar.gz
+   
    dblist    - Lists Database Names and wp-config.php Locations
    
    wpspeed   - Runs WordPress Speed Checks
@@ -164,14 +171,55 @@ Update Options:
    
    wpdbcheck - PHP Based DB Tests 
    
+   wpcheck   - Perl Based Plugin/Theme Check 
+
 ### Helpful Functions:
 
    fcount    - Lists Number of Files in Current Directory
    
-   dirsize   - Sorts Directory Contents by Size 
-   
-### Troubleshooting: 
+   dirsize   - Sorts Directory Contents by Size
+  
+### Troubleshooting:
 
    mailtest  - Checks PHP Mail Function
    
    slowmysql - Displays Slow MySQL Queries
+
+### WP Tools
+This menu allows you to tap into the power of WordPress Tools. To skip the menu, type wptools and press tab twice to view options. All actions viewable in the WordPress Tools GUI. Choose a Function below:
+
+(1) Backup  - Backup site through WordPress Tools (May not include all content)
+
+(2) Restore - Restore site & database from existing WordPress Tools backup
+
+(3) Upgrade - Backup and update site, plugins, themes. If errors exist revert.
+
+(4) Exit
+
+### WP Install
+This setup will guide you through a manual WordPress install.
+
+Make sure you are in the folder you want to install WordPress and there are no existing WordPress files.
+
+---To begin create a database in cPanel and then enter the needed information---
+
+### WP Optimization
+
+WARNING: THIS IS AN ADVANCED MENU. MAKE SURE THAT YOU KNOW WHAT YOU ARE DOING! 
+Check if there is existing optimization code in the .htaccess before modifying. If code is duplicated it can cause the site to break. 
+ 
+(1) WP Speed Report
+
+(2) Backup .htaccess
+
+(3) Enable Gzip Compression (.htaccess)
+
+(4) Enable Expired Headers (.htaccess)
+
+(5) Revert Changes
+
+(6) Quick Optimize 
+
+(7) Install Recommended Plugins (Manual Setup)
+
+(8) Exit
