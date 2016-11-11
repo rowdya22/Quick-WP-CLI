@@ -76,7 +76,7 @@ if [ $CHECK != '1' ]; then
 echo -e "$COL_MAGENTA 
 WARNING WPCLI CHECK: [FAILED]
 
-WPCLI is having trouble working. Are you in a WordPress directory? If so check for a Coming Soon or Maintenance Mode Plugin. 
+WPCLI is having trouble working. Are you in a WordPress directory? If so check for a Coming Soon or Maintenance Mode Plugin.$COL_RESET 
 "
 fi
 ### END WPCLI FUNCTIONALITY CHECK ###
@@ -98,7 +98,7 @@ WordPress Specific:
   $COL_CYAN wpwsod $COL_MGREEN   - Guided Walkthrough to Fix WSOD
   $COL_CYAN wpfix $COL_MGREEN    - Run Fixes
   $COL_CYAN wpbackup $COL_MGREEN - Backup Files and Database to Folder or tar.gz
-  $COL_CYAN wpmigrate $COL_MGREEN - Move WordPress to another directory 
+  $COL_CYAN wpmigrate $COL_MGREEN- Move WordPress to Another Directory 
   $COL_CYAN dblist $COL_MGREEN   - Lists Database Names and wp-config.php Locations
   $COL_CYAN wpspeed $COL_MGREEN  - Runs WordPress Speed Checks
   $COL_CYAN wpopt $COL_MGREEN    - Basic Site Optimization and Suggestions
@@ -1468,7 +1468,7 @@ function wpmigrate() {
 		# Loop using availdir function, until user selects directory they want to migrate to
 		until [ $migrate == true ];
 		do		
-			printf "\nAvailable directories in %s\n\n" "~/public_html${migrateDir##/home*public_html}"
+			printf "$COL_GREEN\nAvailable directories in$COL_CYAN %s\n$COL_RESET\n" "~/public_html${migrateDir##/home*public_html}"
 			availdir $migrateDir	
 		done
 			
@@ -1481,7 +1481,7 @@ function wpmigrate() {
 			if [ "$selectSub" -eq 1 ]; then
 				printf "$COL_GREEN\nWhat would you like to name the sub-directory?$COL_RESET\n\nSub-directory name: "; read subDir
 				printf "$COL_GREEN\nYou would like to:\n\n\tCreate sub-directory called:$COL_RESET $COL_CYAN %s\n$COL_GREEN\tMigrate:$COL_CYAN %s\n$COL_GREEN\tTo:$COL_CYAN %s\n$COL_RESET\n" "$subDir" "~/public_html${loc##/home*public_html}" "~/public_html${migrateDir##/home*public_html}$subDir"
-				printf "Correct?""\n\n(1)\tYes\n(2)\tNo\n"
+				printf "$COL_GREEN\nCorrect?""\n\n(1)\tYes\n(2)\tNo\n$COL_RESET"
 				printf "\nSelection: "; read selectMig
 				printf "\n"
 				
