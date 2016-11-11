@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   10 Nov 2016   #
+# Updated on:   11 Nov 2016   #
 #                             # 
 ###############################
 
@@ -53,7 +53,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 10 Nov 2016
+What would you like to work on?                           $COL_GREEN Updated: 11 Nov 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -98,6 +98,7 @@ WordPress Specific:
   $COL_CYAN wpwsod $COL_MGREEN   - Guided Walkthrough to Fix WSOD
   $COL_CYAN wpfix $COL_MGREEN    - Run Fixes
   $COL_CYAN wpbackup $COL_MGREEN - Backup Files and Database to Folder or tar.gz
+  $COL_CYAN wpmigrate $COL_MGREEN - Move WordPress to another directory 
   $COL_CYAN dblist $COL_MGREEN   - Lists Database Names and wp-config.php Locations
   $COL_CYAN wpspeed $COL_MGREEN  - Runs WordPress Speed Checks
   $COL_CYAN wpopt $COL_MGREEN    - Basic Site Optimization and Suggestions
@@ -1445,38 +1446,24 @@ find -maxdepth 1 -mtime -10 -type f -iname "error_log*" -print0 | xargs -0 tail
 }
 
 ##### WP MIGRATE #####
-
-# Title: Modified from Wordpress Swiss Knife
-# Author: Chad D.
-# Last Edited: 07.14.15
-# =====================================================================================
+# Title: Adapted from WordPress Swiss Knife
+# Original Author: Chad D.
+# ==============================================================================
 
 # Constants
-# wpFiles=(index.php license.txt readme.html wp-activate.php wp-admin wp-blog-header.php wp-comments-post.php wp-config.php wp-content wp-cron.php wp-includes wp-links-opml.php wp-load.php wp-login.php wp-mail.php wp-settings.php wp-signup.php wp-trackback.php xmlrpc.php)
+# wpFiles=(.htaccess index.php license.txt readme.html wp-activate.php wp-admin wp-blog-header.php wp-comments-post.php wp-config.php wp-content wp-cron.php wp-includes wp-links-opml.php wp-load.php wp-login.php wp-mail.php wp-settings.php wp-signup.php wp-trackback.php wp-cli.yml xmlrpc.php)
 
 wpFiles=(.htaccess index.php license.txt php.ini readme.html wp-* xmlrpc.php)
-red=$'\e[1;31m'
-grn=$'\e[1;32m'
-yel=$'\e[1;33m'
-blu=$'\e[1;34m'
-mag=$'\e[1;35m'
-cyn=$'\e[1;36m'
-end=$'\e[0m'
 
 function wpmigrate() {
-	case "$1" in
-	(-h) 	printf "\nThis will result in migrating of the wordpress site present in the working directory\n"
-		;;
-			
-	('')	local loc=$(pwd)/
-		;;
-	esac
+	local loc=$(pwd)/
+
 	
 	if [ -f "$loc"wp-config.php ]; then
 		local migrateDir=~/public_html
 		local migrate=false
 		
-		printf "\nWhere would you like to migrate to?\n"
+		printf "$COL_GREEN\nWhere would you like to migrate to?\n$COL_RESET"
 		
 		# Loop using availdir function, until user selects directory they want to migrate to
 		until [ $migrate == true ];
@@ -1487,44 +1474,44 @@ function wpmigrate() {
 			
 		while :
 		do
-			printf "\nWould you like to create a sub-directory within %s?\n" "~/public_html${migrateDir##/home*public_html}"
-			printf "\n(1)\tYes\n(2)\tNo\n"
+			printf "$COL_GREEN\nWould you like to create a sub-directory within$COL_CYAN %s?\n$COL_RESET" "~/public_html${migrateDir##/home*public_html}"
+			printf "$COL_GREEN\n(1)\tYes\n(2)\tNo\n$COL_RESET"
 			printf "\nSelection: "; read selectSub
 			
 			if [ "$selectSub" -eq 1 ]; then
-				printf "\nWhat would you like to name the sub-directory?\n\nSub-directory name: "; read subDir
-				printf "\nYou would like to:\n\n\tCreate sub-directory called: %s\n\tMigrate: %s\n\tTo: %s\n\n" "$subDir" "~/public_html${loc##/home*public_html}" "~/public_html${migrateDir##/home*public_html}$subDir"
+				printf "$COL_GREEN\nWhat would you like to name the sub-directory?$COL_RESET\n\nSub-directory name: "; read subDir
+				printf "$COL_GREEN\nYou would like to:\n\n\tCreate sub-directory called:$COL_RESET $COL_CYAN %s\n$COL_GREEN\tMigrate:$COL_CYAN %s\n$COL_GREEN\tTo:$COL_CYAN %s\n$COL_RESET\n" "$subDir" "~/public_html${loc##/home*public_html}" "~/public_html${migrateDir##/home*public_html}$subDir"
 				printf "Correct?""\n\n(1)\tYes\n(2)\tNo\n"
 				printf "\nSelection: "; read selectMig
 				printf "\n"
 				
 				if [ "$selectMig" -eq 1 ]; then
-					migrateDir=$migrateDir$subDir
-					mkdir $migrateDir && printf "%40sSuccess\r\tDirectory creation\n" || printf "%40sError\r\tDirectory creation\n"
+					migrateDir=$migrateDir/$subDir
+					mkdir $migrateDir && printf "%40s${COL_CYAN}Success${COL_RESET}\r\tDirectory creation\n" || printf "%40s${COL_RED}Error${COL_RESET}\r\tDirectory creation\n"
 					break
 					
 				elif [ "$selectMig" -eq 2 ]; then
-					printf "\nMigration cancelled\n\n"
+					printf "$COL_CYAN\nWarning:$COL_RESET Migration cancelled!\n\n"
 					return 1
 				else
-					printf "\nSorry, %s is not a valid response. Try again.\n" "$selectSub"
+					printf "$COL_MAGENTA\nSorry, %s is not a valid response. Try again.$COL_RESET\n" "$selectSub"
 				fi			
 							
 			elif [ "$selectSub" -eq 2 ]; then
 				break
 			else
-				printf "\nSorry, %s is not a valid response. Try again.\n" "$selectSub"
+				printf "$COL_MAGENTA\nSorry, %s is not a valid response. Try again.$COL_RESET\n" "$selectSub"
 			fi						
 		done
 		
 		for ((i = 0; i < ${#wpFiles[@]}; i++))
 		do
-			mv -f "$loc"${wpFiles[$i]} $migrateDir && printf "%40s${blue}Success${end}\r\t${wpFiles[$i]}\n" || printf "%40s${red}Error${end}\r\t${wpFiles[$i]}\n"		
+			mv -f "$loc"${wpFiles[$i]} $migrateDir && printf "%40s${COL_CYAN}Success${COL_RESET}\r\t${wpFiles[$i]}\n" || printf "%40s${COL_RED}Error${COL_RESET}\r\t${wpFiles[$i]}\n"		
 		done
 		
-		printf "\nWordpress migration task complete\n"	
+		printf "$COL_GREEN\nSuccess:$COL_RESET WordPress migration task complete\n"	
 	else
-		printf "\nThere is no wp-config.php file present\n\n" && return 1
+		printf "$COL_MAGENTA\nThere is no wp-config.php file present $COL_RESET\n\n" && return 1
 	fi
 }
 
@@ -1560,7 +1547,7 @@ function availdir() {
 			break
 		fi	
 		
-		printf "\nSorry, %s is not a valid response. Try again.\n" "$selectDir"
+		printf "$COL_MAGENTA\nSorry, %s is not a valid response. Try again.$COL_RESET\n" "$selectDir"
 	done
 }
 
