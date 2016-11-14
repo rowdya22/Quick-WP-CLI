@@ -1081,10 +1081,19 @@ This will install a mu caching plugin that requires zero configuration.
 After install permalinks are regenerated to activate the caching. Continue? y/n $COL_RESET";
 read cachingSelect && echo ''
 case $cachingSelect in
-        [Yy])       mkdir wp-content/mu-plugins/
-		    wget https://raw.githubusercontent.com/bluehost/endurance-page-cache/production/endurance-page-cache.php -O wp-content/mu-plugins/endurance-page-cache.php; 
-		    wget https://raw.githubusercontent.com/bluehost/endurance-browser-cache/production/endurance-browser-cache.php -O wp-content/mu-plugins/endurance-browser-cache.php; 
-		    wpfix
+        [Yy])       
+		if [ ! -d wp-content/mu-plugins/ ]; then
+		mkdir wp-content/mu-plugins/
+		fi
+		if [ -f wp-content/mu-plugins/endurance-page-cache.php ]; then
+		rm -rf wp-content/mu-plugins/endurance-page-cache.php
+		fi
+		if [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
+                rm -rf wp-content/mu-plugins/endurance-browser-cache.php
+                fi
+		wget https://raw.githubusercontent.com/bluehost/endurance-page-cache/production/endurance-page-cache.php -O wp-content/mu-plugins/endurance-page-cache.php; 
+		wget https://raw.githubusercontent.com/bluehost/endurance-browser-cache/production/endurance-browser-cache.php -O wp-content/mu-plugins/endurance-browser-cache.php; 
+		wpfix
         ;;
         *)          echo -e "$COL_CYAN\rWarning: Caching not installed.$COL_RESET ";;
 esac
@@ -1514,6 +1523,17 @@ wpFiles=(.htaccess index.php license.txt php.ini readme.html wp-* xmlrpc.php)
 	else
 		printf "$COL_MAGENTA\nThere is no wp-config.php file present $COL_RESET\n\n" && return 1
 	fi
+
+echo -e "$COL_GREEN
+Would you like to update the URLs now? y/n"
+read updateURLs && echo ''
+case $updateURLs in
+	[Yy])	cd $migrateDir
+		wpurlUpdate
+	;;
+	*)	echo -e "$COL_CYAN\nWarning:$COL_RESET URLs not updated."
+	;;
+esac
 }
 
 function availdir() {
