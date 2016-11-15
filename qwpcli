@@ -1930,7 +1930,8 @@ WARNING: THIS IS AN ADVANCED MENU. MAKE SURE THAT YOU KNOW WHAT YOU ARE DOING! \
 (5) Revert Changes
 (6) Quick Optimize 
 (7) Install Recommended Plugins (Manual Setup)
-(8) Exit
+(8) Install Endurance Caching (No Configuration Required)
+(9) Exit
 
 \tSelection: \c" ;
 
@@ -1943,7 +1944,8 @@ case $optSelect in
 	5)	wpUndoOpt;;
 	6)	wpQuickOpt;;
 	7)	wpOptPlugInstall;;
-	8)	return;;
+	8)	wpEnduranceCache;;	
+	9)	return;;
 	*)	invalidOption;;
 esac
 }
@@ -2053,8 +2055,7 @@ function wpQuickOpt(){
 wpBackupHtaccess
 wpEnableGzip
 wpEnableExpiredHeaders
-wptransient
-wpdbOpt
+wpEnduranceCache
 }
 
 function wpOptPlugInstall(){
