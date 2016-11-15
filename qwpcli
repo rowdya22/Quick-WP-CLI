@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   14 Nov 2016   #
+# Updated on:   15 Nov 2016   #
 #                             # 
 ###############################
 
@@ -53,7 +53,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 14 Nov 2016
+What would you like to work on?                           $COL_GREEN Updated: 15 Nov 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -96,7 +96,7 @@ clear
 echo -e "$COL_MGREEN
 WordPress Specific:
   $COL_CYAN wpwsod $COL_MGREEN   - Guided Walkthrough to Fix WSOD
-  $COL_CYAN wpfix $COL_MGREEN    - Run Fixes
+  $COL_CYAN wpfix $COL_MGREEN    - Run Fixes (Flush Permalinks/Cache, DB Cleanup)
   $COL_CYAN wpbackup $COL_MGREEN - Backup Files and Database to Folder or tar.gz
   $COL_CYAN wpmigrate $COL_MGREEN- Move WordPress to Another Directory 
   $COL_CYAN dblist $COL_MGREEN   - Lists Database Names and wp-config.php Locations
@@ -106,15 +106,15 @@ WordPress Specific:
   $COL_CYAN wptools $COL_MGREEN  - Show WordPress Tools Functions 
   $COL_CYAN wpdbcheck $COL_MGREEN- PHP Based DB Tests 
   $COL_CYAN wpcheck $COL_MGREEN  - Perl Based Plugin/Theme Check 
-
 Helpful Functions:
   $COL_CYAN fcount $COL_MGREEN   - Lists Number of Files in Current Directory
   $COL_CYAN dirsize $COL_MGREEN  - Sorts Directory Contents by Size
-  
+  $COL_CYAN editini $COL_MGREEN  - Push Common Settings to php.ini 
+  $COL_CYAN editinisr $COL_MGREEN- Search/Replace Values in the php.ini
 Troubleshooting:
   $COL_CYAN mailtest $COL_MGREEN - Checks PHP Mail Function
   $COL_CYAN slowmysql $COL_MGREEN- Displays Slow MySQL Queries
-  
+
 Check out more wpcli commands at $COL_MAGENTA http://wp-cli.org/commands/ $COL_RESET
 "
 }
@@ -1573,6 +1573,72 @@ function availdir() {
 }
 
 ##### END WP MIGRATE #####
+
+function editini(){
+if [ -f php.ini ]; then
+echo -e "$COL_GREEN
+Suggested Values: $COL_RESET
+post_max_size = 64M
+upload_max_filesize = 64M 
+max_input_vars = 2000
+memory_limit = 512M
+max_execution_time = 60
+
+Feel free to suggest changes or additional values
+
+$COL_GREEN\nWould you like to push the following settings to php.ini? (y) or (n)
+"
+read editiniSelect && echo''
+case $editiniSelect in
+	[Yy])	cp php.ini .QWPCLI_php.ini.$NOW
+		echo "php.ini file backup created..."
+		sed -i "s/.*post_max_size\ .*/post_max_size = 64M/" php.ini
+		sed -i "s/.*upload_max_filesize\ .*/upload_max_filesize = 64M/" php.ini
+		sed -i "s/.*max_input_vars\ .*/max_input_vars = 2000/" php.ini
+		sed -i "s/.*memory_limit\ .*/memory_limit = 512M/" php.ini
+		sed -i "s/.*max_execution_time\ .*/max_execution_time = 60/" php.ini
+		echo -e "$COL_GREEN\nSuccess:$COL_RESET php.ini file updated"
+	;;
+	*)	echo -e "$COL_CYAN\nWarning:$COL_RESET no changes were made!"
+	;;
+esac
+
+else
+echo -e "$COL_CYAN\nWarning:$COL_RESET php.ini file does not exit!"
+fi
+}
+
+function editinisr(){
+if [ -f php.ini ]; then
+echo -e "$COL_MAGENTA\nWARNING! This is is a search and replace tool! \nMake sure all spelling is exact prior to submitting changes!$COL_GREEN
+
+What php.ini value would you like to change? (everything before the =)$COL_RESET"
+read search;
+
+echo -e "$COL_GREEN\nWhat value should $search have? (everything after the =)$COL_RESET"
+read replace;
+
+echo -e "$COL_GREEN\nSet $search to $search = $replace? (y) or (n)"
+read editiniSelect && echo ''
+case $editiniSelect in
+	[Yy])	checksearch=$(grep $search php.ini | wc -l)
+		if [ $checksearch = 1 ]; then
+			cp php.ini .QWPCLI_php.ini.$NOW
+			echo "php.ini file backup created..."
+			sed -i "s/.*$search\ .*/$search = $replace/" php.ini
+			echo -e "$COL_GREEN\nSuccess:$COL_RESET $search set to $replace in php.ini"
+		else
+			echo -e "$COL_CYAN\nWarning:$COL_RESET Unable to find $search or multiple values exist! No changes made."
+		fi
+	;;
+	*)	echo -e "$COL_CYAN\nWarning:$COL_RESET no changes were made!"
+	;;
+esac
+
+else
+echo -e "$COL_CYAN\nWarning:$COL_RESET php.ini file does not exit!"
+fi
+}
 
 function wpcolors(){
 echo -e "
