@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   15 Nov 2016   #
+# Updated on:   16 Nov 2016   #
 #                             # 
 ###############################
 
@@ -53,7 +53,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 15 Nov 2016
+What would you like to work on?                           $COL_GREEN Updated: 16 Nov 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -1075,28 +1075,38 @@ esac
 }
 
 function wpEnduranceCache(){
+if [[ ! -f wp-config.php ]]; then echo -e "$COL_CYAN\nWarning:$COL_RESET Could not find wp-config.php! Not installing a WordPress plugin on a non WordPress site!"
+else
 echo -e "$COL_GREEN
 This will install a mu caching plugin that requires zero configuration.
 
-After install permalinks are regenerated to activate the caching. Continue? y/n $COL_RESET";
-read cachingSelect && echo ''
-case $cachingSelect in
-        [Yy])       
-		if [ ! -d wp-content/mu-plugins/ ]; then
-		mkdir wp-content/mu-plugins/
-		fi
-		if [ -f wp-content/mu-plugins/endurance-page-cache.php ]; then
-		rm -rf wp-content/mu-plugins/endurance-page-cache.php
-		fi
-		if [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
-                rm -rf wp-content/mu-plugins/endurance-browser-cache.php
-                fi
-		wget https://raw.githubusercontent.com/bluehost/endurance-page-cache/production/endurance-page-cache.php -O wp-content/mu-plugins/endurance-page-cache.php; 
-		wget https://raw.githubusercontent.com/bluehost/endurance-browser-cache/production/endurance-browser-cache.php -O wp-content/mu-plugins/endurance-browser-cache.php; 
-		wpfix
-        ;;
-        *)          echo -e "$COL_CYAN\rWarning: Caching not installed.$COL_RESET ";;
-esac
+After install permalinks are regenerated to activate the caching. $COL_RESET\n"
+
+secs=$((5 * 1))
+while [ $secs -gt 0 ]; do
+   echo -ne " Beginning install in: $secs\033[0K\r"
+   sleep 1
+   : $((secs--))
+done
+
+if [ ! -d wp-content/mu-plugins/ ]; then
+mkdir wp-content/mu-plugins/
+fi
+if [ -f wp-content/mu-plugins/endurance-page-cache.php ]; then
+rm -rf wp-content/mu-plugins/endurance-page-cache.php
+fi
+if [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
+rm -rf wp-content/mu-plugins/endurance-browser-cache.php
+fi
+wget https://raw.githubusercontent.com/bluehost/endurance-page-cache/production/endurance-page-cache.php -O wp-content/mu-plugins/endurance-page-cache.php; 
+wget https://raw.githubusercontent.com/bluehost/endurance-browser-cache/production/endurance-browser-cache.php -O wp-content/mu-plugins/endurance-browser-cache.php; 
+
+echo -e "$COL_GREEN\nSuccess:$COL_RESET Caching Downloaded/Updated $COL_CYAN
+Warning:$COL_RESET Permalinks will now be flushed..."
+sleep 3
+wpfix
+echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Cache activated"
+fi
 }
 
 ### WSOD Fix ###
