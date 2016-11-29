@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Adams   #
-# Updated on:   21 Nov 2016   #
+# Updated on:   29 Nov 2016   #
 #                             # 
 ###############################
 
@@ -53,7 +53,7 @@ $COL_GREEN \___\_\_,_/_/\__/_/\_\  $COL_GREEN |__/|__/_/       \___/____/___/  $
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 21 Nov 2016
+What would you like to work on?                           $COL_GREEN Updated: 29 Nov 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -64,14 +64,14 @@ What would you like to work on?                           $COL_GREEN Updated: 21
   $COL_CYAN wpuser $COL_MGREEN   - Create User, Set Passwords, Change Roles
   $COL_CYAN wpupdate $COL_MGREEN - Check For or Run Updates, Configure Auto Updates
   $COL_CYAN wpcleanup $COL_MGREEN- Remove All QWPCLI Generated Files
-  $COL_CYAN wpworks $COL_MGREEN  - Install Updates, Optimize DB, Run Fixes
+  $COL_CYAN wpwsod $COL_MGREEN   - Guided Walkthrough to Fix WSOD
   $COL_CYAN wpglobal $COL_MGREEN - Run Commands Across All WordPress Installs (Advanced)
-  $COL_CYAN wpmore $COL_MGREEN   - More Commands (Global Actions,$COL_CYAN WSOD Fix$COL_MGREEN, WP Tools, DB List)
+  $COL_CYAN wpmore $COL_MGREEN   - More Commands (Global Actions, WP Tools, DB List)
 $COL_RESET"
 
 ### WPCLI FUNCTIONALITY CHECK ###
 CHECK=$(wp --skip-plugins --skip-themes core version | wc -l)
-
+#Output should be only one line. If not throw a warning as WP-CLI likely errored.
 if [ $CHECK != '1' ]; then
 echo -e "$COL_MAGENTA 
 WARNING WPCLI CHECK: [FAILED]
@@ -95,7 +95,7 @@ function wpmore(){
 clear
 echo -e "$COL_MGREEN
 WordPress Specific:
-  $COL_CYAN wpwsod $COL_MGREEN   - Guided Walkthrough to Fix WSOD
+  $COL_CYAN wpworks $COL_MGREEN  - Install Updates, Optimize DB, Run Fixes
   $COL_CYAN wpfix $COL_MGREEN    - Run Fixes (Flush Permalinks/Cache, DB Cleanup)
   $COL_CYAN wpbackup $COL_MGREEN - Backup Files and Database to Folder or tar.gz
   $COL_CYAN wpmigrate $COL_MGREEN- Move WordPress to Another Directory 
@@ -160,8 +160,7 @@ esac
 }
 ### Database Menu ###
 function wpdb() {
-###Get the info from the wp-config file
-
+#Grab info from the wp globals
 dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
 dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
 dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
@@ -341,8 +340,7 @@ esac
 
 ### SHOW GENERAL WORDPRESS INFORMATION ###
 function wpstats(){
-###Get the info from the wp-config file
-
+#Get info from the wp globals
 dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
 dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
 dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
@@ -376,11 +374,25 @@ fi
 wp --skip-plugins eval 'echo "Eval Plugins:   [OK]\n";'
 wp --skip-themes eval 'echo "Eval Themes:    [OK]\n";'
 
-echo -e "\n$COL_GREEN\rWP Version:    $COL_CYAN" `cat wp-includes/version.php | grep "wp_version " | sed "s/.*'\(.*\)'.*/\1/"`
-echo -e "$COL_GREEN\rSite URL:     $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'siteurl'"`|sed "s/option_value//" 
-echo -e "$COL_GREEN\rHome URL:     $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'home'"`|sed "s/option_value//" 
-echo -e "$COL_GREEN\rStylesheet:   $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'stylesheet'"`|sed "s/option_value//" 
-echo -e "$COL_GREEN\rTemplate:     $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'template'"`|sed "s/option_value//" 
+#Alternate using MySQL incase there are issues with WPCLI`
+#echo -e "\n$COL_GREEN\rWP Version:    $COL_CYAN" `cat wp-includes/version.php | grep "wp_version " | sed "s/.*'\(.*\)'.*/\1/"`
+#echo -e "$COL_GREEN\rSite URL:     $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'siteurl'"`|sed "s/option_value//" 
+#echo -e "$COL_GREEN\rHome URL:     $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'home'"`|sed "s/option_value//" 
+#echo -e "$COL_GREEN\rStylesheet:   $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'stylesheet'"`|sed "s/option_value//" 
+#echo -e "$COL_GREEN\rTemplate:     $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'template'"`|sed "s/option_value//" 
+
+wpver=$(wp --skip-plugins --skip-themes core version)
+wpsiteurl=$(wp --skip-plugins --skip-themes option get siteurl)
+wphome=$(wp --skip-plugins --skip-themes option get home)
+wpstyle=$(wp --skip-plugins --skip-themes option get stylesheet)
+wptemplate=$(wp --skip-plugins --skip-themes option get template)
+
+echo -e "\n$COL_GREEN\rWP Version:    $COL_CYAN $wpver"
+echo -e "$COL_GREEN\rSite URL:      $COL_CYAN $wpsiteurl" 
+echo -e "$COL_GREEN\rHome URL:      $COL_CYAN $wphome"
+echo -e "$COL_GREEN\rStylesheet:    $COL_CYAN $wpstyle"
+echo -e "$COL_GREEN\rTemplate:      $COL_CYAN $wptemplate"
+
 echo -e "$COL_GREEN"
 
 ###START DB CONNECTION TEST
@@ -472,7 +484,7 @@ if [ -f .htaccess ]; then cp .htaccess .QWPCLI_htaccess.$NOW
 echo -e "$COL_GREEN
 Current .htaccess renamed to .QWPCLI_htaccess.$NOW $COL_RESET"
 fi
-
+#Check if wp-cli.yml (required file) exists, if not create it
 if [ ! -f wp-cli.yml ]; then echo -e "apache_modules:\n\t - mod_rewrite" > wp-cli.yml
 fi
 wp --skip-plugins --skip-themes rewrite structure $(wp --skip-plugins --skip-themes option get permalink_structure)
@@ -522,8 +534,8 @@ ACTIVEPLUGINS=$(<.QWPCLI_ACTIVEPLUGINS.txt awk '$1=="Success:" {print $3}' | tr 
 # '
 wp --skip-plugins --skip-themes plugin activate $ACTIVEPLUGINS
 
-echo -e "$COL_GREEN\rAttemped plugin reactivation. If errors exist review .QWPCLI_ACTIVEPLUGINS.txt and activate manually. $COL_RESET"
-
+echo -e "$COL_GREEN\rAttempted plugin reactivation. If errors exist review .QWPCLI_ACTIVEPLUGINS.txt and activate manually. $COL_RESET"
+#Automatically remove generated files when session ends
 remove_plug_file () { gcmd rm -rf .QWPCLI_ACTIVEPLUGINS.txt; }
 trap remove_plug_file EXIT
 
@@ -617,7 +629,7 @@ $COL_RESET"
 
 ### CREATE TEMP USER HOSTADMIN ###
 function wpUserCreate(){
-# pass=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#$%^&*_+,./?' | fold -w 10| head -n 1)
+#Alternate password generation  pass=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#$%^&*_+,./?' | fold -w 10| head -n 1)
 URL=$(wp --skip-plugins --skip-themes option get siteurl)
 NEWPASS="$(wp --skip-plugins --skip-themes user create HostAdmin HostAdmin@example.com --role=administrator | tail -1 | awk -F ':' '{ print $2 }')"
 
@@ -628,7 +640,7 @@ $URL/wp-admin/
 
 UN:$COL_MAGENTA HostAdmin$COL_RESET
 PW:$COL_MAGENTA$NEWPASS $COL_RESET\n"
-
+#create cleanup job to remove created user globally
 remove_temp_user () { gcmd wpuserr; }
 trap remove_temp_user EXIT
 }
@@ -639,7 +651,7 @@ wp --skip-plugins --skip-themes user delete HostAdmin --yes
 }
 ### CHANGE USER PASSWORDS ###
 function wpChangePass() {
-
+#Get info from wp globals
 dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
 dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
 dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
@@ -651,8 +663,10 @@ wp --skip-plugins --skip-themes user list --role=administrator --fields=ID,user_
 echo -e "$COL_RESET
 User ID: "; read USERID
 echo -e "New Password: "; read NEWPASS
+###WPCLI Method
 # wp --skip-plugins --skip-themes user update $USERID --user_pass=$NEWPASS
 # wp --skip-plugins --skip-themes db query "UPDATE "$dbprefix"users SET user_pass = MD5('$NEWPASS') WHERE ID = $USERID;"
+###MySQL Method - Use MySQL as it is more reliable in this case
 mysql -u $dbuser -p$dbpass -D $dbname -e "UPDATE "$dbprefix"users SET user_pass = MD5('$NEWPASS') WHERE ID = $USERID;"
 
 echo -e "\n$COL_GREEN\rSuccess:$COL_RESET Password reset using MySQL\n" 
@@ -764,7 +778,6 @@ echo -e "$COL_GREEN\rSuccess:$COL_RESET Updated user_login and display_name.\n"
 
 wp --skip-plugins --skip-themes user list --fields=ID,user_login,display_name
 }
-
 ##### END WPUSER COMMANDS #####
 ##### WPUPDATE COMMANDS #####
 
@@ -1066,7 +1079,7 @@ case $brandSelect in
 esac
 
 echo -e "$COL_GREEN
-Enable Comming Soon page? y/n $COL_RESET";
+Enable Coming Soon page? y/n $COL_RESET";
 read comingSoonSelect && echo ''
 case $comingSoonSelect in
         [Yy])       wp --skip-plugins --skip-themes option set mm_coming_soon true;;
@@ -1443,7 +1456,7 @@ function rmorphanmeta(){
 dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
 wp --skip-plugins --skip-themes db query "DELETE pm FROM ${dbprefix}postmeta pm LEFT JOIN ${dbprefix}posts wp ON wp.ID = pm.post_id WHERE wp.ID IS NULL";
 
-echo -e "$COL_GREEN\rSuccess:$COL_RESET Orphanded post_meta data removed using MySQL" 
+echo -e "$COL_GREEN\rSuccess:$COL_RESET Orphaned post_meta data removed using MySQL" 
 }
 
 function wpdbcheck(){
