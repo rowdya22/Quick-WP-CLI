@@ -147,7 +147,7 @@ wptheme - List, Change, Update, Install
 wpurl - List and Change URLs
 ----------------------------
 
-    Site URL: http://radams.bluehoststaff.com/wptest
+    Site URL:
     
     URL Options:
     (1) Change URLs
