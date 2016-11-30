@@ -196,7 +196,7 @@ wpglobal - Run Commands Across All WordPress Installs (Advanced)
 
        _______     __        __  ___      __  _                
       / ___/ /__  / /  ___ _/ / / _ |____/ /_(_)__  ___  ___    Fixing WordPress   
-     / (_ / / _ \/ _ \/ _  / / / __ / __/ __/ / _ \/ _ \(_-<        Faster! 
+     / (_ / / _ \/ _ \/ _  / / / __ / __/ __/ / _ \/ _ \(_-<         Faster! 
      \___/_/\___/_.__/\_,_/_/ /_/ |_\__/\__/_/\___/_//_/___/    Dev: Rowdy Adams 
     
     What global actions would you like to take? 
@@ -249,7 +249,7 @@ WP Tools
 
       _      _____    ______          __  
      | | /| / / _ \  /_  __/__  ___  / /__                      Fixing WordPress   
-     | |/ |/ / ___/   / / / _ \/ _ \/ (_-<                          Faster! 
+     | |/ |/ / ___/   / / / _ \/ _ \/ (_-<                           Faster! 
      |__/|__/_/      /_/  \___/\___/_/___/                      Dev: Rowdy Adams 
     
     This menu allows you to tap into the power of WordPress Tools. To skip the menu,
@@ -266,7 +266,7 @@ WP Install
 
       _      _____    ____           __         __ __   
      | | /| / / _ \  /  _/___   ___ / /_ ___ _ / // /           Fixing WordPress 
-     | |/ |/ / ___/ _/ / / _ \ (_-</ __// _ `// // /               Faster!  
+     | |/ |/ / ___/ _/ / / _ \ (_-</ __// _ `// // /                 Faster!  
      |__/|__/_/    /___//_//_//___/\__/ \_,_//_//_/             Dev: Rowdy Adams 
     
     This setup will guide you through a manual WordPress install.
