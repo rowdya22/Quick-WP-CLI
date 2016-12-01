@@ -411,7 +411,7 @@ echo -e "Database Pass: $COL_CYAN $dbpass $COL_GREEN"
 echo -e "Database Host: $COL_CYAN $dbhost $COL_GREEN"
 echo -e "Database Name: $COL_CYAN $dbname $COL_GREEN"
 echo -e "Database Prfx: $COL_CYAN $dbprefix $COL_GREEN"
-echo -e " "
+echo -e "$COL_RESET\t\t\t $(grep AddHandler .htaccess) $COL_GREEN"
 
 echo -e "Core Updates:  $COL_CYAN $CORE $COL_RESET \t $(php -i 2>/dev/null | grep memory_limit | sed 's/<[^>]*>/ /g') $COL_GREEN"
 echo -e "Plugin Updates:$COL_CYAN $PLUGIN $COL_RESET \t $(php -i 2>/dev/null | grep post_max_size | sed 's/<[^>]*>/ /g') $COL_GREEN"
