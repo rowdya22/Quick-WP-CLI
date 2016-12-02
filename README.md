@@ -26,9 +26,9 @@ qwpcli - Main Menu
 ------------------
 
         ___       _     __     _      _____      _______   ____
-      / __ \__ __(_)___/ /__  | | /| / / _ \____/ ___/ /  /  _/  Fixing WordPress 
-     / /_/ / // / / __/  '_/  | |/ |/ / ___/___/ /__/ /___/ /         Faster!   
-     \___\_\_,_/_/\__/_/\_\   |__/|__/_/       \___/____/___/    Dev: Rowdy Adams 
+      / __ \__ __(_)___/ /__  | | /| / / _ \____/ ___/ /  /  _/  
+     / /_/ / // / / __/  '_/  | |/ |/ / ___/___/ /__/ /___/ /   
+     \___\_\_,_/_/\__/_/\_\   |__/|__/_/       \___/____/___/     
     
     What would you like added to QWPCLI? Let me know! https://github.com/rowdya22
     Type qwpcli to return to this menu:
@@ -195,9 +195,9 @@ wpglobal - Run Commands Across All WordPress Installs (Advanced)
 ----------------------------------------------------------------
 
        _______     __        __  ___      __  _                
-      / ___/ /__  / /  ___ _/ / / _ |____/ /_(_)__  ___  ___    Fixing WordPress   
-     / (_ / / _ \/ _ \/ _  / / / __ / __/ __/ / _ \/ _ \(_-<         Faster! 
-     \___/_/\___/_.__/\_,_/_/ /_/ |_\__/\__/_/\___/_//_/___/    Dev: Rowdy Adams 
+      / ___/ /__  / /  ___ _/ / / _ |____/ /_(_)__  ___  ___        
+     / (_ / / _ \/ _ \/ _  / / / __ / __/ __/ / _ \/ _ \(_-<          
+     \___/_/\___/_.__/\_,_/_/ /_/ |_\__/\__/_/\___/_//_/___/    
     
     What global actions would you like to take? 
     
@@ -248,9 +248,9 @@ WP Tools
 --------
 
       _      _____    ______          __  
-     | | /| / / _ \  /_  __/__  ___  / /__                      Fixing WordPress   
-     | |/ |/ / ___/   / / / _ \/ _ \/ (_-<                           Faster! 
-     |__/|__/_/      /_/  \___/\___/_/___/                      Dev: Rowdy Adams 
+     | | /| / / _ \  /_  __/__  ___  / /__                    
+     | |/ |/ / ___/   / / / _ \/ _ \/ (_-<                       
+     |__/|__/_/      /_/  \___/\___/_/___/                     
     
     This menu allows you to tap into the power of WordPress Tools. To skip the menu,
     type wptools and press tab twice to view options. All actions viewable in the 
@@ -265,9 +265,9 @@ WP Install
 ----------
 
       _      _____    ____           __         __ __   
-     | | /| / / _ \  /  _/___   ___ / /_ ___ _ / // /           Fixing WordPress 
-     | |/ |/ / ___/ _/ / / _ \ (_-</ __// _ `// // /                 Faster!  
-     |__/|__/_/    /___//_//_//___/\__/ \_,_//_//_/             Dev: Rowdy Adams 
+     | | /| / / _ \  /  _/___   ___ / /_ ___ _ / // /    
+     | |/ |/ / ___/ _/ / / _ \ (_-</ __// _ `// // /     
+     |__/|__/_/    /___//_//_//___/\__/ \_,_//_//_/      
     
     This setup will guide you through a manual WordPress install.
     
