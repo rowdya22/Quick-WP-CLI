@@ -1,3 +1,6 @@
+WARNING: THE CREATOR(S) OF THIS SCRIPT ARE NOT LIABLE FOR DAMAGES OF ANY KIND. IF YOU DO NOT KNOW WHAT YOU ARE DOING, DON'T DO IT.
+
+
 DEPENDENCIES
 ------------
  1. [Quick WP-CLI requires WP-CLI to be installed in order to function](http://wp-cli.org/)
