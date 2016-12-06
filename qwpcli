@@ -582,13 +582,13 @@ wp --skip-plugins --skip-themes theme activate $THEME
 }
 ### INSTALL & ACTIVATE DEFAULT THEME ###
 function wpThemeDefault(){
-wp --skip-plugins --skip-themes theme install twentysixteen --force --activate
+wp --skip-plugins --skip-themes theme install twentyseventeen --force --activate
 }
 ### INSTALL THEMES ###
 function wpThemeInstall() {
 echo -e "$COL_GREEN
 Recommended Themes:
-   twentysixteen
+   twentyseventeen
    hueman
    evolve
    customizr
