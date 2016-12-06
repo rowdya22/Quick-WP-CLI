@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Wapuu   #
-# Updated on:   01 Dec 2016   #
+# Updated on:   06 Dec 2016   #
 #                             # 
 ###############################
 
@@ -58,7 +58,7 @@ $COL_WHITE \___\_\_,_/_/\__/_/\_\  $COL_WHITE |__/|__/_/       \___/____/___/
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_WHITE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 01 Dec 2016
+What would you like to work on?                           $COL_GREEN Updated: 06 Dec 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -1088,7 +1088,7 @@ Enable Coming Soon page? y/n $COL_RESET";
 read comingSoonSelect && echo ''
 case $comingSoonSelect in
         [Yy])       wp --skip-plugins --skip-themes option set mm_coming_soon true;;
-        *)          echo -e "$COL_GREEN\rNotice: Coming Soon page inactive.$COL_RESET ";;
+        *)          wp --skip-plugins --skip-themes option set mm_coming_soon false; echo -e "$COL_GREEN\rNotice: Coming Soon page inactive.$COL_RESET ";;
 esac
 }
 
@@ -1136,7 +1136,7 @@ dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
 dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
 
 # THEMENAME=$(echo -e "" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'stylesheet'"`|sed "s/option_value//")
-THEMENAME=$(wp --skip-plugins --skip-themes option get sytelsheet)
+THEMENAME=$(wp --skip-plugins --skip-themes option get stylesheet)
 ### OPTION TO BACKUP ###
 echo -e "\nWould you like to make a backup? (Does not include wp-content) (y) or (n): \c"; read input;
 if [ $input == 'y' ]; then 
@@ -1483,10 +1483,6 @@ find -maxdepth 1 -mtime -10 -type f -iname "error_log*" -print0 | xargs -0 tail
 }
 
 ##### WP MIGRATE #####
-# Title: Adapted from WordPress Swiss Knife
-# Original Author: Chad D.
-# ==============================================================================
-
 # Constants
 # wpFiles=(.htaccess index.php license.txt readme.html wp-activate.php wp-admin wp-blog-header.php wp-comments-post.php wp-config.php wp-content wp-cron.php wp-includes wp-links-opml.php wp-load.php wp-login.php wp-mail.php wp-settings.php wp-signup.php wp-trackback.php wp-cli.yml xmlrpc.php)
 
