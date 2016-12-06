@@ -40,7 +40,7 @@ COL_ORANGE=$ESC_SEQ"38;5;208;01m"
 COL_CHERRY=$ESC_SEQ"38;5;124;01m"
 COL_FORREST=$ESC_SEQ"38;5;22;01m"
 COL_WHITE=$ESC_SEQ"38;5;231;01m"
-# echo -e "\x1b[38;5;92;01m TEXT  \x1b[39;49;00m"
+#echo -e "\x1b[38;5;92;01m TEXT  \x1b[39;49;00m"
 
 function now() {
 date -u +"%Y%m%d-%H%M%S"
