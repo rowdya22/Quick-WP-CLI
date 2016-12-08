@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Wapuu   #
-# Updated on:   08 Dec 2016   #
+# Updated on:   08 Dec 7016   #
 #                             # 
 ###############################
 
@@ -258,7 +258,7 @@ read themeSelect && echo ''
 case $themeSelect in
 	1)	wpThemeList;; #List available themes
 	2)	wpThemeActivate;; #Activate theme from list
-	3)	wpThemeDefault;; #Install and activate 2016 theme
+	3)	wpThemeDefault;; #Install and activate 2017 theme
 	4)	wpThemeInstall;; #Install theme by slug
 	5)	return;;
 	*)	invalidOption;;
@@ -665,12 +665,11 @@ echo -e "$COL_RESET
 User ID: "; read USERID
 echo -e "New Password: "; read NEWPASS
 ###WPCLI Method
-# wp --skip-plugins --skip-themes user update $USERID --user_pass=$NEWPASS
+wp --skip-plugins --skip-themes user update $USERID --user_pass=$NEWPASS
+###ALTERNATE METHOD
 # wp --skip-plugins --skip-themes db query "UPDATE "$dbprefix"users SET user_pass = MD5('$NEWPASS') WHERE ID = $USERID;"
-###MySQL Method - Use MySQL as it is more reliable in this case
-mysql -u $dbuser -p$dbpass -D $dbname -e "UPDATE "$dbprefix"users SET user_pass = MD5('$NEWPASS') WHERE ID = $USERID;"
-
-echo -e "\n$COL_GREEN\rSuccess:$COL_RESET Password reset using MySQL\n" 
+#mysql -u $dbuser -p$dbpass -D $dbname -e "UPDATE "$dbprefix"users SET user_pass = MD5('$NEWPASS') WHERE ID = $USERID;"
+#echo -e "\n$COL_GREEN\rSuccess:$COL_RESET Password reset using MySQL\n" 
 }
 
 function emailPassReset(){
@@ -1131,7 +1130,6 @@ dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ;
 dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
 dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
 
-# THEMENAME=$(echo -e "" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'stylesheet'"`|sed "s/option_value//")
 THEMENAME=$(wp --skip-plugins --skip-themes option get stylesheet)
 ### OPTION TO BACKUP ###
 echo -e "\nWould you like to make a backup? (Does not include wp-content) (y) or (n): \c"; read input;
@@ -1149,10 +1147,8 @@ case $wsodSelect in
 	[Yy]*)
 		wpPluginActivate
 		# TAIL ERROR LOG AND WPCHECK PLUGINS #
-		# Downloadwpcheck
 		echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 		errl1
-		#perl troubleshoot.pl --plugins --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 		echo -e "\nLooks like it was a Plugin issue. \nCheck the error_log to see if you can narrow down the cause."
 	;;
 	
@@ -1165,10 +1161,8 @@ case $wsodSelect in
 				wp --skip-plugins --skip-themes theme activate $THEMENAME
 				wpPluginActivate
 				# WPCHECK ALL AND TAIL ERROR LOG #
-				# Downloadwpcheck
 				echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 				errl1
-				#perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 				echo -e "\nCould be a Theme or Plugin issue. \nCheck the error_log to see if you can narrow down the cause." 
 			;;
 				
@@ -1182,10 +1176,8 @@ case $wsodSelect in
 					wp --skip-plugins --skip-themes theme activate $THEMENAME
 					wpPluginActivate
 					# WPCHECK ALL AND TAIL ERROR LOG #
-					# Downloadwpcheck
 					echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 					errl1
-					#perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 					echo -e "\nPlugins and Theme reactivated. \nCheck the error_log to see if you can narrow down the cause."
 				;;
 		
@@ -1199,19 +1191,15 @@ case $wsodSelect in
 						wp --skip-plugins --skip-themes theme activate $THEMENAME
 						wpPluginActivate
 						# WPCHECK ALL AND TAIL ERROR LOG #
-						# Downloadwpcheck
 						echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 						errl1
-						#perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 						echo -e "\nPlugins and Theme reactivated. \nCheck the error_log to see if you can narrow down the cause."
 					;;
 			
 					### ADDITIONAL CHECKS ###
 					[Nn]*) 
-						# Downloadwpcheck
 						echo -e "$COL_GREEN\nRecent Error Logs: $COL_RESET"
 						errl1
-						#perl troubleshoot.pl --all --wp_cli="/usr/php/54/usr/bin/php-cli -c /etc/wp-cli/php.ini /usr/local/bin/wp"
 						echo -e "\nResave the PHP Config and if that fails, seek additional assistance. $COL_RESET"
 					echo -e "\nRevert site back to original state? (Reset Plugins and Theme) y/n/q \c"
 					read wsodSelect && echo ''
@@ -1253,32 +1241,6 @@ If done run$COL_CYAN wpcleanup$COL_RESET to remove all QWPCLI files.
 "
 }
 
-### RESTORE FILES WITH RSYNC ###
-function restore (){
-
-echo -e "
-What backup would you like to restore FILES from?
-NOTE: Files are restored from/to your current working directory.
-
-$COL_MAGENTA\rYou are currently in $(dirs) $COL_RESET
-
-(1) Daily
-(2) Weekly
-(3) Monthly
-(4) Exit
-
-\tSelection: \c"  
-
-read var && echo ''
-case $var in
-        1) echo -e "Please run: $COL_CYAN \nrsync -auvxh ~/../$(whoami).daily$(dirs | cut -c 2-)/ $(dirs)/ $COL_RESET";;
-        2) echo -e "Please run: $COL_CYAN \nrsync -auvxh ~/../$(whoami).weekly$(dirs | cut -c 2-)/ $(dirs)/ $COL_RESET";;
-        3) echo -e "Please run: $COL_CYAN \nrsync -auvxh ~/../$(whoami).monthly$(dirs | cut -c 2-)/ $(dirs)/ $COL_RESET";;
-        4) return;;
-        *) invalidOption;;
-esac
-}
-
 ### Disable Auto Updates ###
 function wpAutoUpdate(){
 echo -e "core\nplugins\nthemes" > .automatic_updates_disabled
@@ -1297,7 +1259,6 @@ echo ""
 
 function wpOverhall(){
 wpReplaceCore
-wp --skip-plugins --skip-themes core update-db
 wpRewriteFlush
 wp --skip-plugins --skip-themes transient delete-expired
 wp --skip-plugins --skip-themes cache flush
@@ -1392,11 +1353,6 @@ echo -e "$COL_MAGENTA
 Now disabling user registration, comments, and pingpacks... $COL_RESET"
 sleep 2
 
-#wp --skip-plugins --skip-themes db query "UPDATE $(grep table_prefix wp-config.php | cut -d\' -f2)options SET option_value = '0' WHERE option_name = 'users_can_register';"
-#wp --skip-plugins --skip-themes db query "UPDATE $(grep table_prefix wp-config.php | cut -d\' -f2)options SET option_value='closed' WHERE option_name='default_comment_status';"
-#wp --skip-plugins --skip-themes db query "UPDATE $(grep table_prefix wp-config.php | cut -d\' -f2)options SET option_value='closed' WHERE option_name='default_ping_status'; "
-#wp --skip-plugins --skip-themes db query "UPDATE $(grep table_prefix wp-config.php | cut -d\' -f2)options SET option_value='0' WHERE option_name='default_pingback_flag'; "
-#wp --skip-plugins --skip-themes db query "UPDATE $(grep table_prefix wp-config.php | cut -d\' -f2)options SET option_value='1' WHERE option_name='comment_moderation'; "
 wp --skip-plugins --skip-themes option set default_comment_status closed
 wp --skip-plugins --skip-themes option set default_ping_status closed
 wp --skip-plugins --skip-themes option set default_pingback_flag 0
