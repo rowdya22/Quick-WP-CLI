@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Wapuu   #
-# Updated on:   09 Dec 7016   #
+# Updated on:   14 Dec 7016   #
 #                             # 
 ###############################
 
@@ -58,7 +58,7 @@ $COL_WHITE \___\_\_,_/_/\__/_/\_\  $COL_WHITE |__/|__/_/       \___/____/___/
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_WHITE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 09 Dec 2016
+What would you like to work on?                           $COL_GREEN Updated: 14 Dec 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -68,7 +68,7 @@ What would you like to work on?                           $COL_GREEN Updated: 09
   $COL_CYAN wpurl $COL_MGREEN    - List and Change URLs
   $COL_CYAN wpuser $COL_MGREEN   - Create User, Set Passwords, Change Roles
   $COL_CYAN wpupdate $COL_MGREEN - Check For or Run Updates, Configure Auto Updates
-  $COL_CYAN wpcleanup $COL_MGREEN- Remove All QWPCLI Generated Files
+  $COL_CYAN wpconfig $COL_MGREEN - Configure Multiple Settings at Once
   $COL_CYAN wpwsod $COL_MGREEN   - Guided Walkthrough to Fix WSOD
   $COL_CYAN wpglobal $COL_MGREEN - Run Commands Across All WordPress Installs (Advanced)
   $COL_CYAN wpmore $COL_MGREEN   - More Commands (Global Actions, WP Tools, DB List)
@@ -110,7 +110,8 @@ WordPress Specific:
   $COL_CYAN wpinstall $COL_MGREEN- Install WordPress From Scratch 
   $COL_CYAN wptools $COL_MGREEN  - Show WordPress Tools Functions 
   $COL_CYAN wpdbcheck $COL_MGREEN- PHP Based DB Tests 
-  $COL_CYAN wpcheck $COL_MGREEN  - Perl Based Plugin/Theme Check 
+  $COL_CYAN wpcheck $COL_MGREEN  - Perl Based Plugin/Theme Check
+  $COL_CYAN wpcleanup $COL_MGREEN- Remove All QWPCLI Generated Files 
 Helpful Functions:
   $COL_CYAN fcount $COL_MGREEN   - Lists Number of Files in Current Directory
   $COL_CYAN dirsize $COL_MGREEN  - Sorts Directory Contents by Size
@@ -2395,4 +2396,102 @@ case $modSelect in
 	[Nn]*) echo -e "WP-CLI Installed and Aliased\n";;
 	*)	invalidOption;;
 esac 
+}
+
+###COMMAND MENU###
+function wpconfig(){
+#Does user know what their are doing?
+dialog --title 'BETA TEST' --yesno 'This is an advanced menu. Do you wish to continue?' 6 30
+response=$?
+#response=0
+if [[ "$response" == '0' ]];then
+
+#COLLECT FEEDBACK
+dialog --title 'NOTE' --msgbox 'If you know of a function or customization you would want added let me know!' 7 30 
+
+#Config Options --checklist text height width list-height
+cmd=(dialog --title 'Which features would you like to edit?' --separate-output --checklist "Select options:" 22 76 10)
+options=(1 "Toggle Comments" off    # any option can be set to default to "on"
+         2 "Toggle User Registration" off
+         3 "Enable/Update Endurance Caching" off
+         4 "Install/Update Mojo Plugin" off
+	 5 "Update Core/Plugins/Themes/Disable" off
+	 6 "Optimize/Repair DB" off
+	 7 "Adjust Posts Per Page" off
+	 8 "Update PHP Version" off
+	 9 "Edit php.ini" off
+	 10 "Speed Test" off
+	 11 "Backup Files & DB" off
+	)
+choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+clear
+for choice in $choices
+do
+    case $choice in
+        1) echo -e "\n$COL_BLUE----- Toggle Comments -----$COL_RESET"
+		echo -e "$COL_GREEN\rTurn Comments for future posts ON or OFF?\n1) ON\n2) OFF\n3) Disable Comments on ALL Content\n4) Exit\n $COL_RESET" ; read select;
+                case $select in
+                        1) wp --skip-plugins --skip-themes option update default_comment_status open
+                        ;;
+                        2) wp --skip-plugins --skip-themes option update default_comment_status closed
+	                ;;
+			3) dbprefix=$(wp --skip-plugins --skip-themes eval "global $wpdb;echo $wpdb->prefix;")
+			   wp --skip-plugins --skip-themes option update default_comment_status closed
+			   wp -skip-plugins --skip-themes db query "UPDATE ${dbprefix}posts SET comment_status='closed';"
+			;;
+			4) echo -e "$COL_MAGENTA\nWarning:$COL_RESET Operation Canceled!"
+			;;
+                        *) invalidOption;;
+                esac
+        ;;
+	2) echo -e "\n$COL_BLUE----- Toggle User Registration -----$COL_RESET"
+		echo -e "$COL_GREEN\rTurn user registration ON or OFF?\n1) ON\n2) OFF\n3) Exit\n $COL_RESET" ; read select;
+		case $select in
+			1) wp --skip-plugins --skip-themes option update users_can_register 1
+			;;
+			2) wp --skip-plugins --skip-themes option update users_can_register 0
+			;;
+                        3) echo -e "$COL_MAGENTA\nWarning:$COL_RESET Operation Canceled!"
+                        ;;
+			*) invalidOption;;
+		esac
+	;;
+        3) echo -e "\n$COL_BLUE----- Enable/Update Endurance Caching -----$COL_RESET"
+		wpEnduranceCache
+	;;
+        4) echo -e "\n$COL_BLUE----- Install/Update Mojo Plugin -----$COL_RESET"
+		wpMojoInstall
+	;;
+        5) echo -e "\n$COL_BLUE----- Update Core/Plugins/Themes/Disable -----$COL_RESET"
+		wpupdate
+	;;
+        6) echo -e "\n$COL_BLUE----- Optimize/Repair DB -----$COL_RESET"
+		wpfix
+	;;
+        7) echo -e "\n$COL_BLUE----- Adjust Posts Per Page -----$COL_RESET"
+		echo -e "$COL_GREEN\rSet value for posts per page$COL_MAGENTA (numeric value only!)$COL_RESET\nPosts Per Page: "; read NUM
+		wp option update posts_per_page $NUM
+	;;
+        8) echo -e "\n$COL_BLUE----- Update PHP Version -----$COL_RESET"
+		#Prompt for version and run silently
+		#. <(curl -sS https://raw.githubusercontent.com/rowdya22/phpver/master/phpver)
+	;;
+        9) echo -e "\n$COL_BLUE----- Edit php.ini -----$COL_RESET"
+		editini
+	;;
+        10) echo -e "\n$COL_BLUE----- Speed Test -----$COL_RESET"
+          	echo "Speed Test Comming Soon!"
+	;;        
+	11) echo -e "\n$COL_BLUE----- Backup Files & DB -----$COL_RESET"
+		wpbackup
+	;;
+        *) echo "Soemthing Weird Happened"
+	;;
+    esac
+done
+#Exit if NO is Selected
+else
+echo -e "$COL_MAGENTA
+Warning:$COL_RESET Config Canceled!"
+fi
 }
