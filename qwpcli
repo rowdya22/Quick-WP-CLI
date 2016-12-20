@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Wapuu   #
-# Updated on:   14 Dec 7016   #
+# Updated on:   20 Dec 7016   #
 #                             # 
 ###############################
 
@@ -58,7 +58,7 @@ $COL_WHITE \___\_\_,_/_/\__/_/\_\  $COL_WHITE |__/|__/_/       \___/____/___/
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_WHITE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 14 Dec 2016
+What would you like to work on?                           $COL_GREEN Updated: 20 Dec 2016
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -1086,6 +1086,7 @@ case $comingSoonSelect in
         [Yy])       wp --skip-plugins --skip-themes option set mm_coming_soon true;;
         *)          wp --skip-plugins --skip-themes option set mm_coming_soon false; echo -e "$COL_GREEN\rNotice: Coming Soon page inactive.$COL_RESET ";;
 esac
+wp --skip-plugins --skip-themes option set jpo_firstrun 1
 }
 
 function wpEnduranceCache(){
@@ -1622,6 +1623,23 @@ esac
 else
 echo -e "$COL_CYAN\nWarning:$COL_RESET php.ini file does not exit!"
 fi
+}
+
+function wpdebug(){
+echo -e "$COL_GREEN
+WP_DEBUG is currently set to $debugval What would you like to set it to?
+
+"
+read debugSelect && echo ''
+case $debugSelect in
+	1) 
+	;;
+	2)
+	;;
+	3)
+	;;
+	*) invalidOption ;;
+esac
 }
 
 function wpcolors(){
