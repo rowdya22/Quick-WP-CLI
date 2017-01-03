@@ -1643,7 +1643,7 @@ function wpConfigEdit(){
         echo -e "$COL_GREEN\nOverwrite? (y) or (n) $COL_RESET"
         read configSelect && echo ''
                 case $configSelect in
-                [Yy])   sed -i "s/.*$search\ .*/$search = $insert/" $file
+                [Yy])   sed -i "s/.*$search.*/$insert/" $file
                         echo -e "$COL_GREEN\nSuccess:$COL_RESET $search set to $insert in $file"
                 ;;
                 *)      echo -e "$COL_CYAN\nWarning:$COL_RESET No changes made."
@@ -1683,7 +1683,7 @@ do
 
 Set what value (in seconds) for$COL_CYAN AUTOSAVE_INTERVAL$COL_RESET?"
 	read VALUE;
-
+	#CHECK FOR CORRECT ENTRY
 	search="'AUTOSAVE_INTERVAL'"
         wpConfigEdit
 	;;
@@ -1716,10 +1716,17 @@ Set what value (as URL) for$COL_CYAN NOBLOGREDIRECT$COL_RESET?"
 	wpConfigEdit
 	;;
 	5) echo -e "\n$COL_BLUE----- WP_AUTO_UPDATE_CORE -----$COL_RESET"
-	   echo -e "The easiest way to manipulate core updates is with the WP_AUTO_UPDATE_CORE constant.$COL_CYAN\ntrue$COL_RESET - Enable all core updates, including minor and major $COL_CYAN\nfalse$COL_RESET - Disable all core updates $COL_CYAN\n'minor'$COL_RESET - Enable core updates for minor releases (default)
+	   echo -e "The easiest way to manipulate core updates is with the WP_AUTO_UPDATE_CORE constant.$COL_CYAN\ntrue$COL_RESET - Enable all core updates, including minor and major $COL_CYAN\nfalse$COL_RESET - Disable all core updates $COL_CYAN\nminor$COL_RESET - Enable core updates for minor releases (default)
 
-Set what value (true/false/'minor') for$COL_CYAN WP_AUTO_UPDATE_CORE$COL_RESET?"
-	read VALUE;
+Set what value (true/false/minor) for$COL_CYAN WP_AUTO_UPDATE_CORE$COL_RESET?"
+	read foo;
+	if [ $foo == 'minor' ]; then
+	echo "its minor"
+	VALUE="'$foo'"
+	else
+	echo "nope"
+	VALUE="$foo"
+	fi	
 
 	search="'WP_AUTO_UPDATE_CORE'"
 	wpConfigEdit
