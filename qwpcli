@@ -1716,9 +1716,9 @@ Set what value (as URL) for$COL_CYAN NOBLOGREDIRECT$COL_RESET?"
 	wpConfigEdit
 	;;
 	5) echo -e "\n$COL_BLUE----- WP_AUTO_UPDATE_CORE -----$COL_RESET"
-	   echo -e "The easiest way to manipulate core updates is with the WP_AUTO_UPDATE_CORE constant.$COL_CYAN\ntrue$COL_RESET - Enable all core updates, including minor and major $COL_CYAN\nfalse$COL_RESET - Disable all core updates $COL_CYAN\n\'minor\'$COL_RESET - Enable core updates for minor releases (default)
+	   echo -e "The easiest way to manipulate core updates is with the WP_AUTO_UPDATE_CORE constant.$COL_CYAN\ntrue$COL_RESET - Enable all core updates, including minor and major $COL_CYAN\nfalse$COL_RESET - Disable all core updates $COL_CYAN\n'minor'$COL_RESET - Enable core updates for minor releases (default)
 
-Set what value (true/false/\'minor\') for$COL_CYAN WP_AUTO_UPDATE_CORE$COL_RESET?"
+Set what value (true/false/'minor') for$COL_CYAN WP_AUTO_UPDATE_CORE$COL_RESET?"
 	read VALUE;
 
 	search="'WP_AUTO_UPDATE_CORE'"
