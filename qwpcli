@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Wapuu   #
-# Updated on:   01 Jan 2017   #
+# Updated on:   03 Jan 2017   #
 #                             # 
 ###############################
 
@@ -54,7 +54,7 @@ echo -e "$COL_MGREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 01 Jan 2017
+What would you like to work on?                           $COL_GREEN Updated: 03 Jan 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -64,7 +64,7 @@ What would you like to work on?                           $COL_GREEN Updated: 01
   $COL_CYAN wpurl $COL_MGREEN    - List and Change URLs
   $COL_CYAN wpuser $COL_MGREEN   - Create User, Set Passwords, Change Roles
   $COL_CYAN wpupdate $COL_MGREEN - Check For or Run Updates, Configure Auto Updates
-  $COL_CYAN wpconfig $COL_MGREEN - Configure Multiple Settings at Once
+  $COL_CYAN wpconfig $COL_MGREEN - Configure wp-config.php Options 
   $COL_CYAN wpwsod $COL_MGREEN   - Guided Walkthrough to Fix WSOD
   $COL_CYAN wpglobal $COL_MGREEN - Run Commands Across All WordPress Installs (Advanced)
   $COL_CYAN wpmore $COL_MGREEN   - More Commands (Global Actions, WP Tools, DB List)
@@ -1553,6 +1553,8 @@ function availdir() {
 
 ##### END WP MIGRATE #####
 
+##### CONFIG OPTIONS #####
+
 function editini(){
 if [ -f php.ini ]; then
 echo -e "$COL_GREEN
@@ -1626,22 +1628,152 @@ echo -e "$COL_CYAN\nWarning:$COL_RESET php.ini file does not exit!"
 fi
 }
 
-function wpdebug(){
-echo -e "$COL_GREEN
-WP_DEBUG is currently set to $debugval What would you like to set it to?
+# CHILD FUNCTION FOR WPCONFIG 
+function wpConfigEdit(){
+        insert="define( $search, $VALUE );"
+        check=$(grep $search $file | wc -l) #CHECK IF ENTRY EXISTS
 
-"
-read debugSelect && echo ''
-case $debugSelect in
-	1) 
-	;;
-	2)
-	;;
-	3)
-	;;
-	*) invalidOption ;;
-esac
+        if [ $check = 0 ]; then
+        sed -i "s/$match/$match\n$insert/" $file
+        echo -e "$COL_GREEN\nSuccess:$COL_RESET $insert set in wp-config.php."
+        else
+        #IF VALUE EXISTS ALREADY, PROMPT TO CHANGE
+        echo -e "$COL_CYAN\nWarning:$COL_RESET $search already exists!$COL_MAGENTA\n"
+        grep $search $file
+        echo -e "$COL_GREEN\nOverwrite? (y) or (n) $COL_RESET"
+        read configSelect && echo ''
+                case $configSelect in
+                [Yy])   sed -i "s/.*$search\ .*/$search = $insert/" $file
+                        echo -e "$COL_GREEN\nSuccess:$COL_RESET $search set to $insert in $file"
+                ;;
+                *)      echo -e "$COL_CYAN\nWarning:$COL_RESET No changes made."
+                ;;
+                esac
+        fi
 }
+
+function wpconfig(){
+file='wp-config.php'
+match=$(grep table_prefix $file)
+
+#Does user know what their are doing?
+dialog --title 'wp-config.php Editor' --yesno 'This is an advanced menu. Do you wish to continue?' 6 30
+response=$?
+if [[ "$response" == '0' ]];then
+
+#Config Options --checklist text height width list-height
+cmd=(dialog --title 'Which configuration changes would you like to make?' --separate-output --checklist "Select options:" 22 76 10)
+options=(1 "AUTOSAVE_INTERVAL" off    # any option can be set to default to "on"
+         2 "DISALLOW_FILE_EDIT" off
+         3 "EMPTY_TRASH_DAYS" off
+         4 "NOBLOGREDIRECT" off
+         5 "WP_AUTO_UPDATE_CORE" off
+         6 "WP_DEBUG" off
+         7 "WP_MAX_MEMORY_LIMIT" off
+         8 "WP_MEMORY_LIMIT" off
+	 9 "WP_POST_REVISIONS" off
+        )
+choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+clear
+for choice in $choices
+do
+    case $choice in
+        1) echo -e "\n$COL_BLUE----- AUTOSAVE_INTERVAL -----$COL_RESET"
+	   echo -e "When editing a post, WordPress uses Ajax to auto-save revisions to the post as you edit. You may want to increase this setting for longer delays in between auto-saves, or decrease the setting to make sure you never lose changes.$COL_CYAN The default is 60 seconds$COL_RESET
+
+Set what value (in seconds) for$COL_CYAN AUTOSAVE_INTERVAL$COL_RESET?"
+	read VALUE;
+
+	search="'AUTOSAVE_INTERVAL'"
+        wpConfigEdit
+	;;
+	2) echo -e "\n$COL_BLUE----- DISALLOW_FILE_EDIT -----$COL_RESET"
+	   echo -e "Occasionally you may wish to disable the plugin or theme editor to prevent overzealous users from being able to edit sensitive files and potentially crash the site. Disabling these also provides an additional layer of security if a hacker gains access to a well-privileged user account.\n\n$COL_GREEN Please note:$COL_RESET the functionality of some plugins may be affected by the use of current_user_can('edit_plugins') in their code. Plugin authors should avoid checking for this capability, or at least check if this constant is set and display an appropriate error message. Be aware that if a plugin is not working this may be the cause.$COL_CYAN Default option is false$COL_RESET
+
+Set what value (true/false) for$COL_CYAN DISALLOW_FILE_EDIT$COL_RESET?"
+        read VALUE;
+
+        search="'DISALLOW_FILE_EDIT'"
+	wpConfigEdit
+	;;
+	3) echo -e "\n$COL_BLUE----- EMPTY_TRASH_DAYS -----$COL_RESET"
+	   echo -e "This constant controls the number of days before WordPress permanently deletes posts, pages, attachments, and comments, from the trash bin.$COL_CYAN The default is 30 days.$COL_RESET\nTo disable trash set the number of days to zero. Note that WordPress will not ask for confirmation when someone clicks on \"Delete Permanently\".
+
+Set what value (in days) for$COL_CYAN EMPTY_TRASH_DAYS$COL_RESET?"
+        read VALUE;
+        
+        search="'EMPTY_TRASH_DAYS'"
+	wpConfigEdit
+	;;
+	4) echo -e "\n$COL_BLUE----- NOBLOGREDIRECT -----$COL_RESET"
+	   echo -e "NOBLOGREDIRECT can be used to redirect the browser if the visitor tries to access a nonexistent site using either a subdomain or a subfolder.$COL_CYAN\nE.g., http://nonexistent.example.com or http://example.com/nonexistent/ $COL_RESET
+
+Set what value (as URL) for$COL_CYAN NOBLOGREDIRECT$COL_RESET?"
+        read foo;
+        VALUE="'$foo'"
+	
+	search="'NOBLOGREDIRECT'"
+	wpConfigEdit
+	;;
+	5) echo -e "\n$COL_BLUE----- WP_AUTO_UPDATE_CORE -----$COL_RESET"
+	   echo -e "The easiest way to manipulate core updates is with the WP_AUTO_UPDATE_CORE constant.$COL_CYAN\ntrue$COL_RESET - Enable all core updates, including minor and major $COL_CYAN\nfalse$COL_RESET - Disable all core updates $COL_CYAN\nminor$COL_RESET - Enable core updates for minor releases (default)
+
+Set what value (true/false/minor) for$COL_CYAN WP_AUTO_UPDATE_CORE$COL_RESET?"
+	read VALUE;
+
+	search="'WP_AUTO_UPDATE_CORE'"
+	wpConfigEdit
+	;;
+	6) echo -e "\n$COL_BLUE----- WP_DEBUG -----$COL_RESET"
+	   echo -e "The WP_DEBUG option, controls the reporting of some errors and warnings and enables use of the WP_DEBUG_DISPLAY and WP_DEBUG_LOG settings.$COL_CYAN The default value is false.$COL_RESET
+
+Set what value (true/false) for$COL_CYAN WP_DEBUG$COL_RESET?"
+	read VALUE;
+
+	search="'WP_DEBUG'"
+	wpConfigEdit
+	;;
+	7) echo -e "\n$COL_BLUE----- WP_MAX_MEMORY_LIMIT -----$COL_RESET"
+	   echo -e "Administration tasks require much memory than usual operation. When in the administration area, the memory can be increased or decreased from the WP_MEMORY_LIMIT by defining WP_MAX_MEMORY_LIMIT.
+
+Set what value (as in 256M) for$COL_CYAN WP_MAX_MEMORY_LIMIT$COL_RESET?"
+        read foo;
+	VALUE="'$foo'"
+
+	search="'WP_MAX_MEMORY_LIMIT'"
+	wpConfigEdit
+	;;
+	8) echo -e "\n$COL_BLUE----- WP_MEMORY_LIMIT -----$COL_RESET"
+	   echo -e "The WP_MEMORY_LIMIT option allows you to specify the maximum amount of memory that can be consumed by PHP. This setting may be necessary in the event you receive a message such as \"Allowed memory size of xxxxxx bytes exhausted.\"
+
+Set what value (as in 256M) for$COL_CYAN WP_MEMORY_LIMIT$COL_RESET?"
+	read foo;
+        VALUE="'$foo'"
+
+	search="'WP_MEMORY_LIMIT'"
+	wpConfigEdit
+	;;
+	9) echo -e "\n$COL_BLUE----- WP_POST_REVISIONS -----$COL_RESET"
+	   echo -e "WordPress, by default, will save copies of each edit made to a post or page, allowing the possibility of reverting to a previous version of that post or page. The saving of revisions can be disabled by setting the value to$COL_CYAN false$COL_RESET, or a maximum number of revisions per post or page can be specified.
+
+Set what value (false or 5) for$COL_CYAN WP_POST_REVISIONS$COL_RESET?"
+	read VALUE;
+
+	search="'WP_POST_REVISIONS'"
+	wpConfigEdit
+	;;
+        *) echo "Something Weird Happened"
+        ;;
+    esac
+done
+#Exit if NO is Selected
+else
+echo -e "$COL_MAGENTA
+Warning:$COL_RESET wp-config.php Editor Canceled!"
+fi
+}
+
+##### END CONFIG OPTIONS #####
 
 function wpcolors(){
 echo -e "
@@ -2418,7 +2550,7 @@ esac
 }
 
 ###COMMAND MENU###
-function wpconfig(){
+function BETAwpconfig(){
 #Does user know what their are doing?
 dialog --title 'BETA TEST' --yesno 'This is an advanced menu. Do you wish to continue?' 6 30
 response=$?
@@ -2504,7 +2636,7 @@ do
 	11) echo -e "\n$COL_BLUE----- Backup Files & DB -----$COL_RESET"
 		wpbackup
 	;;
-        *) echo "Soemthing Weird Happened"
+        *) echo "Something Weird Happened"
 	;;
     esac
 done
