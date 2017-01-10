@@ -2395,9 +2395,6 @@ echo -e "$COL_MAGENTA Auto Updates DISABLED. Not Updating $COL_RESET"
 fi
 }
 
-sed -ei "s/# END WordPress/# END WordPress\n$sslredriect/" .htaccess
-}
-
 function wpRevert(){
 dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
 dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
