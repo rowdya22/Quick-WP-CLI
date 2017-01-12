@@ -3,7 +3,7 @@
 ###############################
 #                             #
 # Developed by: Rowdy Wapuu   #
-# Updated on:   10 Jan 2017   #
+# Updated on:   12 Jan 2017   #
 #                             # 
 ###############################
 
@@ -44,7 +44,7 @@ echo -e "$COL_MGREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 10 Jan 2017
+What would you like to work on?                           $COL_GREEN Updated: 12 Jan 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -122,6 +122,13 @@ fi
 
 ### SHOW MENU ON STARTUP ###
 qwpcli
+#/tmp FOLDER CHECK #
+if [ -d /tmp ]; then
+	TMPFOLDER=$(df -h /tmp | awk '{if ($1 != "Filesystem") print $5}' | tr -d %)
+	if (("$TMPFOLDER" >= 90 )); then
+	echo -e "$COL_CYAN\nWarning:$COL_RESET /tmp folder is $TMPFOLDER % full. Clear space to prevent possible issues."
+	fi
+fi
 #################### END START ####################
 
 #################### MENUS ####################
@@ -749,7 +756,7 @@ esac
 function wpChangeUser(){
 # need to request entry of new user and old user
 
-wp --skip-plugins --skip-themes user list --fields=ID,user_login,display_name
+wp --skip-plugins --skip-themes user list --fields=user_login,display_name
 
 echo -e "\nWhat user_login (and display_name) would you like to change?" ; read oldUser
 
