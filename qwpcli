@@ -59,7 +59,7 @@ $COL_RESET"
 
 ### WPCLI FUNCTIONALITY CHECK ###
 CHECK=$(wp --skip-plugins --skip-themes core version | wc -l)
-#Output should be only one line. If not throw a warning as WP-CLI likely errored.
+### Output should be only one line. If not throw a warning as WP-CLI likely errored.
 if [ $CHECK != '1' ]; then
 echo -e "$COL_MAGENTA 
 WARNING WPCLI CHECK: [FAILED]
