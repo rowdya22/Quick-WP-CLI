@@ -1,11 +1,11 @@
 #!/bin/bash
 
-###############################
-#                             #
-# Developed by: Rowdy Wapuu   #
-# Updated on:   12 Jan 2017   #
-#                             # 
-###############################
+#################################
+#                               #
+#   Developed by: Rowdy Wapuu   #
+#   Updated on:   13 Jan 2017   #
+#                               # 
+#################################
 
 shopt -s expand_aliases
 
