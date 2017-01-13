@@ -3,14 +3,11 @@
 ###############################
 #                             #
 # Developed by: Rowdy Wapuu   #
-# Updated on:   12 Jan 2017   #
+# Updated on:   13 Jan 2017   #
 #                             # 
 ###############################
 
 shopt -s expand_aliases
-
-# Required for gcmd commands #
-DIRS=$(find ~/public_html* -maxdepth 5 -type f -name 'wp-config.php')
 
 # Colors
 ESC_SEQ="\x1b["
@@ -44,7 +41,7 @@ echo -e "$COL_MGREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 12 Jan 2017
+What would you like to work on?                           $COL_GREEN Updated: 13 Jan 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -106,8 +103,6 @@ Helpful Functions:
 Troubleshooting:
   $COL_CYAN mailtest $COL_MGREEN - Checks PHP Mail Function
   $COL_CYAN slowmysql $COL_MGREEN- Displays Slow MySQL Queries
-
-Check out more wpcli commands at $COL_MAGENTA http://wp-cli.org/commands/ $COL_RESET
 "
 }
 
@@ -1558,7 +1553,7 @@ echo -e "$COL_GREEN
 Suggested Values: $COL_RESET
 post_max_size = 64M
 upload_max_filesize = 64M 
-max_input_vars = 3000
+max_input_vars = 6000
 memory_limit = 512M
 max_execution_time = 60
 
@@ -1572,7 +1567,7 @@ case $editiniSelect in
 		echo "php.ini file backup created..."
 		sed -i "s/.*post_max_size\ .*/post_max_size = 64M/" php.ini
 		sed -i "s/.*upload_max_filesize\ .*/upload_max_filesize = 64M/" php.ini
-		sed -i "s/.*max_input_vars\ .*/max_input_vars = 3000/" php.ini
+		sed -i "s/.*max_input_vars\ .*/max_input_vars = 6000/" php.ini
 		sed -i "s/.*memory_limit\ .*/memory_limit = 512M/" php.ini
 		sed -i "s/.*max_execution_time\ .*/max_execution_time = 60/" php.ini
 		echo -e "$COL_GREEN\nSuccess:$COL_RESET php.ini file updated"
@@ -1593,7 +1588,7 @@ echo -e "$COL_MAGENTA\nWARNING! This is is a search and replace tool! \nMake sur
 Suggested Values: $COL_RESET
 post_max_size = 64M
 upload_max_filesize = 64M 
-max_input_vars = 3000
+max_input_vars = 6000
 memory_limit = 512M
 max_execution_time = 60
 $COL_GREEN
@@ -1946,7 +1941,6 @@ Success:$COL_RESET Global operation completed.\n"
 cd $originalDir
 }
 
-
 function wpgGlobal(){
 NOW=$(date +"%Y_%m_%d")
 if [ -f error_log ]; then mv error_log error_log.$NOW
@@ -2033,7 +2027,9 @@ wp --skip-plugins --skip-themes theme update --all
 }
 
 function gcmd(){
-#DIRS=$(find ~/public_html* -maxdepth 5 -type f -name 'wp-config.php')
+### Index WordPress installs 
+DIRS=$(find ~/public_html* -maxdepth 5 -type f -name 'wp-config.php')
+###
 for DIR in $DIRS; do
     CDIR=$(dirname $DIR)
     cd $CDIR;
@@ -2055,11 +2051,11 @@ echo -e "$COL_GREEN
 
 
 # accept user input for the databse info
-echo -e "$COL_MAGENTA
+echo -e "$COL_GREEN
 This setup will guide you through a manual WordPress install.
 
 Make sure you are in the folder you want to install WordPress and\nthere are no existing WordPress files.\n
-
+$COL_MAGENTA
 ---To begin create a database in cPanel and then enter the needed information--- $COL_RESET"
 echo -e "$COL_GREEN
 Database Name: $COL_RESET"
@@ -2135,7 +2131,7 @@ echo -e "$COL_GREEN
  |__/|__/_/     \____/ .__/\__/_/_/_/_/_//__/\_,_/\__/_/\___/_//_/
                     /_/                                           
 $COL_MAGENTA
-WARNING: THIS IS AN ADVANCED MENU. MAKE SURE THAT YOU KNOW WHAT YOU ARE DOING! \nCheck if there is existing optimization code in the .htaccess before modifying. If code is duplicated it can cause the site to break. \n $COL_RESET
+WARNING: THIS IS AN ADVANCED MENU. MAKE SURE YOU KNOW WHAT YOU ARE DOING! \nCheck if there is existing optimization code in the .htaccess before modifying. If code is duplicated it can cause the site to break. \n $COL_RESET
 
 (1) WP Speed Report
 (2) Backup .htaccess
@@ -2271,9 +2267,10 @@ wpEnduranceCache
 }
 
 function wpOptPlugInstall(){
-wp --skip-plugins --skip-themes plugin install wp-super-cache wp-optimize ewww-image-optimizer --activate
+wpEnduranceCache
+wp --skip-plugins --skip-themes plugin install wp-optimize ewww-image-optimizer --activate
 
-echo -e "\nBe sure to configure the plugins for best results\n"
+echo -e "\nBe sure to configure wp-optimize & ewww-image-optimizer\n"
 }
 
 #################### END OPTIMIZATION FUNCTIONS ####################
@@ -2394,14 +2391,6 @@ Success:$COL_RESET Operation completed.\n"
 cd $originalDir
 }
 
-function check(){
-if [ ! -f .automatic_updates_disabled ]; then
-echo "Auto Updates not disabled. Continue as Normal"
-else
-echo -e "$COL_MAGENTA Auto Updates DISABLED. Not Updating $COL_RESET"
-fi
-}
-
 function wpRevert(){
 dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
 dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
@@ -2409,153 +2398,34 @@ dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ;
 dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
 dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
 
-if [[ ! -f QWPCLI_BACKUP_* && ! -f QWPCLI_CORE_* ]]; then
+echo -e "$COL_GREEN\nThis function will look for and restore QWPCLI_BACKUP.tar.gz or QWPCLI_CORE.tar.gz. If multiple BACKUP or CORE files exist you will get an error. Please confirm that only 1 possible file type exists:
+
+(1) Yes
+(2) No $COL_RESET" 
+read select;
+case $select in
+1)
+if [ ! -e QWPCLI_BACKUP_* ] && [ ! -e QWPCLI_CORE_* ]; then
 echo -e "$COL_MAGENTA
 Warning:$COL_RESET No backup found!\n"
 fi
 
-if [[ -f QWPCLI_BACKUP_* ]]; then
+if [ -e QWPCLI_BACKUP_* ]; then
 	tar -zxvf QWPCLI_BACKUP_* --strip-components=1
-	wp --skip-plugins --skip-themes db import QWPCLI_$dbname_*
-	rm -rf QWPCLI_BACKUP_* QWPCLI_$dbname_*
-echo -e "$COL_GREEN
-Success:$COL_RESET Files and Database restored from backup.\n"
+	wp --skip-plugins --skip-themes db import QWPCLI_"$dbname"_*
+	rm -rf QWPCLI_BACKUP_* QWPCLI_"$dbname"_*
+	wp --skip-plugins --skip-themes core update-db --quiet
+	echo -e "$COL_GREEN\nSuccess:$COL_RESET Files and Database restored from backup.\n"
+else 
+	if [ -e QWPCLI_CORE_* ]; then
+		tar -zxvf QWPCLI_CORE_* --strip-components=1
+		rm -rf QWPCLI_CORE_*
+		echo -e "$COL_GREEN\nSuccess:$COL_RESET Core files restored from backup.\n"
+	fi
 fi
-
-if [[ -f QWPCLI_CORE_* ]]; then
-	tar -zxvf QWPCLI_CORE_* --strip-components=1
-	rm -rf QWPCLI_CORE_*
-echo -e "$COL_GREEN
-Success:$COL_RESET Core files restored from backup.\n"
-fi
-}
-
-#####
-
-function mkdev(){
-# read -r dbhost dbname dbpass dbuser dbprodprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
-
-dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
-dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
-dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
-dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
-dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
-
-wpbackup
-
-# EXPORT DB TABLES THAT MATCH PROD PREFIX
-wp db export dev.sql --tables=$(wp db tables --all-tables-with-prefix --format=csv) 
-
-echo -e "What directory would you like to have your staging environment created in?\n"; read devdir
-
-# SETUP UP STAGING FOLDER
-mkdir $devdir
-
-# CLONE FILES INTO THE DEV FOLDER
-cp -Rv wp* $devdir;
-cp -v .htaccess $devdir 2>/dev/null || echo -e "\n\tNo .htaccess was present";
-cp -v index.php $devdir 2>/dev/null || echo -e "\n\tNo index.php was present";
-cp -v license.txt $devdir 2>/dev/null || echo -e "\n\tNo license.txt was present";
-cp -v readme.html $devdir 2>/dev/null || echo -e "\n\tNo readme.html was present";
-cp -v xmlrpc.php $devdir 2>/dev/null || echo -e "\n\tNo xmlrpc.php was present";
-cp -v dev.sql $devdir  2>/dev/null || echo -e "\n\tNo Prod database was present";
-
-cd $devdir
-
-sleep 5 
-
-echo -e "$COL_GREEN
-Success:$COL_RESET WordPress files copied to /$devdir"
-
-# SETUP DB
-dbdevprefix="dev_"
-sed -i "s/$dbprodprefix/$dbdevprefix/" dev.sql
-
-echo -e "$COL_GREEN
-Success:$COL_RESET Database prefix updated to $dbdevprefix\n"
-
-# IMPORT DB W/ NEW PREFIX
-wp db import dev.sql
-
-rm -rf dev.sql
-
-# UPDATE WP-CONFIG.PHP PREFIX
-sed -i "s/$dbprodprefix/$dbdevprefix/" wp-config.php
-
-sleep 5
-
-echo -e "$COL_GREEN
-Success:$COL_RESET Database prefix updated in the wp-config.php file"
-
-# UPDATE SITE URLS TO DEV
-wp --skip-plugins --skip-themes search-replace $(wp option get siteurl) $(wp option get siteurl)/$devdir --precise --recurse-objects
-
-sleep 5
-
-echo -e "$COL_GREEN
-Success:$COL_RESET Site URLs updated to reflect /$devdir"
-
-# NOTICE
-echo -e "$COL_GREEN
-Success:$COL_RESET Staging environment created in /$devdir\n"
-
-echo -e "Long Explanation:\n- WordPress site files have been copied to /$devdir\n- A copy of the Database was made and imported using the $dbdevprefix prefix\n- The dbprefix was updated in the wp-config.php file to $dbdevprefix\n- Site URLs updated to include /$devdir\n"
-}
-
-function pushprod(){
-# EXPORT DEV DB
-wp db export prod.sql
-
-DEVURL=$(wp option get siteurl)
-
-# SYNC FILES DEV --> PROD
-rsync -auvxhr --delete wp* /.. ;
-rsync -auvxh --delete .htaccess /.. 2>/dev/null || echo -e "\n\tNo index.php was present/pushed.";
-rsync -auvxh --delete license.txt /.. 2>/dev/null || echo -e "\n\tNo license.txt was present/pushed.";
-rsync -auvxh --delete readme.html /.. 2>/dev/null || echo -e "\n\tNo readme.html was present/pushed.";
-rsync -auvxh --delete xmlrpc.php /.. 2>/dev/null || echo -e "\n\tNo xmlrpc.php was present/pushed.";
-rsync -auvxh --delete prod.sql /.. 2>/dev/null || echo -e "\n\tNo prod.sql was present/pushed.";
-
-cd ..
-
-PRODURL=$(wp option get siteurl)
-
-dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
-dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
-dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
-dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
-dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
-
-dbdevprefix="dev_"
-
-# UPDATE DB PREFIX
-sed -i "s/$dbdevprefix/$dbprodprefix/" prod.sql
-
-# UPDATE WP-CONFIG.PHP PREFIX
-sed -i "s/$dbdevprefix/$dbprodprefix/" wp-config.php
-
-# SET UP THE DATABASE
-wp db import prod.sql
-
-rm -rf prod.sql
-
-echo -e "Dev URL updating from $DEVURL to $PRODURL\nIs this correct? (y/n)\n"; read input;
-
-case $input in
-	[Yy]*) wp --skip-plugins --skip-themes search-replace $DEVURL $PRODURL --precise --recurse-objects
-	echo -e "$COL_GREEN
-	Success:$COL_RESET Staging environment pushed to production \n"
-	;;
-	[Nn]*) 
-	echo -e "What is the correct URL? (must match format):"; read $NEWURL
-        wp --skip-plugins --skip-themes search-replace $DEVURL $NEWURL --precise --recurse-objects
-	echo -e "$COL_GREEN
-	Success:$COL_RESET Staging environment pushed to production \n"
-	;;
-	[Qq]*) 
-	echo -e "Operations quit\n"
-	;;
-	*) invalidOption;;
+;;
+*)  echo -e "$COL_CYAN\nWarning:$COL_RESET Operation halted! No files reverted"
+;;
 esac
 }
 
@@ -2634,8 +2504,8 @@ do
 		wp option update posts_per_page $NUM
 	;;
         8) echo -e "\n$COL_BLUE----- Update PHP Version -----$COL_RESET"
-		#Prompt for version and run silently
-		#. <(curl -sS https://raw.githubusercontent.com/rowdya22/phpver/master/phpver)
+		#Add prompt for version and run silently
+		. <(curl -sS https://raw.githubusercontent.com/rowdya22/phpver/master/phpver)
 	;;
         9) echo -e "\n$COL_BLUE----- Edit php.ini -----$COL_RESET"
 		editini
