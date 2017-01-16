@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   13 Jan 2017   #
+#   Updated on:   16 Jan 2017   #
 #                               # 
 #################################
 
@@ -41,7 +41,7 @@ echo -e "$COL_MGREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 13 Jan 2017
+What would you like to work on?                           $COL_GREEN Updated: 16 Jan 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -334,19 +334,8 @@ esac
 
 ### SHOW GENERAL WORDPRESS INFORMATION ###
 function wpstats(){
-#Get info from the wp globals
-dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
-dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
-dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
-dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
-dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
-
-PLUGIN=$(wp --skip-plugins --skip-themes plugin list | grep -w available | wc -l)
-THEME=$(wp --skip-plugins --skip-themes theme list | grep -w available | wc -l)
-CORE=$(wp --skip-plugins --skip-themes core check-update | grep -w wordpress | wc -l)
-
 echo -e ""
-
+### START SITE TESTS ###
 ### WPCLI CHECK
 CHECK=$(wp --skip-plugins --skip-themes core version | wc -l)
 
@@ -367,24 +356,14 @@ fi
 ### EVAL PLUGINS/THEMES LOOKING FOR ERRORS
 wp --skip-plugins eval 'echo "Eval Plugins: \x1b[36;01m  [CHECK]\n \x1b[39;49;00m";'
 wp --skip-themes eval 'echo "\x1b[32;01m\rEval Themes: \x1b[36;01m   [CHECK]\n \x1b[39;49;00m";'
+### END SITE TESTS ###
 
-#Alternate using MySQL incase there are issues with WPCLI`
-#echo -e "\n$COL_GREEN\rWP Version:    $COL_CYAN" `grep 'wp_version ' wp-includes/version.php | cut -d\' -f 2`
-#echo -e "$COL_GREEN\rSite URL:     $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'siteurl'"`|sed "s/option_value//" 
-#echo -e "$COL_GREEN\rHome URL:     $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'home'"`|sed "s/option_value//" 
-#echo -e "$COL_GREEN\rStylesheet:   $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'stylesheet'"`|sed "s/option_value//" 
-#echo -e "$COL_GREEN\rTemplate:     $COL_CYAN" `mysql -u $dbuser -p"$dbpass" $dbname -e "select option_value from $dbprefix""options where option_name""= 'template'"`|sed "s/option_value//" 
-
+### START GENERAL INFO ###
 wpver=$(wp --skip-plugins --skip-themes core version)
 wpsiteurl=$(wp --skip-plugins --skip-themes option get siteurl)
 wphome=$(wp --skip-plugins --skip-themes option get home)
 wpstyle=$(wp --skip-plugins --skip-themes option get stylesheet)
 wptemplate=$(wp --skip-plugins --skip-themes option get template)
-echo "<?php echo phpversion() ?>" > QWPCLI_version.php #Create PHP Version and Get Value
-wpphpver=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_version.php)
-echo "<?php echo phpinfo() ?>" > QWPCLI_info.php #Create PHP Info
-#wpphpmemlim=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_info.php | grep "memory_limit" -m 1) #| perl -e'$out=do{local$/;<STDIN>};$out=~/>([[:alnum:]_]+).*>(\d+M)/gxim;print "$1 $2\n"'
-#echo -e "Memory Limit: $wpphpmemlim" 
 
 echo -e "\n$COL_GREEN\rWP Version:    $COL_CYAN $wpver"
 echo -e "$COL_GREEN\rSite URL:      $COL_CYAN $wpsiteurl" 
@@ -392,25 +371,57 @@ echo -e "$COL_GREEN\rHome URL:      $COL_CYAN $wphome"
 echo -e "$COL_GREEN\rStylesheet:    $COL_CYAN $wpstyle"
 echo -e "$COL_GREEN\rTemplate:      $COL_CYAN $wptemplate"
 echo -e "$COL_GREEN"
+### END GENERAL INFO ###
 
+### START DATABASE INFO ###
+#Get info from the wp globals
+dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
+dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
+dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
+dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
+dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;')
 ###START DB CONNECTION TEST
 if [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! 
 fi
 mysql -u $dbuser -p"$dbpass" -e ";" >/dev/null 2>&1 && printf "Database Conn: $COL_CYAN Success $COL_GREEN \n" || printf "Database Conn: $COL_MAGENTA Failure $COL_GREEN \n"
 ### END DB CONNECTION TEST
-
+echo -e "Database Name: $COL_CYAN $dbname $COL_GREEN"
 echo -e "Database User: $COL_CYAN $dbuser $COL_GREEN"
 echo -e "Database Pass: $COL_CYAN $dbpass $COL_GREEN"
 echo -e "Database Host: $COL_CYAN $dbhost $COL_GREEN"
-echo -e "Database Name: $COL_CYAN $dbname $COL_GREEN"
 echo -e "Database Prfx: $COL_CYAN $dbprefix $COL_GREEN"
-echo -e "$COL_RESET\t\t\t PHP Version: $wpphpver $COL_GREEN"
+### END DATABASE INFO ###
 
-echo -e "Core Updates:  $COL_CYAN $CORE $COL_RESET \t $(php -i 2>/dev/null | grep memory_limit | sed 's/<[^>]*>/ /g') $COL_GREEN"
-echo -e "Plugin Updates:$COL_CYAN $PLUGIN $COL_RESET \t $(php -i 2>/dev/null | grep post_max_size | sed 's/<[^>]*>/ /g') $COL_GREEN"
-echo -e "Theme Updates: $COL_CYAN $THEME $COL_RESET \t $(php -i 2>/dev/null | grep upload_max_filesize | sed 's/<[^>]*>/ /g') $COL_GREEN"
-echo -e "$COL_RESET"
+### START UPDATE AND LIMITS ###
+PLUGIN=$(wp --skip-plugins --skip-themes plugin list | grep -w available | wc -l)
+THEME=$(wp --skip-plugins --skip-themes theme list | grep -w available | wc -l)
+CORE=$(wp --skip-plugins --skip-themes core check-update | grep -w wordpress | wc -l)
+PLUGINTOTAL=$(wp --skip-plugins --skip-themes plugin list | wc -l)
+THEMETOTAL=$(wp --skip-plugins --skip-themes theme list | wc -l)
+
+### CREATE AN INFO.PHP FILE AND GET THE CORRECT VALUES ###
+echo "<?php echo phpversion() ?>" > QWPCLI_version.php #Create PHP Version and Get Value
+wpphpver=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_version.php)
+echo "<?php echo phpinfo() ?>" > QWPCLI_info.php #Create PHP Info
+wpphpmemlimlong=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_info.php | grep "memory_limit" -m 1)
+wpphpmemlim=$(echo -e "$wpphpmemlimlong" | perl -e'$out=do{local$/;<STDIN>};$out=~/>([[:alnum:]_]+).*>(\d+M)/gxim;print "$2"')
+wpphppostmaxlong=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_info.php | grep "post_max_size" -m 1)
+wpphppostmax=$(echo -e "$wpphppostmaxlong" | perl -e'$out=do{local$/;<STDIN>};$out=~/>([[:alnum:]_]+).*>(\d+M)/gxim;print "$2"')
+wpphpuploadmaxlong=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_info.php | grep "upload_max_filesize" -m 1)
+wpphpuploadmax=$(echo -e "$wpphpuploadmaxlong" | perl -e'$out=do{local$/;<STDIN>};$out=~/>([[:alnum:]_]+).*>(\d+M)/gxim;print "$2"')
+# REQUIRES (\d+) NOT (\d+M) BECAUSE OF NUMBER ONLY VALUE
+wpphpmaxvarslong=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_info.php | grep "max_input_vars" -m 1)
+wpphpmaxvars=$(echo -e "$wpphpmaxvarslong" | perl -e'$out=do{local$/;<STDIN>};$out=~/>([[:alnum:]_]+).*>(\d+)/gxim;print "$2"')
+### END INFO.PHP FILE VALUES ###
+
+echo -e "\nPHP Version:   $COL_CYAN $wpphpver $COL_GREEN \t Max Input Vars: $COL_CYAN $wpphpmaxvars $COL_GREEN"
+echo -e "Core Updates:  $COL_CYAN $CORE $COL_GREEN \t\t Memory Limit:   $COL_CYAN $wpphpmemlim $COL_GREEN"
+echo -e "Plugin Updates:$COL_CYAN $PLUGIN of $PLUGINTOTAL $COL_GREEN \t Post Max Size:  $COL_CYAN $wpphppostmax $COL_GREEN"
+echo -e "Theme Updates: $COL_CYAN $THEME of $THEMETOTAL $COL_GREEN \t Upload Max Size:$COL_CYAN $wpphpmemlim $COL_RESET"
+
 rm -rf QWPCLI_version.php QWPCLI_info.php #Clean Up Temp Files
+### END UPDATE AND LIMITS ###
+echo -e "$COL_RESET"
 }
 
 ##### END WPSTATS COMMANDS #####
@@ -539,13 +550,13 @@ trap remove_plug_file EXIT
 function wpPluginInstall(){
 echo -e "$COL_GREEN
 Recommended Plugins:
-   jetpack
    google-captcha
+   jetpack
    shortcodes-ultimate
-   velvet-blues-update-urls
    sucuri-scanner
    updraftplus
-   tk-google-fonts
+   velvet-blues-update-urls
+   wp-security-audit-log
   
 $COL_RESET
 What plugin(s) would you like to install (and activate)? Enter slug separated by spaces..."
@@ -2527,6 +2538,7 @@ Warning:$COL_RESET Config Canceled!"
 fi
 }
 
+### Fix for code causeing WSOD on 4.7.1 ###
 function footest(){
 checkfile="wp-config.php"
 plugsearch="add_filter( 'auto_update_plugin', '__return_true' );"
@@ -2547,3 +2559,5 @@ echo -e "$COL_MAGENTA\nWarning:$COL_GREEN $themesearch$COL_RESET exists in the $
 sed -i "/$themesearch/c\\$themereplace" $checkfile
 fi
 }
+### Auto Launch footest check ###
+footest
