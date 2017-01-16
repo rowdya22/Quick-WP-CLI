@@ -2067,12 +2067,21 @@ This setup will guide you through a manual WordPress install.
 
 Make sure you are in the folder you want to install WordPress and\nthere are no existing WordPress files.\n
 $COL_MAGENTA
----To begin create a database in cPanel and then enter the needed information--- $COL_RESET"
+---To begin create a database in cPanel and then enter the needed information--- $COL_RESET
+
+Have you created a database in cPanel? (y) or (n)"
+read Select && echo''
+case $Select in
+        [Yy])   echo -e "$COL_GREEN\nGood job you read the instructions!$COL_RESET\n" 
+	;;
+        *)      echo -e "$COL_MAGENTA\nRe-read the instructions above and make the database before proceeding...$COL_RESET\n"
+        ;;
+esac
 echo -e "$COL_GREEN
-Database Name: $COL_RESET"
+Database Name (user_dbname): $COL_RESET"
 read -e dbname
 echo -e "$COL_GREEN 
-Database User: $COL_RESET"
+Database User (user_dbuser): $COL_RESET"
 read -e dbuser
 echo -e "$COL_GREEN 
 Database Password: $COL_RESET"
@@ -2093,7 +2102,6 @@ wp --skip-plugins --skip-themes plugin uninstall hello --deactivate --quiet
 echo -e "$COL_MAGENTA
 Now installing suggested plugins and themes.... $COL_RESET"
 sleep 2
-## wp --skip-plugins --skip-themes plugin install jetpack sucuri-scanner google-captcha shortcodes-ultimate
 wpPluginInstall
 wpThemeInstall
 wp --skip-plugins --skip-themes plugin update --all
