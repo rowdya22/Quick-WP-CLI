@@ -403,13 +403,13 @@ THEMETOTAL=$(wp --skip-plugins --skip-themes theme list --field=name | wc -l)
 ### DATA COLLECTION FROM http://IPADDRESS/~USER
 ADDRESS=`hostname`
 LOCATION=`pwd`
-touch `pwd`/deleteMe;
-host -t a $ADDRESS > `pwd`/deleteMe;
-awk '{print $4}' deleteMe > deleteMe01;
-ADDRESS=`cat deleteMe01`;
-echo $LOCATION > `pwd`/deleteMe;
-awk -F public_html '{print $2}' deleteMe > deleteMe01;
-LOCATION=`cat deleteMe01`;
+touch `pwd`/QWPCLI.tmp;
+host -t a $ADDRESS > `pwd`/QWPCLI.tmp;
+awk '{print $4}' QWPCLI.tmp > QWPCLI.tmp01;
+ADDRESS=`cat QWPCLI.tmp01`;
+echo $LOCATION > `pwd`/QWPCLI.tmp;
+awk -F public_html '{print $2}' QWPCLI.tmp > QWPCLI.tmp01;
+LOCATION=`cat QWPCLI.tmp01`;
 ### END ALT DATA COLLECTION
 echo "<?php echo phpversion() ?>" > QWPCLI_version.php #Create PHP Version and Get Value
 # wpphpver=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_version.php) ### ALTERNATE URL - CURRENTLY HAS ISSUES WITH CDNs
@@ -431,7 +431,7 @@ echo -e "Core Updates:  $COL_CYAN $CORE $COL_GREEN \t\t Memory Limit:   $COL_CYA
 echo -e "Plugin Updates:$COL_CYAN $PLUGIN of $PLUGINTOTAL $COL_GREEN \t Post Max Size:  $COL_CYAN $wpphppostmax $COL_GREEN"
 echo -e "Theme Updates: $COL_CYAN $THEME of $THEMETOTAL $COL_GREEN \t Upload Max Size:$COL_CYAN $wpphpmemlim $COL_RESET"
 
-rm -rf QWPCLI_version.php QWPCLI_info.php deleteMe deleteMe01#Clean Up Temp Files
+rm -rf QWPCLI_version.php QWPCLI_info.php QWPCLI.tmp QWPCLI.tmp01 #Clean Up Temp Files
 ### END UPDATE AND LIMITS ###
 echo -e "$COL_RESET"
 }
