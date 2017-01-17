@@ -431,7 +431,7 @@ echo -e "Core Updates:  $COL_CYAN $CORE $COL_GREEN \t\t Memory Limit:   $COL_CYA
 echo -e "Plugin Updates:$COL_CYAN $PLUGIN of $PLUGINTOTAL $COL_GREEN \t Post Max Size:  $COL_CYAN $wpphppostmax $COL_GREEN"
 echo -e "Theme Updates: $COL_CYAN $THEME of $THEMETOTAL $COL_GREEN \t Upload Max Size:$COL_CYAN $wpphpmemlim $COL_RESET"
 
-rm -rf QWPCLI_version.php QWPCLI_info.php #Clean Up Temp Files
+rm -rf QWPCLI_version.php QWPCLI_info.php deleteMe deleteMe01#Clean Up Temp Files
 ### END UPDATE AND LIMITS ###
 echo -e "$COL_RESET"
 }
