@@ -400,17 +400,29 @@ PLUGINTOTAL=$(wp --skip-plugins --skip-themes plugin list | wc -l)
 THEMETOTAL=$(wp --skip-plugins --skip-themes theme list | wc -l)
 
 ### CREATE AN INFO.PHP FILE AND GET THE CORRECT VALUES ###
+### DATA COLLECTION FROM http://IPADDRESS/~USER
+ADDRESS=`hostname`
+LOCATION=`pwd`
+touch `pwd`/deleteMe;
+host -t a $ADDRESS > `pwd`/deleteMe;
+awk '{print $4}' deleteMe > deleteMe01;
+ADDRESS=`cat deleteMe01`;
+echo $LOCATION > `pwd`/deleteMe;
+awk -F public_html '{print $2}' deleteMe > deleteMe01;
+LOCATION=`cat deleteMe01`;
+### END ALT DATA COLLECTION
 echo "<?php echo phpversion() ?>" > QWPCLI_version.php #Create PHP Version and Get Value
-wpphpver=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_version.php)
+# wpphpver=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_version.php) ### ALTERNATE URL - CURRENTLY HAS ISSUES WITH CDNs
+wpphpver=$(curl -s $(echo -e "http://$ADDRESS/~`whoami`$LOCATION")/QWPCLI_version.php)
 echo "<?php echo phpinfo() ?>" > QWPCLI_info.php #Create PHP Info
-wpphpmemlimlong=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_info.php | grep "memory_limit" -m 1)
+wpphpmemlimlong=$(curl -s $(echo -e "http://$ADDRESS/~`whoami`$LOCATION")/QWPCLI_info.php | grep "memory_limit" -m 1)
 wpphpmemlim=$(echo -e "$wpphpmemlimlong" | perl -e'$out=do{local$/;<STDIN>};$out=~/>([[:alnum:]_]+).*>(\d+M)/gxim;print "$2"')
-wpphppostmaxlong=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_info.php | grep "post_max_size" -m 1)
+wpphppostmaxlong=$(curl -s $(echo -e "http://$ADDRESS/~`whoami`$LOCATION")/QWPCLI_info.php | grep "post_max_size" -m 1)
 wpphppostmax=$(echo -e "$wpphppostmaxlong" | perl -e'$out=do{local$/;<STDIN>};$out=~/>([[:alnum:]_]+).*>(\d+M)/gxim;print "$2"')
-wpphpuploadmaxlong=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_info.php | grep "upload_max_filesize" -m 1)
+wpphpuploadmaxlong=$(curl -s $(echo -e "http://$ADDRESS/~`whoami`$LOCATION")/QWPCLI_info.php | grep "upload_max_filesize" -m 1)
 wpphpuploadmax=$(echo -e "$wpphpuploadmaxlong" | perl -e'$out=do{local$/;<STDIN>};$out=~/>([[:alnum:]_]+).*>(\d+M)/gxim;print "$2"')
 # REQUIRES (\d+) NOT (\d+M) BECAUSE OF NUMBER ONLY VALUE
-wpphpmaxvarslong=$(curl -s $(wp --skip-plugins --skip-themes option get siteurl)/QWPCLI_info.php | grep "max_input_vars" -m 1)
+wpphpmaxvarslong=$(curl -s $(echo -e "http://$ADDRESS/~`whoami`$LOCATION")/QWPCLI_info.php | grep "max_input_vars" -m 1)
 wpphpmaxvars=$(echo -e "$wpphpmaxvarslong" | perl -e'$out=do{local$/;<STDIN>};$out=~/>([[:alnum:]_]+).*>(\d+)/gxim;print "$2"')
 ### END INFO.PHP FILE VALUES ###
 
