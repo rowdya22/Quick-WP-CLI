@@ -396,8 +396,8 @@ echo -e "Database Prfx: $COL_CYAN $dbprefix $COL_GREEN"
 PLUGIN=$(wp --skip-plugins --skip-themes plugin list | grep -w available | wc -l)
 THEME=$(wp --skip-plugins --skip-themes theme list | grep -w available | wc -l)
 CORE=$(wp --skip-plugins --skip-themes core check-update | grep -w wordpress | wc -l)
-PLUGINTOTAL=$(wp --skip-plugins --skip-themes plugin list | wc -l)
-THEMETOTAL=$(wp --skip-plugins --skip-themes theme list | wc -l)
+PLUGINTOTAL=$(wp --skip-plugins --skip-themes plugin list --field=name | wc -l)
+THEMETOTAL=$(wp --skip-plugins --skip-themes theme list --field=name | wc -l)
 
 ### CREATE AN INFO.PHP FILE AND GET THE CORRECT VALUES ###
 ### DATA COLLECTION FROM http://IPADDRESS/~USER
