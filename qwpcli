@@ -1579,8 +1579,8 @@ function editini(){
 if [ -f php.ini ]; then
 echo -e "$COL_GREEN
 Suggested Values: $COL_RESET
-post_max_size = 64M
-upload_max_filesize = 64M 
+post_max_size = 256M
+upload_max_filesize = 256M 
 max_input_vars = 6000
 memory_limit = 512M
 max_execution_time = 60
@@ -1593,8 +1593,8 @@ read editiniSelect && echo''
 case $editiniSelect in
 	[Yy])	cp php.ini .QWPCLI_php.ini.$NOW
 		echo "php.ini file backup created..."
-		sed -i "s/.*post_max_size\ .*/post_max_size = 64M/" php.ini
-		sed -i "s/.*upload_max_filesize\ .*/upload_max_filesize = 64M/" php.ini
+		sed -i "s/.*post_max_size\ .*/post_max_size = 256M/" php.ini
+		sed -i "s/.*upload_max_filesize\ .*/upload_max_filesize = 256M/" php.ini
 		sed -i "s/.*max_input_vars\ .*/max_input_vars = 6000/" php.ini
 		sed -i "s/.*memory_limit\ .*/memory_limit = 512M/" php.ini
 		sed -i "s/.*max_execution_time\ .*/max_execution_time = 60/" php.ini
@@ -1614,8 +1614,8 @@ if [ -f php.ini ]; then
 echo -e "$COL_MAGENTA\nWARNING! This is is a search and replace tool! \nMake sure all spelling is exact prior to submitting changes!$COL_GREEN
 
 Suggested Values: $COL_RESET
-post_max_size = 64M
-upload_max_filesize = 64M 
+post_max_size = 256M
+upload_max_filesize = 256M 
 max_input_vars = 6000
 memory_limit = 512M
 max_execution_time = 60
