@@ -632,7 +632,7 @@ Enter Old URL: "
 read OLDURL
 echo -e "Enter New URL: "
 read NEWURL
-wp --skip-plugins --skip-themes search-replace $OLDURL $NEWURL --precise --recurse-objects
+wp --skip-plugins --skip-themes search-replace $OLDURL $NEWURL --precise --recurse-objects --skip-columns=guid
 }
 ### SHOW SITE/HOME URLS ###
 function wpurlList() {
