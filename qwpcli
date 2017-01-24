@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   18 Jan 2017   #
+#   Updated on:   24 Jan 2017   #
 #                               # 
 #################################
 
@@ -41,7 +41,7 @@ echo -e "$COL_MGREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 18 Jan 2017
+What would you like to work on?                           $COL_GREEN Updated: 24 Jan 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -2557,6 +2557,26 @@ else
 echo -e "$COL_MAGENTA
 Warning:$COL_RESET Config Canceled!"
 fi
+}
+
+function wpphp(){
+### CREATE AN INFO.PHP FILE AND GET THE CORRECT VALUES ###
+### DATA COLLECTION FROM http://IPADDRESS/~USER
+ADDRESS=`hostname`
+LOCATION=`pwd`
+touch `pwd`/QWPCLI.tmp;
+host -t a $ADDRESS > `pwd`/QWPCLI.tmp;
+awk '{print $4}' QWPCLI.tmp > QWPCLI.tmp01;
+ADDRESS=`cat QWPCLI.tmp01`;
+echo $LOCATION > `pwd`/QWPCLI.tmp;
+awk -F public_html '{print $2}' QWPCLI.tmp > QWPCLI.tmp01;
+LOCATION=`cat QWPCLI.tmp01`;
+### END ALT DATA COLLECTION
+echo "<?php echo phpversion() ?>" > QWPCLI_version.php #Create PHP Version and Get Value
+wpphpverlong=$(curl -s $(echo -e "http://$ADDRESS/~`whoami`$LOCATION")/QWPCLI_version.php)
+wpphpver=$(echo $wpphpverlong | cut -c 1-10)
+echo $wpphpver
+rm -rf QWPCLI.tmp QWPCLI.tmp01 QWPCLI_version.php
 }
 
 ### Fix for code causeing WSOD on 4.7.1 ###
