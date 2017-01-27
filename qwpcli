@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   25 Jan 2017   #
+#   Updated on:   27 Jan 2017   #
 #                               # 
 #################################
 
@@ -41,7 +41,7 @@ echo -e "$COL_MGREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 25 Jan 2017
+What would you like to work on?                           $COL_GREEN Updated: 27 Jan 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -2580,6 +2580,32 @@ rm -rf QWPCLI.tmp QWPCLI.tmp01 QWPCLI_version.php
 }
 
 ### WP Boost ###
+function wpboostauto(){
+#Generate ini file
+WPPHPVER=$(wpphp | perl -pe's/\.//g' | cut -c 1-2)
+phpver $WPPHPVER
+
+### BOOST php.ini Values
+sed -i "s/.*post_max_size\ .*/post_max_size = 256M/" php.ini
+sed -i "s/.*upload_max_filesize\ .*/upload_max_filesize = 256M/" php.ini
+sed -i "s/.*max_input_vars\ .*/max_input_vars = 6000/" php.ini
+sed -i "s/.*memory_limit\ .*/memory_limit = 512M/" php.ini
+sed -i "s/.*max_execution_time\ .*/max_execution_time = 60/" php.ini
+echo -e "$COL_GREEN\nSuccess:$COL_RESET php.ini generated for $WPPHPVER"
+### BOOST WP MEMORY & ACTIVATE AUTO UPDATE
+file='wp-config.php'
+match=$(grep table_prefix $file)
+search="'WP_MAX_MEMORY_LIMIT'"
+VALUE="'512M'"
+wpConfigEdit
+search="'WP_MEMORY_LIMIT'"
+VALUE="'512M'"
+wpConfigEdit
+search="'WP_AUTO_UPDATE_CORE'"
+VALUE="true"
+wpConfigEdit
+}
+
 function wpboost(){
 echo -e "$COL_MAGENTA
 This feature is in BETA! The following changes will be made to the website: $COL_RESET
@@ -2599,40 +2625,17 @@ Continue? y/n
 read selectBoost && echo ''
 case $selectBoost in
         [Yy])   
-### PHP 7
-echo -e "\nWould You Like to Upgrade to PHP 7? (Y/N)\n"
-read Select && echo ''
-case $Select in
-        [Yy])   . <(curl -sS https://raw.githubusercontent.com/rowdya22/phpver/master/phpver) && phpver 70
-        ;;
-        *)      echo -e "Moving On!"
-        ;;
-esac
-#Generate ini file
-WPPHPVER=$(wpphp | perl -pe's/\.//g' | cut -c 1-2)
-phpver $WPPHPVER
-
-### BOOST php.ini Values
-sed -i "s/.*post_max_size\ .*/post_max_size = 256M/" php.ini
-sed -i "s/.*upload_max_filesize\ .*/upload_max_filesize = 256M/" php.ini
-sed -i "s/.*max_input_vars\ .*/max_input_vars = 6000/" php.ini
-sed -i "s/.*memory_limit\ .*/memory_limit = 512M/" php.ini
-sed -i "s/.*max_execution_time\ .*/max_execution_time = 60/" php.ini
-echo -e "$COL_GREEN\nSuccess:$COL_RESET php.ini values adjusted"
-### Use QWPCLI to Boost WP MEMORY & AUTO UPDATE
-file='wp-config.php'
-match=$(grep table_prefix $file)
-search="'WP_MAX_MEMORY_LIMIT'"
-VALUE="'512M'"
-wpConfigEdit
-search="'WP_MEMORY_LIMIT'"
-VALUE="'512M'"
-wpConfigEdit
-search="'WP_AUTO_UPDATE_CORE'"
-VALUE="true"
-wpConfigEdit
-
-        ;;
+		### PHP 7
+		echo -e "\nWould You Like to Upgrade to PHP 7? (Y/N)\n"
+		read Select && echo ''
+		case $Select in
+		        [Yy])   . <(curl -sS https://raw.githubusercontent.com/rowdya22/phpver/master/phpver) && phpver 70
+		        ;;
+		        *)      echo -e "Moving On!"
+		        ;;
+		esac
+        	wpboostauto
+	;;
         *)      echo -e "$COL_CYAN\nNote:$COL_RESET Operation Canceled!"
         ;;
 esac
