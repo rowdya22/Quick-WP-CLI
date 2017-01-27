@@ -1576,14 +1576,18 @@ function availdir() {
 ##### CONFIG OPTIONS #####
 
 function editini(){
+if [ ! -f php.ini ]; then
+phpinigen
+fi
+
 if [ -f php.ini ]; then
 echo -e "$COL_GREEN
-Suggested Values: $COL_RESET
-post_max_size = 256M
-upload_max_filesize = 256M 
-max_input_vars = 6000
-memory_limit = 512M
-max_execution_time = 60
+Suggested Values:            Current Values: $COL_RESET
+post_max_size       = 256M $COL_CYAN  $(grep post_max_size php.ini)$COL_RESET
+upload_max_filesize = 256M $COL_CYAN  $(grep upload_max_filesize php.ini)$COL_RESET
+max_input_vars      = 6000 $COL_CYAN  $(grep max_input_vars php.ini)$COL_RESET
+memory_limit        = 512M $COL_CYAN  $(grep memory_limit php.ini)$COL_RESET
+max_execution_time  = 60   $COL_CYAN  $(grep max_execution_time php.ini)$COL_RESET
 
 Feel free to suggest changes or additional values
 
@@ -1610,15 +1614,19 @@ fi
 }
 
 function editinisr(){
+if [ ! -f php.ini ]; then
+phpinigen
+fi
+
 if [ -f php.ini ]; then
 echo -e "$COL_MAGENTA\nWARNING! This is is a search and replace tool! \nMake sure all spelling is exact prior to submitting changes!$COL_GREEN
 
-Suggested Values: $COL_RESET
-post_max_size = 256M
-upload_max_filesize = 256M 
-max_input_vars = 6000
-memory_limit = 512M
-max_execution_time = 60
+Suggested Values:            Current Values: $COL_RESET
+post_max_size       = 256M $COL_CYAN  $(grep post_max_size php.ini)$COL_RESET
+upload_max_filesize = 256M $COL_CYAN  $(grep upload_max_filesize php.ini)$COL_RESET
+max_input_vars      = 6000 $COL_CYAN  $(grep max_input_vars php.ini)$COL_RESET
+memory_limit        = 512M $COL_CYAN  $(grep memory_limit php.ini)$COL_RESET
+max_execution_time  = 60   $COL_CYAN  $(grep max_execution_time php.ini)$COL_RESET
 $COL_GREEN
 What php.ini value would you like to change? (everything before the =)$COL_RESET"
 read search;
@@ -2579,12 +2587,18 @@ echo $wpphpver
 rm -rf QWPCLI.tmp QWPCLI.tmp01 QWPCLI_version.php
 }
 
-### WP Boost ###
-function wpboostauto(){
+### Generate php.ini file for existing PHP Version
+function phpinigen(){
 #Generate ini file
 WPPHPVER=$(wpphp | perl -pe's/\.//g' | cut -c 1-2)
 phpver $WPPHPVER
+}
 
+### WP Boost ###
+function wpboostauto(){
+#Generate ini file
+phpinigen
+phpver $WPPHPVER
 ### BOOST php.ini Values
 sed -i "s/.*post_max_size\ .*/post_max_size = 256M/" php.ini
 sed -i "s/.*upload_max_filesize\ .*/upload_max_filesize = 256M/" php.ini
@@ -2626,7 +2640,7 @@ read selectBoost && echo ''
 case $selectBoost in
         [Yy])   
 		### PHP 7
-		echo -e "\nWould You Like to Upgrade to PHP 7? (Y/N)\n"
+		echo -e "\nWould You Like to Upgrade to PHP 7? (y/n)\n"
 		read Select && echo ''
 		case $Select in
 		        [Yy])   . <(curl -sS https://raw.githubusercontent.com/rowdya22/phpver/master/phpver) && phpver 70
