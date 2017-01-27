@@ -83,6 +83,7 @@ function wpmore(){
 clear
 echo -e "$COL_MGREEN
 WordPress Specific:
+  $COL_CYAN wpboost $COL_MGREEN  - Boost Memory Limits and php.ini Values
   $COL_CYAN wpworks $COL_MGREEN  - Install Updates, Optimize DB, Run Fixes
   $COL_CYAN wpfix $COL_MGREEN    - Run Fixes (Flush Permalinks/Cache, DB Cleanup)
   $COL_CYAN wpbackup $COL_MGREEN - Backup Files and Database to Folder or tar.gz
