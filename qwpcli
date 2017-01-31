@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   27 Jan 2017   #
+#   Updated on:   31 Jan 2017   #
 #                               # 
 #################################
 
@@ -41,7 +41,7 @@ echo -e "$COL_MGREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 27 Jan 2017
+What would you like to work on?                           $COL_GREEN Updated: 31 Jan 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -858,21 +858,33 @@ Exporting Database.....\n"
 dbexport
 echo -e "Backing Up Files.....$COL_RESET"
 	# Makes directory and copy all wordpress files into directory
-	mkdir QWPCLI_BACKUP_$NOW && rsync -auvxhr wp* QWPCLI_BACKUP_$NOW;
-    	rsync -auvxh .htaccess QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo .htaccess was present/backed up.";
-	rsync -auvxh index.php QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo index.php was present/backed up.";
-	rsync -auvxh license.txt QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo license.txt was present/backed up.";
-	rsync -auvxh readme.html QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo readme.html was present/backed up.";
-	rsync -auvxh xmlrpc.php QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo xmlrpc.php was present/backed up.";
+	mkdir QWPCLI_BACKUP_$NOW 
+	cp -auvxR wp-* QWPCLI_BACKUP_$NOW
+    	cp -auvx .htaccess QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo .htaccess was present/backed up.";
+	cp -auvx index.php QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo index.php was present/backed up.";
+	cp -auvx license.txt QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo license.txt was present/backed up.";
+	cp -auvx readme.html QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo readme.html was present/backed up.";
+	cp -auvx xmlrpc.php QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo xmlrpc.php was present/backed up.";
 
-	mv -f $file QWPCLI_BACKUP_$NOW;
+	mv -f $file QWPCLI_BACKUP_$NOW; #$file comes from dbexport
 	
 	# if user would like, compress directory
-	echo -e "\nWould you like to compress (.tar) directory? (y) or (n): \c"; read input;
+	echo -e "\nWould you like to compress directory? (y) or (n): \c"; read input;
 	if [ $input == 'y' ]; then 
-		tar -zvcf QWPCLI_BACKUP_$NOW.tar.gz QWPCLI_BACKUP_$NOW;
-		rm -fr QWPCLI_BACKUP_$NOW;
-		echo -e "$COL_GREEN\n\tBackup Completed\n\n\tYour Backup is located in:\n\n\tQWPCLI_BACKUP_$NOW.tar.gz\n\n$COL_RESET";
+	echo -e "\nCompress using what format?\n(1) .tar.gz\n(2) .zip\n"
+			
+	read backupSelect && echo ''
+	case $backupSelect in
+        1)	tar -zvcf QWPCLI_BACKUP_$NOW.tar.gz QWPCLI_BACKUP_$NOW;
+                rm -fr QWPCLI_BACKUP_$NOW;
+                echo -e "$COL_GREEN\n\tBackup Completed\n\n\tYour Backup is located in:\n\n\tQWPCLI_BACKUP_$NOW.tar.gz\n\n$COL_RESET";
+	;;
+        2)	zip -r QWPCLI_BACKUP_$NOW.zip QWPCLI_BACKUP_$NOW;
+                rm -fr QWPCLI_BACKUP_$NOW;
+                echo -e "$COL_GREEN\n\tBackup Completed\n\n\tYour Backup is located in:\n\n\tQWPCLI_BACKUP_$NOW.zip\n\n$COL_RESET";
+	;;
+	*) invalidOption ;;
+	esac
 	elif [ $input != 'y' ]; then 
 		echo -e "$COL_GREEN\n\tBackup Completed\n\n\tYour Backup is located in:\n\n\tQWPCLI_BACKUP_$NOW\n\n$COL_RESET";
 	fi	
