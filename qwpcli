@@ -155,12 +155,8 @@ esac
 }
 ### Database Menu ###
 function wpdb() {
-#Grab info from the wp globals
-dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
-dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
-dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
-dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
-dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
+# Get info from the wp globals
+getWPinfo
 
 echo -e "$COL_GREEN"
 ###START DB CONNECTION TEST
@@ -375,12 +371,9 @@ echo -e "$COL_GREEN"
 ### END GENERAL INFO ###
 
 ### START DATABASE INFO ###
-#Get info from the wp globals
-dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
-dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
-dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
-dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
-dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;')
+# Get info from the wp globals
+getWPinfo
+
 ###START DB CONNECTION TEST
 if [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php! 
 fi
@@ -670,12 +663,8 @@ wp --skip-plugins --skip-themes user delete HostAdmin --yes
 }
 ### CHANGE USER PASSWORDS ###
 function wpChangePass() {
-#Get info from wp globals
-dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
-dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
-dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
-dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
-dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
+# Get info from wp globals
+getWPinfo
 
 echo -e "$COL_GREEN"
 wp --skip-plugins --skip-themes user list --role=administrator --fields=ID,user_login,display_name,user_email,roles
@@ -967,12 +956,8 @@ find2perl -name "wp-config.php" -exec grep --color -iHn DB_NAME {} \; | perl
 }
 ### EXPORT DATABASE ###
 function dbexport(){
-
-dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
-dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
-dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
-dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
-dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
+# Get info from the wp globals
+getWPinfo
 
 echo "Starting export..."
 file="$2"
@@ -1159,12 +1144,89 @@ echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Page Cache cleared\n"
 }
 
 ### WSOD Fix ###
+function wpwsodauto(){
+echo -e "\nThis function searches for error logs and then auto matically deactivates plugins or changes the theme based on the errors it finds.
+All changes are stored in QWPCLI_WSOD.txt which is removed automatically"
+
+# PLUGINS
+echo -e "$COL_GREEN\nChecking for Plugin Errors... $COL_RESET"
+
+PLUGCHECK=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/plugins\/([^\/]+)/;print$b;')
+# MUPLUGCHECK=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/mu\-plugins\/([^\/]+)/;print$b;')
+echo -e "Plugins:" >> QWPCLI_WSOD.txt
+echo $PLUGCHECK >> QWPCLI_WSOD.txt
+# echo $MUPLUGCHECK >> QWPCLI_WSOD.txt
+wp --skip-plugins --skip-themes plugin deactivate $PLUGCHECK
+
+# THEMES
+echo -e "$COL_GREEN\nChecking for Theme Errors... $COL_RESET"
+THEMECHECK=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/themes\/([^\/]+)/;print$b;')
+echo -e "\nThemes:" >> QWPCLI_WSOD.txt
+echo $THEMECHECK >> QWPCLI_WSOD.txt
+CURTHEME=$(wp --skip-plugins --skip-themes theme list --status=active --field=name)
+
+if [ "$CURTHEME" == "$THEMECHECK" ]; then
+wpThemeDefault
+else
+echo "ERROR CHANGING THEME TO DEFAULT"
+fi
+
+# CORE
+echo -e "$COL_GREEN\nChecking for Core File Errors... $COL_RESET"
+CORECHECK=$(errl1 | grep -e wp-admin -e wp-includes | wc -l)
+COREERROR=$(errl1 | grep -e wp-admin -e wp-includes)
+echo -e "\nCore:" >> QWPCLI_WSOD.txt
+echo $COREERROR >> QWPCLI_WSOD.txt
+
+if [ $CORELEN > 0 ]; then
+wpReplaceCore
+fi
+
+# GENERAL FIXES
+#echo -e "$COL_GREEN\nFlushing Permalinks, Opt/Repair/Cleanup Database... $COL_RESET"
+#wpfix
+#echo -e "$COL_GREEN\nSetting PHP Version in the .htaccess and boosting limits... $COL_RESET"
+#wpboostauto
+
+# REVERT
+echo -e "\n $COL_MAGENTA
+Error Report: $COL_RESET"
+
+PLUGLEN=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/plugins\/([^\/]+)/;print$b;' | wc -l)
+if [ $PLUGLEN != 0 ]; then
+echo -e "$COL_CYAN\nPlugins:\n$COL_RESET $PLUGCHECK"
+fi
+
+THEMELEN=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/themes\/([^\/]+)/;print$b;' | wc -l)
+if [ $THEMELEN != 0 ]; then
+echo -e "$COL_CYAN\nTheme:\n$COL_RESET $CURTHEME"
+fi
+
+if [ $CORECHECK != 0 ]; then
+echo -e "$COL_CYAN\nCore:\n$COL_RESET $COREERROR"
+fi
+
+echo -e "$COL_GREEN\nRevert site back to original state? (Reset Plugins and Theme) (y) or (n)?"
+
+read wsodSelect && echo ''
+case $wsodSelect in
+	[Yy])
+		wp --skip-plugins --skip-themes plugin activate $PLUGCHECK
+		wp --skip-plugins --skip-themes theme activate $CURTHEME
+		echo -e "$COL_GREEN\nSuccess:$COL_RESET Plugins and Theme restored."
+	;;
+	*) 	echo -e "$COL_CYAN\nWarning:$COL_RESET Site state left untouched"
+	;;
+esac
+
+# CLEANUP
+clean_wsod_files () { gcmd rm -rf QWPCLI_WSOD.txt; }
+trap clean_wsod_files EXIT
+}
+
 function wpwsod(){
-dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
-dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
-dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
-dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
-dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
+# Get info from the wp globals
+getWPinfo
 
 THEMENAME=$(wp --skip-plugins --skip-themes option get stylesheet)
 ### OPTION TO BACKUP ###
@@ -1898,6 +1960,18 @@ fi
 
 ##### END CONFIG OPTIONS #####
 
+function getWPinfo(){
+# Get info from the wp globals
+dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
+dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
+dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
+dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
+dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;')
+
+# Alternatly read in vars from wp-config.php
+#read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
+}
+
 function wpcolors(){
 echo -e "
 $COL_RED This is RED $COL_RESET
@@ -2445,11 +2519,8 @@ cd $originalDir
 }
 
 function wpRevert(){
-dbname=$(wp --skip-plugins --skip-themes eval 'echo DB_NAME;') ; 
-dbuser=$(wp --skip-plugins --skip-themes eval 'echo DB_USER;') ; 
-dbpass=$(wp --skip-plugins --skip-themes eval 'echo DB_PASSWORD;') ; 
-dbhost=$(wp --skip-plugins --skip-themes eval 'echo DB_HOST;') ;
-dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix;') ;
+# Get info from the wp globals
+getWPinfo
 
 echo -e "$COL_GREEN\nThis function will look for and restore QWPCLI_BACKUP.tar.gz or QWPCLI_CORE.tar.gz. If multiple BACKUP or CORE files exist you will get an error. Please confirm that only 1 possible file type exists:
 
