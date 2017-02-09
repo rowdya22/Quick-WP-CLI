@@ -1144,58 +1144,8 @@ echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Page Cache cleared\n"
 }
 
 ### WSOD Fix ###
-:'
+
 function wpwsodauto(){
-# echo -e "\nThis function searches for error logs and then auto matically deactivates plugins or changes the theme based on the errors it finds.
-# All changes are stored in QWPCLI_WSOD.txt which is removed automatically\n"
-
-### EVAL CHECKS
-if [ "$(wp eval 'echo "CLEAR";' $@)" == "CLEAR" ]; then # ALL CLEAR
-echo -e "\nNO WSOD DETECTED" 
-else
-### CORE CHECK ###
-	if [ "$(wp --skip-plugins --skip-themes eval 'echo "CORE";' $@)" != "CORE" ]; then # CORE LOADS
-	echo -e "\nCORE ERROR"
-	# REPLACE CORE & GENERAL FIXES
-
-	# wpReplaceCore
-	# wpboostauto
-	# wpfix
-	fi
-### PLUGIN CHECK ###
-	if [ "$(wp --skip-themes eval 'echo "PLUGINS";' $@)" != "PLUGINS" ]; then # PLUGINS LOAD
-	echo -e "\nPLUGINS ERROR"
-	# IDENTIFY AND DEACTIVATE
-
-	PLUGLIST=$(wp --skip-plugins --skip-themes plugin list --field=name --status=active)
-	for ACTIVEPLUG in $PLUGLIST ; do
-	wp --skip-plugins --skip-themes plugin deactivate $ACTIVEPLUG
-	if [ "$(wp --skip-themes eval 'echo "PLUGINS";' $@)" != "PLUGINS" ];
-	echo -e "\nPLUGIN ERROR REMAINS, TRYING AGAIN..."
-	# ACTIVATE THE PLUGIN IF THE SITE STILL HAS ERRORS AND TRY AGAIN
-	wp --skip-plugins --skip-themes plugin activate $ACTIVEPLUG
-	fi
-	done
-	fi
-### THEME CHECK ###	
-	if [ "$(wp --skip-plugins eval 'echo "THEMES";' $@)" != "THEMES" ]; then # THEMES LOAD
-	echo -e "\nTHEMES ERROR"
-	# REINSTALL OR CHANGE THEME
-	CURTHEME=$(wp --skip-plugins --skip-themes theme list --status=active --field=name)
-	if [ -z "wp-content/themes/$CURTHEME" ]; then
-		echo "THEME IS NOT INSTALLED..."
-		# TODO Possible match existing theme version
-		wp --skip-plugins --skip-themes theme install $CURTHEME --force 
-		else
-		echo "REINSTALLING THEME..."
-		wp --skip-plugins --skip-themes theme install $CURTHEME --force
-	fi
-	if [ "$(wp --skip-plugins eval 'echo "THEMES";' $@)" != "THEMES" ]; then # THEMES LOAD
-        echo -e "\nTHEME ERROR REMAINS, INSTALLING DEFAULT THEME"
-	# wpThemeDefault
-	fi
-	fi
-fi
 
 ### PLUGINS
 # echo -e "$COL_GREEN\nChecking for Plugin Errors... $COL_RESET"
@@ -1310,7 +1260,7 @@ fi
 
 # echo -e "PLUGCHECK: $PLUGCHECK\nTHEMECHECK: $THEMECHECK\nCURTHEME: $CURTHEME\nCORECHECK: $CORECHECK\nCOREERROR: $COREERROR\nPLUGLEN: $PLUGLEN\nTHEMELEN: $THEMELEN\n"
 }
-'
+
 function wpwsod(){
 # Get info from the wp globals
 getWPinfo
