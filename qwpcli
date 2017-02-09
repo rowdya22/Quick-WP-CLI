@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   31 Jan 2017   #
+#   Updated on:   09 Feb 2017   #
 #                               # 
 #################################
 
@@ -41,7 +41,7 @@ echo -e "$COL_MGREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 31 Jan 2017
+What would you like to work on?                           $COL_GREEN Updated: 09 Feb 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -1145,109 +1145,169 @@ echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Page Cache cleared\n"
 
 ### WSOD Fix ###
 function wpwsodauto(){
-echo -e "\nThis function searches for error logs and then auto matically deactivates plugins or changes the theme based on the errors it finds.
-All changes are stored in QWPCLI_WSOD.txt which is removed automatically"
+# echo -e "\nThis function searches for error logs and then auto matically deactivates plugins or changes the theme based on the errors it finds.
+# All changes are stored in QWPCLI_WSOD.txt which is removed automatically\n"
+
+### EVAL CHECKS
+if [ "$(wp eval 'echo "CLEAR";' $@)" == "CLEAR" ]; then # ALL CLEAR
+echo -e "\nNO WSOD DETECTED" 
+else
+### CORE CHECK ###
+	if [ "$(wp --skip-plugins --skip-themes eval 'echo "CORE";' $@)" != "CORE" ]; then # CORE LOADS
+	echo -e "\nCORE ERROR"
+	# REPLACE CORE & GENERAL FIXES
+
+	# wpReplaceCore
+	# wpboostauto
+	# wpfix
+	fi
+### PLUGIN CHECK ###
+	if [ "$(wp --skip-themes eval 'echo "PLUGINS";' $@)" != "PLUGINS" ]; then # PLUGINS LOAD
+	echo -e "\nPLUGINS ERROR"
+	# IDENTIFY AND DEACTIVATE
+
+	PLUGLIST=$(wp --skip-plugins --skip-themes plugin list --field=name --status=active)
+	for ACTIVEPLUG in $PLUGLIST ; do
+	wp --skip-plugins --skip-themes plugin deactivate $ACTIVEPLUG
+	if [ "$(wp --skip-themes eval 'echo "PLUGINS";' $@)" != "PLUGINS" ];
+	echo -e "\nPLUGIN ERROR REMAINS, TRYING AGAIN..."
+	# ACTIVATE THE PLUGIN IF THE SITE STILL HAS ERRORS AND TRY AGAIN
+	wp --skip-plugins --skip-themes plugin activate $ACTIVEPLUG
+	fi
+	done
+	fi
+### THEME CHECK ###	
+	if [ "$(wp --skip-plugins eval 'echo "THEMES";' $@)" != "THEMES" ]; then # THEMES LOAD
+	echo -e "\nTHEMES ERROR"
+	# REINSTALL OR CHANGE THEME
+	CURTHEME=$(wp --skip-plugins --skip-themes theme list --status=active --field=name)
+	if [ -z "wp-content/themes/$CURTHEME" ]; then
+		echo "THEME IS NOT INSTALLED..."
+		# TODO Possible match existing theme version
+		wp --skip-plugins --skip-themes theme install $CURTHEME --force 
+		else
+		echo "REINSTALLING THEME..."
+		wp --skip-plugins --skip-themes theme install $CURTHEME --force
+	fi
+	if [ "$(wp --skip-plugins eval 'echo "THEMES";' $@)" != "THEMES" ]; then # THEMES LOAD
+        echo -e "\nTHEME ERROR REMAINS, INSTALLING DEFAULT THEME"
+	# wpThemeDefault
+	fi
+	fi
+fi
 
 ### PLUGINS
-echo -e "$COL_GREEN\nChecking for Plugin Errors... $COL_RESET"
+# echo -e "$COL_GREEN\nChecking for Plugin Errors... $COL_RESET"
 
-PLUGCHECK=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/plugins\/([^\/]+)/;print$b;')
+# PLUGCHECK=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/plugins\/([^\/]+)/;print$b;')
 # MUPLUGCHECK=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/mu\-plugins\/([^\/]+)/;print$b;')
 # echo $MUPLUGCHECK >> QWPCLI_WSOD.txt
 
 # If error log check finds results 
-if [[ "$PLUGCHECK" != "0" ]]; then
-echo -e "\nPlugins:" >> QWPCLI_WSOD.txt
-echo $PLUGCHECK >> QWPCLI_WSOD.txt
+# if [[ "$PLUGCHECK" != "0" ]]; then
+# echo -e "\nPlugins:" >> QWPCLI_WSOD.txt
+# echo $PLUGCHECK >> QWPCLI_WSOD.txt
 # Deactivate plugins from the error_log
-wp --skip-plugins --skip-themes plugin deactivate $PLUGCHECK
+# wp --skip-plugins --skip-themes plugin deactivate $PLUGCHECK
 # TODO Reinstall plugin and match version?
-else
-echo "NO PLUGIN ISSUES FOUND"
-fi
+# else
+# echo "NO PLUGIN ISSUES FOUND"
+# fi
+
+# PLUGLIST=$(wp --skip-plugins --skip-themes plugin list --field=name --status=active)
+# for ACTIVEPLUG in $PLUGLIST ; do
+# wp --skip-plugins --skip-themes plugin deactivate $ACTIVEPLUG
+
+
+# function wordpress_loads(){
+#   [ "$(wp --skip-plugins --skip-themes  eval 'echo "!@";' $@)" == "!@" ]
+# }
+
+# done
+
 
 ### THEMES
-echo -e "$COL_GREEN\nChecking for Theme Errors... $COL_RESET"
-THEMECHECK=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/themes\/([^\/]+)/;print$b;')
-CURTHEME=$(wp --skip-plugins --skip-themes theme list --status=active --field=name)
+# echo -e "$COL_GREEN\nChecking for Theme Errors... $COL_RESET"
+# THEMECHECK=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/themes\/([^\/]+)/;print$b;')
+# CURTHEME=$(wp --skip-plugins --skip-themes theme list --status=active --field=name)
 
-if [ -z "wp-content/themes/$(wp --skip-plugins --skip-themes theme list --status=active --field=name)" ]; then
-echo "THEME IS NOT INSTALLED..."
+# if [ -z "wp-content/themes/$(wp --skip-plugins --skip-themes theme list --status=active --field=name)" ]; then
+# echo "THEME IS NOT INSTALLED..."
 # TODO Possible match existing theme version
-wp --skip-plugins --skip-themes theme install $(wp --skip-plugins --skip-themes theme list --status=active --field=name) --force 
-fi
+# wp --skip-plugins --skip-themes theme install $(wp --skip-plugins --skip-themes theme list --status=active --field=name) --force 
+# fi
 
 # If error log check finds results 
-if [[ "$CURTHEME" == "$THEMECHECK" ]]; then
-echo -e "\nThemes:" >> QWPCLI_WSOD.txt
-echo $THEMECHECK >> QWPCLI_WSOD.txt
+# if [[ "$CURTHEME" == "$THEMECHECK" ]]; then
+# echo -e "\nThemes:" >> QWPCLI_WSOD.txt
+# echo $THEMECHECK >> QWPCLI_WSOD.txt
 # Install and set default theme if current theme is in the error_log
-wpThemeDefault
-else
-echo "NO THEME ISSUES FOUND"
-fi
+# wpThemeDefault
+# else
+# echo "NO THEME ISSUES FOUND"
+# fi
 
 ### CORE
-echo -e "$COL_GREEN\nChecking for Core File Errors... $COL_RESET"
-CORECHECK=$(errl1 | grep -e wp-admin -e wp-includes | wc -l)
-COREERROR=$(errl1 | grep -e wp-admin -e wp-includes)
+# echo -e "$COL_GREEN\nChecking for Core File Errors... $COL_RESET"
+# CORECHECK=$(errl1 | grep -e wp-admin -e wp-includes | wc -l)
+# COREERROR=$(errl1 | grep -e wp-admin -e wp-includes)
 
 # If error log check finds results 
-if [[ "$CORECHECK" != "0" ]]; then
-echo -e "\nCore:" >> QWPCLI_WSOD.txt
-echo $COREERROR >> QWPCLI_WSOD.txt
+# if [[ "$CORECHECK" != "0" ]]; then
+# echo -e "\nCore:" >> QWPCLI_WSOD.txt
+# echo $COREERROR >> QWPCLI_WSOD.txt
 # Replace core with identical version if files have been modified
-wpReplaceCore
-else
-echo "NO CORE ISSUES FOUND"
-fi
+# wpReplaceCore
+# else
+# echo "NO CORE ISSUES FOUND"
+# fi
 
 ### GENERAL FIXES
-if [ -f index.html ]; then
-echo "$COL_CYAN\nGeneral:$COL_RESET\nWarning: index.html file exists!"
-echo "\nWarning: index.html file exists!" >> QWPCLI_WSOD.txt
-fi
+# if [ -f index.html ]; then
+# echo "$COL_CYAN\nGeneral:$COL_RESET\nWarning: index.html file exists!"
+# echo "\nWarning: index.html file exists!" >> QWPCLI_WSOD.txt
+# fi
 #echo -e "$COL_GREEN\nFlushing Permalinks, Opt/Repair/Cleanup Database... $COL_RESET"
 #wpfix
 #echo -e "$COL_GREEN\nSetting PHP Version in the .htaccess and boosting limits... $COL_RESET"
 #wpboostauto
 
 ### REVERT
-echo -e "\n $COL_MAGENTA
-Error Report: $COL_RESET"
+# echo -e "\n $COL_MAGENTA
+# Error Report: $COL_RESET"
 
-PLUGLEN=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/plugins\/([^\/]+)/;print$b;' | wc -l)
-if [ $PLUGLEN != 0 ]; then
-echo -e "$COL_CYAN\nPlugins:$COL_RESET\n$PLUGCHECK"
-fi
+# PLUGLEN=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/plugins\/([^\/]+)/;print$b;' | wc -l)
+# if [ $PLUGLEN != 0 ]; then
+# echo -e "$COL_CYAN\nPlugins:$COL_RESET\n$PLUGCHECK"
+# fi
 
-THEMELEN=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/themes\/([^\/]+)/;print$b;' | wc -l)
-if [ $THEMELEN != 0 ]; then
-echo -e "$COL_CYAN\nTheme:$COL_RESET\n$CURTHEME"
-fi
+# THEMELEN=$(errl1 | perl -e'$a=do{local$/;<STDIN>};($b)=$a=~/themes\/([^\/]+)/;print$b;' | wc -l)
+# if [ $THEMELEN != 0 ]; then
+# echo -e "$COL_CYAN\nTheme:$COL_RESET\n$CURTHEME"
+# fi
 
-if [ $CORECHECK != 0 ]; then
-echo -e "$COL_CYAN\nCore:$COL_RESET\n$COREERROR"
-fi
+# if [ $CORECHECK != 0 ]; then
+# echo -e "$COL_CYAN\nCore:$COL_RESET\n$COREERROR"
+# fi
 
-echo -e "$COL_GREEN\nRevert site back to original state? (Reset Plugins and Theme) (y) or (n)?"
+# echo -e "$COL_GREEN\nRevert site back to original state? (Reset Plugins and Theme) (y) or (n)?"
 
-read wsodSelect && echo ''
-case $wsodSelect in
-	[Yy])
-		wp --skip-plugins --skip-themes plugin activate $PLUGCHECK
-		wp --skip-plugins --skip-themes theme activate $CURTHEME
-		echo -e "$COL_GREEN\nSuccess:$COL_RESET Plugins and Theme restored.\n"
-	;;
-	*) 	echo -e "$COL_CYAN\nWarning:$COL_RESET Site state left untouched.\n"
-	;;
-esac
+# read wsodSelect && echo ''
+# case $wsodSelect in
+#	[Yy])
+#		wp --skip-plugins --skip-themes plugin activate $PLUGCHECK
+#		wp --skip-plugins --skip-themes theme activate $CURTHEME
+#		echo -e "$COL_GREEN\nSuccess:$COL_RESET Plugins and Theme restored.\n"
+#	;;
+#	*) 	echo -e "$COL_CYAN\nWarning:$COL_RESET Site state left untouched.\n"
+#	;;
+# esac
 
 # CLEANUP
-clean_wsod_files () { gcmd rm -rf QWPCLI_WSOD.txt; }
-trap clean_wsod_files EXIT
+# clean_wsod_files () { gcmd rm -rf QWPCLI_WSOD.txt; }
+# trap clean_wsod_files EXIT
 
-echo -e "PLUGCHECK: $PLUGCHECK\nTHEMECHECK: $THEMECHECK\nCURTHEME: $CURTHEME\nCORECHECK: $CORECHECK\nCOREERROR: $COREERROR\nPLUGLEN: $PLUGLEN\nTHEMELEN: $THEMELEN\n"
+# echo -e "PLUGCHECK: $PLUGCHECK\nTHEMECHECK: $THEMECHECK\nCURTHEME: $CURTHEME\nCORECHECK: $CORECHECK\nCOREERROR: $COREERROR\nPLUGLEN: $PLUGLEN\nTHEMELEN: $THEMELEN\n"
 }
 
 function wpwsod(){
