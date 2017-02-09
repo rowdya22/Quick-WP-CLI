@@ -1144,6 +1144,7 @@ echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Page Cache cleared\n"
 }
 
 ### WSOD Fix ###
+:'
 function wpwsodauto(){
 # echo -e "\nThis function searches for error logs and then auto matically deactivates plugins or changes the theme based on the errors it finds.
 # All changes are stored in QWPCLI_WSOD.txt which is removed automatically\n"
@@ -1309,7 +1310,7 @@ fi
 
 # echo -e "PLUGCHECK: $PLUGCHECK\nTHEMECHECK: $THEMECHECK\nCURTHEME: $CURTHEME\nCORECHECK: $CORECHECK\nCOREERROR: $COREERROR\nPLUGLEN: $PLUGLEN\nTHEMELEN: $THEMELEN\n"
 }
-
+'
 function wpwsod(){
 # Get info from the wp globals
 getWPinfo
