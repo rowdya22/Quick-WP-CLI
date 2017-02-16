@@ -93,7 +93,6 @@ WordPress Specific:
   $COL_CYAN wpopt $COL_MGREEN    - Basic Site Optimization and Suggestions
   $COL_CYAN wpinstall $COL_MGREEN- Install WordPress From Scratch
   $COL_CYAN wptools $COL_MGREEN  - Show WordPress Tools Functions
-  $COL_CYAN wpdbcheck $COL_MGREEN- PHP Based DB Tests
   $COL_CYAN wpcheck $COL_MGREEN  - Perl Based Plugin/Theme Check
   $COL_CYAN wpcleanup $COL_MGREEN- Remove All QWPCLI Generated Files
 Helpful Functions:
@@ -1437,20 +1436,6 @@ dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix
 wp --skip-plugins --skip-themes db query "DELETE pm FROM ${dbprefix}postmeta pm LEFT JOIN ${dbprefix}posts wp ON wp.ID = pm.post_id WHERE wp.ID IS NULL";
 
 echo -e "$COL_GREEN\rSuccess:$COL_RESET Orphaned post_meta data removed using MySQL"
-}
-
-function wpdbcheck(){
-if [ ! -f wpdbtest.php ]; then
-wget https://raw.githubusercontent.com/rowdya22/Quick-WP-CLI/master/databasetest
-
-mv databasetest wpdbtest.php
-echo -e "$COL_GREEN \nLatest wpdbtest.php downloaded $COL_RESET"
-fi
-
-echo -e "$COL_GREEN \nBegin Test by visting http://domain.com/wpdbtest.php \n $COL_RESET"
-
-clean_up_wpdbcheck () { find ~/public_html*/ -maxdepth 5 \( -name "wpdbtest.php" \)|xargs rm -rf; }
-trap clean_up_wpdbcheck EXIT
 }
 
 ### Find error logs modified in the last 10 days and show the last 10 lines
