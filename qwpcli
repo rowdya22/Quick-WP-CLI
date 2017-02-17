@@ -96,6 +96,7 @@ WordPress Specific:
   $COL_CYAN wpcheck $COL_MGREEN  - Perl Based Plugin/Theme Check
   $COL_CYAN wpcleanup $COL_MGREEN- Remove All QWPCLI Generated Files
 Helpful Functions:
+  $COL_CYAN phpver $COL_MGREEN   - Change PHP AddHandler
   $COL_CYAN fcount $COL_MGREEN   - Lists Number of Files in Current Directory
   $COL_CYAN dirsize $COL_MGREEN  - Sorts Directory Contents by Size
   $COL_CYAN editini $COL_MGREEN  - Push Common Settings to php.ini
