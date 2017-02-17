@@ -46,7 +46,7 @@ qwpcli - Main Menu
        wpurl     - List and Change URLs
        wpuser    - Create User, Set Passwords, Change Roles
        wpupdate  - Check For or Run Updates, Configure Auto Updates
-       wpcleanup - Remove All QWPCLI Generated Files
+       wpconfig  - Configure wp-config.php Options
        wpwsod    - Guided Walkthrough to Fix WSOD
        wpglobal  - Run Commands Across All WordPress Installs (Advanced)
        wpmore    - More Commands (Global Actions, WP Tools, DB List)
@@ -56,25 +56,26 @@ wpstats - Show Version, URL, DB Info, Number of Available Updates
 
     WPCLI Check:    [OK] 
     Checksums:      [OK] 
-    Eval Plugins:   [OK]
-    Eval Themes:    [OK]
-     
+    Eval Plugins:   [CHECK]
+    Eval Themes:    [CHECK]
+ 
     WP Version:     #.#.#
-    Site URL:       http://example.com
-    Home URL:       http://example.com
-    Stylesheet:     twentysixteen
-    Template:       twentysixteen
-    
+    Site URL:       https://example.com
+    Home URL:       https://example.com
+    Stylesheet:     twentyseventeen
+    Template:       twentyseventeen
+
     Database Conn:  Success  
-    Database User:  db_user 
-    Database Pass:  PASSWORD 
+    Database Name:  db_name
+    Database User:  db_user
+    Database Pass:  PASSWORD
     Database Host:  localhost 
-    Database Name:  db_name 
     Database Prfx:  wp_ 
-     
-    Core Updates:   0  	 memory_limit => 256M => 256M 
-    Plugin Updates: 0  	 post_max_size => 64M => 64M 
-    Theme Updates:  0  	 upload_max_filesize => 64M => 64M
+
+    PHP Version:    #.#.#   	 Max Input Vars:  6000 
+    Core Updates:   #  		     Memory Limit:    256M 
+    Plugin Updates: # of #  	 Post Max Size:   256M 
+    Theme Updates:  # of #  	 Upload Max Size: 256M
 
 wpcore - Check Versions, Verify Checksums, Replace Core Files
 -------------------------------------------------------------
@@ -183,12 +184,27 @@ wpupdate - Check For or Run Updates, Configure Auto Updates
     (3) Themes
     (4) All For This Install
     (5) Check Available Updates
-    (6) Disable Auto Updates
-    (7) Exit
+    (6) Disable Auto Updates (WordPress Tools Only)
+    (7) Update Endurance Cache
+    (8) Exit
     
     	Selection: 
 
 wpbackup - Backup Site and Database to Folder or tar.gz
+-------------------------------------------------------
+    Which configuration changes would you like to make?
+      Select Options:
+        (1) AUTOSAVE_INTERVAL
+        (2) DISALLOW_FILE_EDIT
+        (3) EMPTY_TRASH_DAYS
+        (4) NOBLOGREDIRECT
+        (5) WP_AUTO_UPDATE_CORE
+        (6) WP_DEBUG
+        (7) WP_MAX_MEMORY_LIMIT
+        (8) WP_MEMORY_LIMIT
+        (9) WP_POST_REVISIONS
+
+wpbackup - Backup Site and Database to Folder, zip or tar.gz
 -------------------------------------------------------
 
 wpworks - Install Updates, Optimize DB, Run Fixes
@@ -224,27 +240,26 @@ wpmore - More Commands (Global Actions, WP Tools, DB List)
 ----------------------------------------------------------------------
 
     WordPress Specific:
+       wpboost   - Boost Memory Limits and php.ini Values
        wpworks   - Install Updates, Optimize DB, Run Fixes
        wpfix     - Run Fixes (Flush Permalinks/Cache, DB Cleanup)
        wpbackup  - Backup Files and Database to Folder or tar.gz
-       wpmigrate - Move WordPress to Another Directory 
+       wpmigrate - Move WordPress to Another Directory
        dblist    - Lists Database Names and wp-config.php Locations
        wpspeed   - Runs WordPress Speed Checks
        wpopt     - Basic Site Optimization and Suggestions
-       wpinstall - Install WordPress From Scratch 
-       wptools   - Show WordPress Tools Functions 
-       wpdbcheck - PHP Based DB Tests 
-       wpcheck   - Perl Based Plugin/Theme Check 
+       wpinstall - Install WordPress From Scratch
+       wptools   - Show WordPress Tools Functions
+       wpcheck   - Perl Based Plugin/Theme Check
+       wpcleanup - Remove All QWPCLI Generated Files
     Helpful Functions:
        fcount    - Lists Number of Files in Current Directory
        dirsize   - Sorts Directory Contents by Size
-       editini   - Push Common Settings to php.ini 
+       editini   - Push Common Settings to php.ini
        editinisr - Search/Replace Values in the php.ini
     Troubleshooting:
        mailtest  - Checks PHP Mail Function
        slowmysql - Displays Slow MySQL Queries
-    
-    Check out more wpcli commands at  http://wp-cli.org/commands/
 
 
 WP Tools
