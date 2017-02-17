@@ -1144,10 +1144,12 @@ function wpEnduranceCacheUpgrade(){
 if [ -f wp-content/mu-plugins/endurance-page-cache.php ]; then
 rm -rf wp-content/mu-plugins/endurance-page-cache.php
 wget https://raw.githubusercontent.com/bluehost/endurance-page-cache/production/endurance-page-cache.php -O wp-content/mu-plugins/endurance-page-cache.php;
+wpEnduranceCacheClear
 fi
 if [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
 rm -rf wp-content/mu-plugins/endurance-browser-cache.php
 wget https://raw.githubusercontent.com/bluehost/endurance-browser-cache/production/endurance-browser-cache.php -O wp-content/mu-plugins/endurance-browser-cache.php;
+wpEnduranceCacheClear
 fi
 
 if [ -f wp-content/mu-plugins/endurance-page-cache.php ] || [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
