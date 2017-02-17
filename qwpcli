@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   16 Feb 2017   #
+#   Updated on:   17 Feb 2017   #
 #                               #
 #################################
 
@@ -41,7 +41,7 @@ echo -e "$COL_MGREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 16 Feb 2017
+What would you like to work on?                           $COL_GREEN Updated: 17 Feb 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -306,8 +306,9 @@ Update Options:
 (3) Themes
 (4) All For This Install
 (5) Check Available Updates
-(6) Disable Auto Updates
-(7) Exit
+(6) Disable Auto Updates (WordPress Tools Only)
+(7) Update Endurance Cache
+(8) Exit
 
 \tSelection: \c" ;
 
@@ -319,7 +320,8 @@ case $updateSelect in
 	4)	wpUpdateInstall;; #Update entire install
 	5)	wpCheckUpdate;; #Show nubmer of missing updates
 	6)	wpAutoUpdate;; #Configure Auto updates
-	7)	return;;
+	7)	wpEnduranceCacheUpgrade;; #Update Encurance Cache plugins
+	8)	return;;
 	*)	invalidOption;;
 esac
 }
@@ -1134,6 +1136,21 @@ Warning:$COL_RESET Permalinks will now be flushed..."
 sleep 3
 wpfix
 echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Cache activated"
+fi
+}
+
+function wpEnduranceCacheUpgrade(){
+if [ -f wp-content/mu-plugins/endurance-page-cache.php ]; then
+rm -rf wp-content/mu-plugins/endurance-page-cache.php
+wget https://raw.githubusercontent.com/bluehost/endurance-page-cache/production/endurance-page-cache.php -O wp-content/mu-plugins/endurance-page-cache.php;
+fi
+if [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
+rm -rf wp-content/mu-plugins/endurance-browser-cache.php
+wget https://raw.githubusercontent.com/bluehost/endurance-browser-cache/production/endurance-browser-cache.php -O wp-content/mu-plugins/endurance-browser-cache.php;
+fi
+
+if [ -f wp-content/mu-plugins/endurance-page-cache.php ] || [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
+wpfix
 fi
 }
 
