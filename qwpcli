@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   22 Feb 2017   #
+#   Updated on:   23 Feb 2017   #
 #                               #
 #################################
 
@@ -41,7 +41,7 @@ echo -e "$COL_MGREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 22 Feb 2017
+What would you like to work on?                           $COL_GREEN Updated: 23 Feb 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -321,7 +321,7 @@ case $updateSelect in
 	4)	wpUpdateInstall;; #Update entire install
 	5)	wpCheckUpdate;; #Show nubmer of missing updates
 	6)	wpAutoUpdate;; #Configure Auto updates
-	7)	wpEnduranceCacheUpgrade;; #Update Encurance Cache plugins
+	7)	wpEnduranceCacheUpdate;; #Update Encurance Cache plugins
 	8)	return;;
 	*)	invalidOption;;
 esac
@@ -821,6 +821,7 @@ if [ ! -f .automatic_updates_disabled ]; then
 wpCoreUpdate
 wpThemeUpdate
 wpPluginUpdate
+wpEnduranceCacheUpdate
 else
 echo -e "$COL_MAGENTA UPDATE FUNCTIONS DISABLED as long as .automatic_updates_disabled Exists! $COL_RESET"
 fi
@@ -1106,6 +1107,8 @@ wp --skip-plugins --skip-themes option set jpo_firstrun 1
 }
 
 function wpEnduranceCache(){
+EC_INSTALL="0"
+
 if [[ ! -f wp-config.php ]]; then echo -e "$COL_CYAN\nWarning:$COL_RESET Could not find wp-config.php! Not installing a WordPress plugin on a non WordPress site!"
 else
 echo -e "$COL_GREEN
@@ -1119,40 +1122,68 @@ while [ $secs -gt 0 ]; do
    sleep 1
    : $((secs--))
 done
-
+echo ""
 if [ ! -d wp-content/mu-plugins/ ]; then
 mkdir wp-content/mu-plugins/
 fi
-if [ -f wp-content/mu-plugins/endurance-page-cache.php ]; then
-rm -rf wp-content/mu-plugins/endurance-page-cache.php
-fi
-if [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
-rm -rf wp-content/mu-plugins/endurance-browser-cache.php
-fi
-wget https://raw.githubusercontent.com/bluehost/endurance-page-cache/production/endurance-page-cache.php -O wp-content/mu-plugins/endurance-page-cache.php;
-wget https://raw.githubusercontent.com/bluehost/endurance-browser-cache/production/endurance-browser-cache.php -O wp-content/mu-plugins/endurance-browser-cache.php;
 
+if [ -f wp-content/mu-plugins/endurance-page-cache.php ] || [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
+wpEnduranceCacheUpdate
+fi
+
+if [ ! -f wp-content/mu-plugins/endurance-page-cache.php ]; then
+wget https://raw.githubusercontent.com/bluehost/endurance-page-cache/production/endurance-page-cache.php -O wp-content/mu-plugins/endurance-page-cache.php;
+EC_INSTALL="1"
+fi
+
+if [ ! -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
+wget https://raw.githubusercontent.com/bluehost/endurance-browser-cache/production/endurance-browser-cache.php -O wp-content/mu-plugins/endurance-browser-cache.php;
+EC_INSTALL="1"
+fi
+
+if [ "$EC_INSTALL" == "1" ]; then
 echo -e "$COL_GREEN\nSuccess:$COL_RESET Caching Downloaded/Updated $COL_CYAN
 Warning:$COL_RESET Permalinks will now be flushed..."
 sleep 3
 wpfix
 echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Cache activated"
 fi
+fi
 }
 
-function wpEnduranceCacheUpgrade(){
+function wpEnduranceCacheUpdate(){
+EC_UPDATE="0"
 if [ -f wp-content/mu-plugins/endurance-page-cache.php ]; then
-rm -rf wp-content/mu-plugins/endurance-page-cache.php
-wget https://raw.githubusercontent.com/bluehost/endurance-page-cache/production/endurance-page-cache.php -O wp-content/mu-plugins/endurance-page-cache.php;
-wpEnduranceCacheClear
+EPC_LATEST=$(curl -s https://api.mojomarketplace.com/mojo-plugin-assets/json/mu-plugins.json | awk -v k="text" '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' | sed '/^$/d' | sed -e 's/^[ \t]*//' | sed 's/\"//g'| sed 's/[{}]//g' | grep -A1 EPC_VERSION | grep -v EPC_VERSION | tr -d ' ' | tail -c 4)
+EPC_CUR=$(wp --skip-plugins --skip-themes plugin list --name=endurance-page-cache --fields=version --format=csv | grep -v version)
+
+	if [ "$EPC_LATEST" != "$EPC_CUR" ]; then
+	rm -rf wp-content/mu-plugins/endurance-page-cache.php
+	wget https://raw.githubusercontent.com/bluehost/endurance-page-cache/production/endurance-page-cache.php -O wp-content/mu-plugins/endurance-page-cache.php;
+	EC_UPDATE="1" 
+	echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Page Cache updated from $EPC_CUR to $EPC_LATEST"
+	fi
+	if [ "$EPC_LATEST" == "$EPC_CUR" ]; then
+	echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Page Cache already at the latest version: $EPC_LATEST"
+	fi
 fi
 if [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
-rm -rf wp-content/mu-plugins/endurance-browser-cache.php
-wget https://raw.githubusercontent.com/bluehost/endurance-browser-cache/production/endurance-browser-cache.php -O wp-content/mu-plugins/endurance-browser-cache.php;
-wpEnduranceCacheClear
+EBC_LATEST=$(curl -s https://api.mojomarketplace.com/mojo-plugin-assets/json/mu-plugins.json | awk -v k="text" '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' | sed '/^$/d' | sed -e 's/^[ \t]*//' | sed 's/\"//g'| sed 's/[{}]//g' | grep -A1 EBC_VERSION | grep -v EBC_VERSION | tr -d ' ' | tail -c 4)
+EBC_CUR=$(wp --skip-plugins --skip-themes plugin list --name=endurance-browser-cache --fields=version --format=csv | grep -v version)
+
+        if [ "$EBC_LATEST" != "$EBC_CUR" ]; then
+        rm -rf wp-content/mu-plugins/endurance-browser-cache.php
+        wget https://raw.githubusercontent.com/bluehost/endurance-browser-cache/production/endurance-browser-cache.php -O wp-content/mu-plugins/endurance-browser-cache.php;
+	EC_UPDATE="1"
+        echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Browser Cache updated from $EBC_CUR to $EBC_LATEST"
+        fi
+        if [ "$EBC_LATEST" == "$EBC_CUR" ]; then
+        echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Browser Cache already at the latest version: $EBC_LATEST"
+        fi
 fi
 
-if [ -f wp-content/mu-plugins/endurance-page-cache.php ] || [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
+if [ "$EC_UPDATE" == "1" ]; then
+wpEnduranceCacheClear
 wpfix
 fi
 }
