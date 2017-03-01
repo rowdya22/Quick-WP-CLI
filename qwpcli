@@ -849,9 +849,8 @@ Starting backup.....\n
 Exporting Database.....\n"
 dbexport
 echo -e "Backing Up Files.....$COL_RESET"
-	# get md5sum of backup files to compair with backup
-        find -maxdepth 1 \( -name " wp-*" -o -name ".htaccess" -o -name "index.php" -o -name "license.txt" -o -name "readme.html" -o -name "xmlrpc.php" \) -exec md5sum {} \; > QWPCLI_source.txt
-
+	# get md5sum of backup files to compare with backup
+	cd wp-content/ && SRC=$(find | md5sum) && cd ../
 	# Makes directory and copy all WordPress files into directory
 	mkdir QWPCLI_BACKUP_$NOW
 	rsync -auvxhr wp-* QWPCLI_BACKUP_$NOW
@@ -864,17 +863,13 @@ echo -e "Backing Up Files.....$COL_RESET"
 	mv -f $file QWPCLI_BACKUP_$NOW; #$file comes from dbexport
 	
 	# Check for successful backup
-	cd QWPCLI_BACKUP_$NOW/
-	# get md5sum of backup files to compair with source
-	find -maxdepth 1 \( -name " wp-*" -o -name ".htaccess" -o -name "index.php" -o -name "license.txt" -o -name "readme.html" -o -name "xmlrpc.php" \) -exec md5sum {} \; > QWPCLI_destination.txt
-	mv QWPCLI_destination.txt ../ && cd ../
+	cd QWPCLI_BACKUP_$NOW/wp-content/ && DST=$(find | md5sum) && cd ../../
 	echo -e "$COL_GREEN\nChecking backup integrity...$COL_RESET"
-	BACKUP_MATCH=$(diff QWPCLI_source.txt QWPCLI_destination.txt | wc -l)
-	if [ "$BACKUP_MATCH" != "0" ]; then
+	if [ "$SRC" != "$DST" ]; then
 	echo -e "$COL_CYAN\nWarning:$COL_RESET Backup Source does NOT match destination!"
 	echo -e "Retry backup? (y) or (n): \c"; read check;
 		if [ $check == 'y' ]; then
-		rm -rf QWPCLI_BACKUP_$NOW/ QWPCLI_source.txt QWPCLI_destination.txt $file
+		rm -rf QWPCLI_BACKUP_$NOW/ $file
 		wpbackup
 		return #avoid script loops
 		else
@@ -882,7 +877,6 @@ echo -e "Backing Up Files.....$COL_RESET"
 		fi	
 	else
 	echo -e "$COL_GREEN\nSuccess:$COL_RESET Backup Source matches destination"
-	rm -rf QWPCLI_source.txt QWPCLI_destination.txt
 	fi
 	
 	# if user would like, compress directory
