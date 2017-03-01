@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   23 Feb 2017   #
+#   Updated on:   01 Mar 2017   #
 #                               #
 #################################
 
@@ -41,7 +41,7 @@ echo -e "$COL_MGREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 23 Feb 2017
+What would you like to work on?                           $COL_GREEN Updated: 01 Mar 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -849,17 +849,42 @@ Starting backup.....\n
 Exporting Database.....\n"
 dbexport
 echo -e "Backing Up Files.....$COL_RESET"
-	# Makes directory and copy all wordpress files into directory
+	# get md5sum of backup files to compair with backup
+        find \( -name " wp-*" -o -name ".htaccess" -o -name "index.php" -o -name "license.txt" -o -name "readme.html" -o -name "xmlrpc.php" \) -exec md5sum {} \; > QWPCLI_source.txt
+
+	# Makes directory and copy all WordPress files into directory
 	mkdir QWPCLI_BACKUP_$NOW
-	cp -auvxR wp-* QWPCLI_BACKUP_$NOW
-    	cp -auvx .htaccess QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo .htaccess was present/backed up.";
-	cp -auvx index.php QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo index.php was present/backed up.";
-	cp -auvx license.txt QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo license.txt was present/backed up.";
-	cp -auvx readme.html QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo readme.html was present/backed up.";
-	cp -auvx xmlrpc.php QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo xmlrpc.php was present/backed up.";
+	rsync -auvxhr wp-* QWPCLI_BACKUP_$NOW
+    	rsync -auvxh .htaccess QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo .htaccess was present/backed up.";
+	rsync -auvxh index.php QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo index.php was present/backed up.";
+	rsync -auvxh license.txt QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo license.txt was present/backed up.";
+	rsync -auvxh readme.html QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo readme.html was present/backed up.";
+	rsync -auvxh xmlrpc.php QWPCLI_BACKUP_$NOW 2>/dev/null || echo -e "\n\tNo xmlrpc.php was present/backed up.";
 
 	mv -f $file QWPCLI_BACKUP_$NOW; #$file comes from dbexport
-
+	
+	# Check for successful backup
+	cd QWPCLI_BACKUP_$NOW/
+	# get md5sum of backup files to compair with source
+	find \( -name " wp-*" -o -name ".htaccess" -o -name "index.php" -o -name "license.txt" -o -name "readme.html" -o -name "xmlrpc.php" \) -exec md5sum {} \; > QWPCLI_destination.txt
+	mv QWPCLI_destination.txt ../ && cd ../
+	echo -e "$COL_GREEN\nChecking backup integrity...$COL_RESET"
+	BACKUP_MATCH=$(diff QWPCLI_source.txt QWPCLI_destination.txt | wc -l)
+	if [ "$BACKUP_MATCH" != "0" ]; then
+	echo -e "$COL_CYAN\nWarning:$COL_RESET Backup Source does NOT match destination!"
+	echo -e "Retry backup? (y) or (n): \c"; read check;
+		if [ $check == 'y' ]; then
+		rm -rf QWPCLI_BACKUP_$NOW/ QWPCLI_source.txt QWPCLI_destination.txt $file
+		wpbackup
+		return #avoid script loops
+		else
+		echo -e "$COL_CYAN\nWarning:$COL_RESET Continuing with incomplete backup!"
+		fi	
+	else
+	echo -e "$COL_GREEN\nSuccess:$COL_RESET Backup Source matches destination"
+	rm -rf QWPCLI_source.txt QWPCLI_destination.txt
+	fi
+	
 	# if user would like, compress directory
 	echo -e "\nWould you like to compress directory? (y) or (n): \c"; read input;
 	if [ $input == 'y' ]; then
