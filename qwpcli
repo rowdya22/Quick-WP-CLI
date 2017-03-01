@@ -850,7 +850,7 @@ Exporting Database.....\n"
 dbexport
 echo -e "Backing Up Files.....$COL_RESET"
 	# get md5sum of backup files to compair with backup
-        find \( -name " wp-*" -o -name ".htaccess" -o -name "index.php" -o -name "license.txt" -o -name "readme.html" -o -name "xmlrpc.php" \) -exec md5sum {} \; > QWPCLI_source.txt
+        find -maxdepth 1 \( -name " wp-*" -o -name ".htaccess" -o -name "index.php" -o -name "license.txt" -o -name "readme.html" -o -name "xmlrpc.php" \) -exec md5sum {} \; > QWPCLI_source.txt
 
 	# Makes directory and copy all WordPress files into directory
 	mkdir QWPCLI_BACKUP_$NOW
@@ -866,7 +866,7 @@ echo -e "Backing Up Files.....$COL_RESET"
 	# Check for successful backup
 	cd QWPCLI_BACKUP_$NOW/
 	# get md5sum of backup files to compair with source
-	find \( -name " wp-*" -o -name ".htaccess" -o -name "index.php" -o -name "license.txt" -o -name "readme.html" -o -name "xmlrpc.php" \) -exec md5sum {} \; > QWPCLI_destination.txt
+	find -maxdepth 1 \( -name " wp-*" -o -name ".htaccess" -o -name "index.php" -o -name "license.txt" -o -name "readme.html" -o -name "xmlrpc.php" \) -exec md5sum {} \; > QWPCLI_destination.txt
 	mv QWPCLI_destination.txt ../ && cd ../
 	echo -e "$COL_GREEN\nChecking backup integrity...$COL_RESET"
 	BACKUP_MATCH=$(diff QWPCLI_source.txt QWPCLI_destination.txt | wc -l)
