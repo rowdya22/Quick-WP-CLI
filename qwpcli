@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   01 Mar 2017   #
+#   Updated on:   06 Mar 2017   #
 #                               #
 #################################
 
@@ -33,7 +33,7 @@ date -u +"%Y%m%d-%H%M%S"
 #################### START ####################
 function qwpcli(){
 clear
-echo -e "$COL_MGREEN
+echo -e "$COL_GREEN
     ___       _     __     _      _____      _______   ____
   / __ \__ __(_)___/ /__  | | /| / / _ \____/ ___/ /  /  _/
  / /_/ / // / / __/  '_/  | |/ |/ / ___/___/ /__/ /___/ /
@@ -41,7 +41,7 @@ echo -e "$COL_MGREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 01 Mar 2017
+What would you like to work on?                           $COL_GREEN Updated: 06 Mar 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -58,14 +58,14 @@ What would you like to work on?                           $COL_GREEN Updated: 01
 $COL_RESET"
 
 ### WPCLI FUNCTIONALITY CHECK ###
+if [ -f wp-config.php ]; then
 CHECK=$(wp --skip-plugins --skip-themes core version | wc -l)
 ### Output should be only one line. If not throw a warning as WP-CLI likely errored.
 if [ $CHECK != '1' ]; then
 echo -e "$COL_MAGENTA
 WARNING WPCLI CHECK: [FAILED]
 
-WPCLI is having trouble working. Are you in a WordPress directory? If so check for a Coming Soon or Maintenance Mode Plugin.$COL_RESET
-"
+WPCLI is having trouble working. Is WPCLI installed? Try using a temp install by running$COL_CYAN wpcliinstall $COL_RESET"
 fi
 ### END WPCLI FUNCTIONALITY CHECK ###
 
@@ -73,10 +73,16 @@ fi
 if [[ -d "$(pwd)/wp-content/plugins/coming-soon/" ]] || [[ -d "$(pwd)/wp-content/plugins/coming-soon-page/" ]] || [[ -d "$(pwd)/wp-content/plugins/coming-soon-builder/" ]] || [[ -d "$(pwd)/wp-content/plugins/ultimate-landing-page-and-coming-soon-page/" ]] || [[ -d "$(pwd)/wp-content/plugins/rocket-maintenance-mode/" ]] || [[ -d "$(pwd)/wp-content/plugins/simple-maintenance-mode/" ]] || [[ -d "$(pwd)/wp-content/plugins/coming-soon-maintenance-mode-from-acurax/" ]] || [[ -d "$(pwd)/wp-content/plugins/indeed-coming-soon/" ]]; then
 echo -e "$COL_MAGENTA
 WARNING:
-This site may be using a maintenance mode plugin. Some functions may not work \nproperly.  If you have problems disable the plugin and try again. $COL_RESET
-"
+This site may be using a maintenance mode plugin. Some functions may not work \nproperly.  If you have problems disable the plugin and try again. $COL_RESET"
 fi
 ### END COMING SOON CHECK ###
+fi
+
+if [ ! -f wp-config.php ]; then
+echo -e "$COL_MAGENTA
+WARNING:
+No wp-config.php file found. Make sure you are in a working WordPress directory! $COL_RESET"
+fi
 }
 
 function wpmore(){
@@ -866,7 +872,7 @@ echo -e "Backing Up Files.....$COL_RESET"
 	cd QWPCLI_BACKUP_$NOW/wp-content/ && DST=$(find | md5sum) && cd ../../
 	echo -e "$COL_GREEN\nChecking backup integrity...$COL_RESET"
 	if [ "$SRC" != "$DST" ]; then
-	echo -e "$COL_CYAN\nWarning:$COL_RESET Backup Source does NOT match destination!"
+	echo -e "$COL_CYAN\nWarning:$COL_RESET Backup source does NOT match destination!"
 	echo -e "Retry backup? (y) or (n): \c"; read check;
 		if [ $check == 'y' ]; then
 		rm -rf QWPCLI_BACKUP_$NOW/ $file
@@ -1955,6 +1961,26 @@ dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix
 
 function phpver(){
 . <(curl -sS https://raw.githubusercontent.com/rowdya22/phpver/master/phpver)
+}
+
+### Sideload WP-CLI ###
+function wpcliinstall(){
+if [ ! -f ~/QWPCLI_cli ]; then
+workingDir=$(pwd)
+echo -e "\nDo you wish to install a temp copy of WP-CLI? (y) or (n): \c"; read input;
+if [ $input == 'y' ]; then
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x wp-cli.phar && mv wp-cli.phar ~/QWPCLI_cli && cd && alias wp="$(pwd)/QWPCLI_cli" && cd $workingDir && echo -e "$COL_GREEN\nSuccess: $COL_RESET WP-CLI Installed"
+
+#Automatically remove generated files when session ends
+remove_cli_file () { rm -rf ~/QWPCLI_cli; }
+trap remove_cli_file EXIT
+
+elif [ $input != 'y' ]; then
+echo -e "$COL_CYAN\nWarning:$COL_RESET WP-CLI was not installed";
+fi
+else
+echo -e "$COL_CYAN\nWarning:$COL_RESET WP-CLI is already installed"
+fi
 }
 
 function wpcolors(){
