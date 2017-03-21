@@ -389,7 +389,7 @@ wpphpmaxvars=$(echo -e "$wpphpmaxvarslong" | perl -e'$out=do{local$/;<STDIN>};$o
 echo -e "\nPHP Version:   $COL_CYAN $wpphpver $COL_GREEN \t Max Input Vars: $COL_CYAN $wpphpmaxvars $COL_GREEN"
 echo -e "Core Updates:  $COL_CYAN $CORE $COL_GREEN \t\t Memory Limit:   $COL_CYAN $wpphpmemlim $COL_GREEN"
 echo -e "Plugin Updates:$COL_CYAN $PLUGIN of $PLUGINTOTAL $COL_GREEN \t Post Max Size:  $COL_CYAN $wpphppostmax $COL_GREEN"
-echo -e "Theme Updates: $COL_CYAN $THEME of $THEMETOTAL $COL_GREEN \t Upload Max Size:$COL_CYAN $wpphpmemlim $COL_RESET"
+echo -e "Theme Updates: $COL_CYAN $THEME of $THEMETOTAL $COL_GREEN \t Upload Max Size:$COL_CYAN $wpphpuploadmax $COL_RESET"
 
 rm -rf QWPCLI_version.php QWPCLI_info.php QWPCLI.tmp QWPCLI.tmp01 #Clean Up Temp Files
 ### END UPDATE AND LIMITS ###
