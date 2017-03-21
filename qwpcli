@@ -3,10 +3,11 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   09 Mar 2017   #
+#   Updated on:   21 Mar 2017   #
 #                               #
 #################################
 
+unset HISTFILE
 shopt -s expand_aliases
 
 # Colors
@@ -41,7 +42,7 @@ echo -e "$COL_GREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 09 Mar 2017
+What would you like to work on?                           $COL_GREEN Updated: 21 Mar 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -57,32 +58,9 @@ What would you like to work on?                           $COL_GREEN Updated: 09
   $COL_CYAN wpmore $COL_MGREEN   - More Commands (Global Actions, WP Tools, DB List)
 $COL_RESET"
 
-### WPCLI FUNCTIONALITY CHECK ###
-if [ -f wp-config.php ]; then
-CHECK=$(wp --skip-plugins --skip-themes core version | wc -l)
-### Output should be only one line. If not throw a warning as WP-CLI likely errored.
-if [ $CHECK != '1' ]; then
-echo -e "$COL_MAGENTA
-WARNING WPCLI CHECK: [FAILED]
-
-WPCLI is having trouble working. Is WPCLI installed? Try using a temp install by running$COL_CYAN wpcliinstall $COL_RESET"
-fi
-### END WPCLI FUNCTIONALITY CHECK ###
-
-### CHECK FOR COMING SOON PAGES ###
-if [[ -d "$(pwd)/wp-content/plugins/coming-soon/" ]] || [[ -d "$(pwd)/wp-content/plugins/coming-soon-page/" ]] || [[ -d "$(pwd)/wp-content/plugins/coming-soon-builder/" ]] || [[ -d "$(pwd)/wp-content/plugins/ultimate-landing-page-and-coming-soon-page/" ]] || [[ -d "$(pwd)/wp-content/plugins/rocket-maintenance-mode/" ]] || [[ -d "$(pwd)/wp-content/plugins/simple-maintenance-mode/" ]] || [[ -d "$(pwd)/wp-content/plugins/coming-soon-maintenance-mode-from-acurax/" ]] || [[ -d "$(pwd)/wp-content/plugins/indeed-coming-soon/" ]]; then
-echo -e "$COL_MAGENTA
-WARNING:
-This site may be using a maintenance mode plugin. Some functions may not work \nproperly.  If you have problems disable the plugin and try again. $COL_RESET"
-fi
-### END COMING SOON CHECK ###
-fi
-
-if [ ! -f wp-config.php ]; then
-echo -e "$COL_MAGENTA
-WARNING:
-No wp-config.php file found. Make sure you are in a working WordPress directory! $COL_RESET"
-fi
+qwpcliChecks
+wpconfigCheck
+maintCheck
 }
 
 function wpmore(){
@@ -112,25 +90,6 @@ Troubleshooting:
   $COL_CYAN slowmysql $COL_MGREEN- Displays Slow MySQL Queries
 "
 }
-
-unset HISTFILE
-echo -e "\n\n   Quick WP-CLI commands added to current SSH session. For menu, type$COL_CYAN qwpcli$COL_RESET."
-
-### MOVE ERROR LOG AS WPCLI DELETES IT OFTEN ###
-NOW=$(date +"%Y_%m_%d-%H%M")
-if [ -f error_log ]; then mv error_log error_log.$NOW
-fi
-### END ERROR LOG RENAME ###
-
-### SHOW MENU ON STARTUP ###
-qwpcli
-#/tmp FOLDER CHECK #
-if [ -d /tmp ]; then
-	TMPFOLDER=$(df -h /tmp | awk '{if ($1 != "Filesystem") print $5}' | tr -d %)
-	if (("$TMPFOLDER" >= 90 )); then
-	echo -e "$COL_CYAN\nWarning:$COL_RESET /tmp folder is $TMPFOLDER % full. Clear space to prevent possible issues."
-	fi
-fi
 #################### END START ####################
 
 #################### MENUS ####################
@@ -166,8 +125,7 @@ getWPinfo
 
 echo -e "$COL_GREEN"
 ###START DB CONNECTION TEST
-if [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php!
-fi
+wpconfigCheck 
 mysql -u $dbuser -p"$dbpass" -e ";" >/dev/null 2>&1 && printf "DB Conn: Success" || printf "DB Conn:$COL_MAGENTA Failure $COL_GREEN"
 ### END DB CONNECTION TEST
 echo -e "
@@ -383,8 +341,7 @@ echo -e "$COL_GREEN"
 getWPinfo
 
 ###START DB CONNECTION TEST
-if [[ ! -f wp-config.php ]]; then echo Could not find wp-config.php!
-fi
+wpconfigCheck
 mysql -u $dbuser -p"$dbpass" -e ";" >/dev/null 2>&1 && printf "Database Conn: $COL_CYAN Success $COL_GREEN \n" || printf "Database Conn: $COL_MAGENTA Failure $COL_GREEN \n"
 ### END DB CONNECTION TEST
 echo -e "Database Name: $COL_CYAN $dbname $COL_GREEN"
@@ -1100,8 +1057,12 @@ wp --skip-plugins --skip-themes core update-db --quiet
 ### Install MOJO ###
 function wpMojoInstall(){
 wp --skip-plugins --skip-themes plugin uninstall mojo-marketplace mojo-marketplace-wp-plugin mojo-marketplace-wp-plugin-production --deactivate --quiet
-# wp --skip-plugins --skip-themes plugin install https://github.com/mojoness/mojo-marketplace-wp-plugin/archive/production.zip --activate
-wp --skip-plugins --skip-themes plugin install https://www.mojomarketplace.com/mojo-plugin-assets/updater/release/mojo-marketplace-wp-plugin.zip --activate
+
+wp --skip-plugins --skip-themes plugin install https://github.com/mojoness/mojo-marketplace-wp-plugin/archive/production.zip --activate
+### MOJO 2.0 BROKE LINK ###
+# wp --skip-plugins --skip-themes plugin install https://www.mojomarketplace.com/mojo-plugin-assets/updater/release/mojo-marketplace-wp-plugin.zip --activate
+###########################
+ 
 # view options by running wp mojo branding --update=
 echo -e "$COL_GREEN
 Choose a brand for the Mojo Plugin below:
@@ -1959,6 +1920,94 @@ dbprefix=$(wp --skip-plugins --skip-themes eval 'global $wpdb;echo $wpdb->prefix
 #read -r dbhost dbname dbpass dbuser dbprefix <<< $(cat wp-config.php | egrep "^[^/].*[\"']DB_(NAME|USER|PASSWORD|HOST[^_])|table_prefix" | sort -d | sed "s/.*[\"']\(.*\)[\"'].*;.*/\1/" )
 }
 
+function wpphp(){
+### CREATE AN INFO.PHP FILE AND GET THE CORRECT VALUES ###
+### DATA COLLECTION FROM http://IPADDRESS/~USER
+ADDRESS=`hostname`
+LOCATION=`pwd`
+touch `pwd`/QWPCLI.tmp;
+host -t a $ADDRESS > `pwd`/QWPCLI.tmp;
+awk '{print $4}' QWPCLI.tmp > QWPCLI.tmp01;
+ADDRESS=`cat QWPCLI.tmp01`;
+echo $LOCATION > `pwd`/QWPCLI.tmp;
+awk -F public_html '{print $2}' QWPCLI.tmp > QWPCLI.tmp01;
+LOCATION=`cat QWPCLI.tmp01`;
+### END ALT DATA COLLECTION
+echo "<?php echo phpversion() ?>" > QWPCLI_version.php #Create PHP Version and Get Value
+wpphpverlong=$(curl -s $(echo -e "http://$ADDRESS/~`whoami`$LOCATION")/QWPCLI_version.php)
+wpphpver=$(echo $wpphpverlong | cut -c 1-10)
+echo $wpphpver
+rm -rf QWPCLI.tmp QWPCLI.tmp01 QWPCLI_version.php
+}
+
+### Generate php.ini file for existing PHP Version
+function phpinigen(){
+#Generate ini file
+WPPHPVER=$(wpphp | perl -pe's/\.//g' | cut -c 1-2)
+phpver $WPPHPVER
+}
+
+### WP Boost ###
+function wpboostauto(){
+#Generate ini file
+phpinigen
+phpver $WPPHPVER
+### BOOST php.ini Values
+sed -i "s/.*post_max_size\ .*/post_max_size = 256M/" php.ini
+sed -i "s/.*upload_max_filesize\ .*/upload_max_filesize = 256M/" php.ini
+sed -i "s/.*max_input_vars\ .*/max_input_vars = 6000/" php.ini
+sed -i "s/.*memory_limit\ .*/memory_limit = 512M/" php.ini
+sed -i "s/.*max_execution_time\ .*/max_execution_time = 60/" php.ini
+echo -e "$COL_GREEN\nSuccess:$COL_RESET php.ini generated for $WPPHPVER"
+### BOOST WP MEMORY & ACTIVATE AUTO UPDATE
+file='wp-config.php'
+match=$(grep table_prefix $file)
+search="'WP_MAX_MEMORY_LIMIT'"
+VALUE="'512M'"
+wpConfigEdit
+search="'WP_MEMORY_LIMIT'"
+VALUE="'512M'"
+wpConfigEdit
+search="'WP_AUTO_UPDATE_CORE'"
+VALUE="true"
+wpConfigEdit
+}
+
+function wpboost(){
+echo -e "$COL_MAGENTA
+The following changes will be made to the website: $COL_RESET
+- Prompt to upgrade to PHP 7
+- Generate a php.ini file for existing PHP Version
+- post_max_size = 256M
+- upload_max_filesize = 256M
+- max_input_vars = 6000
+- memory_limit = 512M
+- max_execution_time = 60
+- WP_MAX_MEMORY_LIMIT 512M
+- WP_MEMORY_LIMIT 512M
+- WP_AUTO_UPDATE_CORE true
+
+Continue? y/n
+"
+read selectBoost && echo ''
+case $selectBoost in
+        [Yy])
+		### PHP 7
+		echo -e "\nWould You Like to Upgrade to PHP 7? (y/n)\n"
+		read Select && echo ''
+		case $Select in
+		        [Yy])   phpver && phpver 70
+		        ;;
+		        *)      echo -e "Moving On!"
+		        ;;
+		esac
+        	wpboostauto
+	;;
+        *)      echo -e "$COL_CYAN\nNote:$COL_RESET Operation Canceled!"
+        ;;
+esac
+}
+
 function phpver(){
 . <(curl -sS https://raw.githubusercontent.com/rowdya22/phpver/master/phpver)
 }
@@ -1980,6 +2029,67 @@ echo -e "$COL_CYAN\nWarning:$COL_RESET WP-CLI was not installed"
 fi
 else
 echo -e "$COL_CYAN\nWarning:$COL_RESET WP-CLI is already installed"
+fi
+}
+
+function qwpcliChecks(){
+### ONLY RUN CHECKS IF IN WP DIRECTORY ###
+if [ -f wp-config.php ]; then
+
+### WPCLI FUNCTIONALITY CHECK ###
+CHECK=$(wp --skip-plugins --skip-themes core version | wc -l)
+# Output should be only one line. If not throw a warning as WP-CLI likely errored. #
+if [ $CHECK != '1' ]; then
+echo -e "$COL_MAGENTA
+WARNING WPCLI CHECK: [FAILED]
+
+WPCLI is having trouble working. Is WPCLI installed? Try using a temp install by running$COL_CYAN wpcliinstall $COL_RESET"
+fi
+### END WPCLI FUNCTIONALITY CHECK ###
+
+### START BAD AUTOUPDATE CODE CHECKS ###
+checkfile="wp-config.php"
+plugsearch="add_filter( 'auto_update_plugin', '__return_true' );"
+plugreplace="//add_filter( 'auto_update_plugin', '__return_true' );"
+plugline=$(grep "$plugsearch" $checkfile | wc -l)
+
+if [ $plugline != 0 ]; then
+echo -e "$COL_MAGENTA\nWarning:$COL_GREEN $plugsearch$COL_RESET exists in the $checkfile file. This line has been commented out to prevent issues."
+sed -i "/$plugsearch/c\\$plugreplace" $checkfile
+fi
+
+themesearch="add_filter( 'auto_update_theme', '__return_true' );"
+themereplace="//add_filter( 'auto_update_theme', '__return_true' );"
+themeline=$(grep "$themesearch" $checkfile | wc -l)
+
+if [ $themeline != 0 ]; then
+echo -e "$COL_MAGENTA\nWarning:$COL_GREEN $themesearch$COL_RESET exists in the $checkfile file. This line has been commented out to prevent issues."
+sed -i "/$themesearch/c\\$themereplace" $checkfile
+fi
+### END BAD AUTOUPDATE CODE CHECKS ###
+
+### END CHECKS ###
+fi
+}
+
+function maintCheck(){
+### ONLY RUN CHECKS IF IN WP DIRECTORY ###
+if [ -f wp-config.php ]; then
+### CHECK FOR COMING SOON PAGES ###
+if [[ -d "$(pwd)/wp-content/plugins/coming-soon/" ]] || [[ -d "$(pwd)/wp-content/plugins/coming-soon-page/" ]] || [[ -d "$(pwd)/wp-content/plugins/coming-soon-builder/" ]] || [[ -d "$(pwd)/wp-content/plugins/ultimate-landing-page-and-coming-soon-page/" ]] || [[ -d "$(pwd)/wp-content/plugins/rocket-maintenance-mode/" ]] || [[ -d "$(pwd)/wp-content/plugins/simple-maintenance-mode/" ]] || [[ -d "$(pwd)/wp-content/plugins/coming-soon-maintenance-mode-from-acurax/" ]] || [[ -d "$(pwd)/wp-content/plugins/indeed-coming-soon/" ]]; then
+echo -e "$COL_MAGENTA
+WARNING:
+This site may be using a maintenance mode plugin. Some functions may not work \nproperly.  If you have problems disable the plugin and try again. $COL_RESET"
+fi
+### END COMING SOON CHECK ###
+fi
+}
+
+function wpconfigCheck(){
+if [ ! -f wp-config.php ]; then
+echo -e "$COL_MAGENTA
+WARNING:
+No wp-config.php file found. Make sure you are in a working WordPress directory! $COL_RESET"
 fi
 }
 
@@ -2514,7 +2624,7 @@ fi
 
 ###
 
-##########UNDER CONSTRUCTION##########
+#################### UNDER CONSTRUCTION ####################
 function wpGlobalTemplate(){
 wpLocation=($(find ~/public_html -maxdepth 5 -type f -name 'wp-config.php'))
 originalDir=($(pwd))
@@ -2661,115 +2771,25 @@ echo -e "$COL_MAGENTA
 Warning:$COL_RESET Config Canceled!"
 fi
 }
+#################### END UNDER CONSTRUCTION ####################
 
-function wpphp(){
-### CREATE AN INFO.PHP FILE AND GET THE CORRECT VALUES ###
-### DATA COLLECTION FROM http://IPADDRESS/~USER
-ADDRESS=`hostname`
-LOCATION=`pwd`
-touch `pwd`/QWPCLI.tmp;
-host -t a $ADDRESS > `pwd`/QWPCLI.tmp;
-awk '{print $4}' QWPCLI.tmp > QWPCLI.tmp01;
-ADDRESS=`cat QWPCLI.tmp01`;
-echo $LOCATION > `pwd`/QWPCLI.tmp;
-awk -F public_html '{print $2}' QWPCLI.tmp > QWPCLI.tmp01;
-LOCATION=`cat QWPCLI.tmp01`;
-### END ALT DATA COLLECTION
-echo "<?php echo phpversion() ?>" > QWPCLI_version.php #Create PHP Version and Get Value
-wpphpverlong=$(curl -s $(echo -e "http://$ADDRESS/~`whoami`$LOCATION")/QWPCLI_version.php)
-wpphpver=$(echo $wpphpverlong | cut -c 1-10)
-echo $wpphpver
-rm -rf QWPCLI.tmp QWPCLI.tmp01 QWPCLI_version.php
-}
+#################### START LAUNCH ####################
+echo -e "\n\n   Quick WP-CLI commands added to current SSH session. For menu, type$COL_CYAN qwpcli$COL_RESET."
 
-### Generate php.ini file for existing PHP Version
-function phpinigen(){
-#Generate ini file
-WPPHPVER=$(wpphp | perl -pe's/\.//g' | cut -c 1-2)
-phpver $WPPHPVER
-}
-
-### WP Boost ###
-function wpboostauto(){
-#Generate ini file
-phpinigen
-phpver $WPPHPVER
-### BOOST php.ini Values
-sed -i "s/.*post_max_size\ .*/post_max_size = 256M/" php.ini
-sed -i "s/.*upload_max_filesize\ .*/upload_max_filesize = 256M/" php.ini
-sed -i "s/.*max_input_vars\ .*/max_input_vars = 6000/" php.ini
-sed -i "s/.*memory_limit\ .*/memory_limit = 512M/" php.ini
-sed -i "s/.*max_execution_time\ .*/max_execution_time = 60/" php.ini
-echo -e "$COL_GREEN\nSuccess:$COL_RESET php.ini generated for $WPPHPVER"
-### BOOST WP MEMORY & ACTIVATE AUTO UPDATE
-file='wp-config.php'
-match=$(grep table_prefix $file)
-search="'WP_MAX_MEMORY_LIMIT'"
-VALUE="'512M'"
-wpConfigEdit
-search="'WP_MEMORY_LIMIT'"
-VALUE="'512M'"
-wpConfigEdit
-search="'WP_AUTO_UPDATE_CORE'"
-VALUE="true"
-wpConfigEdit
-}
-
-function wpboost(){
-echo -e "$COL_MAGENTA
-This feature is in BETA! The following changes will be made to the website: $COL_RESET
-- Prompt to upgrade to PHP 7
-- Generate a php.ini file for existing PHP Version
-- post_max_size = 256M
-- upload_max_filesize = 256M
-- max_input_vars = 6000
-- memory_limit = 512M
-- max_execution_time = 60
-- WP_MAX_MEMORY_LIMIT 512M
-- WP_MEMORY_LIMIT 512M
-- WP_AUTO_UPDATE_CORE true
-
-Continue? y/n
-"
-read selectBoost && echo ''
-case $selectBoost in
-        [Yy])
-		### PHP 7
-		echo -e "\nWould You Like to Upgrade to PHP 7? (y/n)\n"
-		read Select && echo ''
-		case $Select in
-		        [Yy])   phpver && phpver 70
-		        ;;
-		        *)      echo -e "Moving On!"
-		        ;;
-		esac
-        	wpboostauto
-	;;
-        *)      echo -e "$COL_CYAN\nNote:$COL_RESET Operation Canceled!"
-        ;;
-esac
-}
-
-### Fix for code causeing WSOD on 4.7.1 ###
-function footest(){
-checkfile="wp-config.php"
-plugsearch="add_filter( 'auto_update_plugin', '__return_true' );"
-plugreplace="//add_filter( 'auto_update_plugin', '__return_true' );"
-plugline=$(grep "$plugsearch" $checkfile | wc -l)
-
-if [ $plugline != 0 ]; then
-echo -e "$COL_MAGENTA\nWarning:$COL_GREEN $plugsearch$COL_RESET exists in the $checkfile file. This line has been commented out to prevent issues."
-sed -i "/$plugsearch/c\\$plugreplace" $checkfile
+### MOVE ERROR LOG AS WPCLI DELETES IT OFTEN ###
+NOW=$(date +"%Y_%m_%d-%H%M")
+if [ -f error_log ]; then mv error_log error_log.$NOW
 fi
+### END ERROR LOG RENAME ###
 
-themesearch="add_filter( 'auto_update_theme', '__return_true' );"
-themereplace="//add_filter( 'auto_update_theme', '__return_true' );"
-themeline=$(grep "$themesearch" $checkfile | wc -l)
+### SHOW MENU ON STARTUP ###
+qwpcli
 
-if [ $themeline != 0 ]; then
-echo -e "$COL_MAGENTA\nWarning:$COL_GREEN $themesearch$COL_RESET exists in the $checkfile file. This line has been commented out to prevent issues."
-sed -i "/$themesearch/c\\$themereplace" $checkfile
+#/tmp FOLDER CHECK #
+if [ -d /tmp ]; then
+	TMPFOLDER=$(df -h /tmp | awk '{if ($1 != "Filesystem") print $5}' | tr -d %)
+	if (("$TMPFOLDER" >= 90 )); then
+	echo -e "$COL_CYAN\nWarning:$COL_RESET /tmp folder is $TMPFOLDER % full. Clear space to prevent possible issues."
+	fi
 fi
-}
-### Auto Launch footest check ###
-footest
+#################### END LAUNCH ####################
