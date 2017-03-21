@@ -1175,7 +1175,7 @@ fi
 }
 
 function wpEnduranceCacheClear(){
-rm -rf wp-content/endurance-page-cache/
+rm -rfv wp-content/endurance-page-cache/
 echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Page Cache cleared\n"
 }
 
