@@ -1945,7 +1945,7 @@ function phpinigen(){
 #Generate ini file
 WPPHPVER=$(wpphp | perl -pe's/\.//g' | cut -c 1-2)
 
-if [[ ${WPPHPVER} = "52*" || ${WPPHPVER} = "54*" || ${WPPHPVER} = "56*" || ${WPPHPVER} = "70*" ]]; then  
+if [[ ${WPPHPVER} = "52"* || ${WPPHPVER} = "54"* || ${WPPHPVER} = "56"* || ${WPPHPVER} = "70"* ]]; then  
 phpver $WPPHPVER
 else
 echo -e "$COL_CYAN\nWarning:$COL_RESET Unable to detect PHP Version, using PHP 5.6 for compatibility"
