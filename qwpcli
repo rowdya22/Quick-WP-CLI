@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   21 Mar 2017   #
+#   Updated on:   27 Mar 2017   #
 #                               #
 #################################
 
@@ -42,7 +42,7 @@ echo -e "$COL_GREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 21 Mar 2017
+What would you like to work on?                           $COL_GREEN Updated: 27 Mar 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -1944,7 +1944,14 @@ rm -rf QWPCLI.tmp QWPCLI.tmp01 QWPCLI_version.php
 function phpinigen(){
 #Generate ini file
 WPPHPVER=$(wpphp | perl -pe's/\.//g' | cut -c 1-2)
+
+if [[ ${WPPHPVER} = "52*" || ${WPPHPVER} = "54*" || ${WPPHPVER} = "56*" || ${WPPHPVER} = "70*" ]]; then  
 phpver $WPPHPVER
+else
+echo -e "$COL_CYAN\nWarning:$COL_RESET Unable to detect PHP Version, using PHP 5.6 for compatibility"
+WPPHPVER="56"
+phpver $WPPHPVER
+fi
 }
 
 ### WP Boost ###
