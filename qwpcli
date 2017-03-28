@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   27 Mar 2017   #
+#   Updated on:   28 Mar 2017   #
 #                               #
 #################################
 
@@ -42,7 +42,7 @@ echo -e "$COL_GREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 27 Mar 2017
+What would you like to work on?                           $COL_GREEN Updated: 28 Mar 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -2124,6 +2124,100 @@ function ext(){
     fi
 }
 
+function wpcleanback(){
+find -maxdepth 5 -mtime +30 \( -name "backwpup_*.tar.gz*" -o -name "backwpup_*.zip*" -o -name "backwpup_*.gz*" \) -exec rm -rv {} \;
+
+if [ -d wp-content/uploads/backupbuddy_backups/ ] ; then
+find wp-content/uploads/backupbuddy_backups/ -mtime +30 \( -name "*.zip*" -o -name "*.tar.gz*" -o -name "*.gz*" \) -exec rm -rfv {} \;
+fi
+
+if [ -d wp-content/updraft/ ] ; then
+find wp-content/updraft/ -mtime +30 \( -name "*.zip*" -o -name "*.tar.gz*" -o -name "*.gz*" \) -exec rm -rfv {} \;
+fi
+
+if [ -d wp-content/infinitewp/backups/ ] ; then
+find wp-content/infinitewp/backups/ -mtime +30 \( -name "*.zip*" -o -name "*.tar.gz*" -o -name "*.gz*" \) -exec rm -rfv {} \;
+fi
+
+if [ -d wp-content/managewp/backups/ ] ; then
+find wp-content/managewp/backups/ -mtime +30 \( -name "*.zip*" -o -name "*.tar.gz*" -o -name "*.gz*" \) -exec rm -rfv {} \;
+fi
+
+if [ -d wp-content/plugins/wp-auto-backup/WordPress_BackUps/ ] ; then
+find wp-content/plugins/wp-auto-backup/WordPress_BackUps/ -mtime +30 \( -name "*.zip*" -o -name "*.tar.gz*" -o -name "*.gz*" \) -exec rm -rfv {} \;
+fi
+
+if [ -d wp-content/ai1wm-backups/ ] ; then
+find wp-content/ai1wm-backups/ -mtime +30 \( -name "*.zip*" -o -name "*.tar.gz*" -o -name "*.gz*" -o -name "*.wpress" \) -exec rm -rfv {} \;
+fi
+
+if [ -d wp-content/backupwordpress-*/ ] ; then
+find wp-content/backupwordpress-*/ -mtime +30 \( -name "*.zip*" -o -name "*.tar.gz*" -o -name "*.gz*" \) -exec rm -rfv {} \;
+fi
+
+if [ -d wp-content/plugins/all-in-one-wp-migration/storage/ ] ; then
+find wp-content/plugins/all-in-one-wp-migration/storage/ -mtime +30 \( -name "*.zip*" -o -name "*.tar.gz*" -o -name "*.gz*" -o -name "*.wpress" \) -exec rm -rfv {} \;
+fi
+
+if [ -d wp-content/uploads/backup-guard/ ] ; then
+find wp-content/uploads/backup-guard/ -mtime +30 \( -name "*.zip*" -o -name "*.tar.gz*" -o -name "*.gz*" -o -name "*.sgbp*" \) -exec rm -rfv {} \;
+fi
+}
+
+function rmsentmail(){
+#/mail/domain/user/sent/folder
+find ~/mail/*/*/.Sent*/*/ -mtime +120 -exec rm -rv {} \;
+}
+
+function wpglobal(){
+
+#Does user know what their are doing?
+dialog --title 'Global Actions Menu' --yesno 'Do you wish to make changes to all WordPress websites?' 6 40
+response=$?
+if [[ "$response" == '0' ]];then
+
+#Config Options --checklist text height width list-height
+cmd=(dialog --title 'What global functions would you like to run?' --separate-output --checklist "Select options:" 22 76 10)
+options=(1 "wpfix - rm transients, obj cache, flush permalinks, db cleanup" off    # any option can be set to default to "on"
+         2 "wpUpdateInstall - Core, Plugins and Theme" off
+         3 "wpboostauto - Raise memory limits and php.ini values" off
+         4 "wpReplaceCore - Replace core files with same ersion" off
+	 5 "wpRewriteFlush - Flush permalinks" off
+	 6 "wpcleanback - rm backups older than 30+ days from popular plugins" off
+	 7 "rmsentmail - rm sent email older than 120 days" off
+        )
+choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+clear
+for choice in $choices
+do
+    case $choice in
+	1) echo -e "\n$COL_BLUE----- wpfix -----$COL_RESET" && gcmd wpfix
+	;;
+	2) echo -e "\n$COL_BLUE----- wpUpdateInstall -----$COL_RESET" && gcmd wpUpdateInstall
+	;;
+        3) echo -e "\n$COL_BLUE----- wpboostauto -----$COL_RESET" && gcmd wpboostauto
+        ;;
+        4) echo -e "\n$COL_BLUE----- wpReplaceCore -----$COL_RESET" && gcmd wpReplaceCore
+        ;;
+        5) echo -e "\n$COL_BLUE----- wpRewriteFlush -----$COL_RESET" && gcmd wpRewriteFlush
+        ;;
+        6) echo -e "\n$COL_BLUE----- wpcleanback -----$COL_RESET" && gcmd wpcleanback
+        ;;
+	7) echo -e "\n$COL_BLUE----- rmsentmail -----$COL_RESET" && rmsentmail
+	;;
+        *) echo "Something Weird Happened"
+        ;;
+    esac
+done
+#Exit if NO is Selected
+else
+echo -e "$COL_CYAN
+Warning:$COL_RESET wpglobal Canceled!"
+fi
+}
+
+##### END CONFIG OPTIONS #####
+
 function wpcolors(){
 echo -e "
 $COL_RED This is RED $COL_RESET
@@ -2140,7 +2234,7 @@ $COL_FORREST This is FORREST $COL_RESET
 }
 
 #################### GLOABAL FUNCTIONS ####################
-function wpglobal(){
+function wpglobal_old(){
 clear
 wpLocation=($(find ~/public_html* -maxdepth 5 -type f -name 'wp-config.php'))
 # wpLocation=$DIRS
