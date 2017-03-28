@@ -85,6 +85,7 @@ Helpful Functions:
   $COL_CYAN dirsize $COL_MGREEN  - Sorts Directory Contents by Size
   $COL_CYAN editini $COL_MGREEN  - Push Common Settings to php.ini
   $COL_CYAN editinisr $COL_MGREEN- Search/Replace Values in the php.ini
+  $COL_CYAN ext $COL_MGREEN      - Handy Extraction Program (ext file.ext)
 Troubleshooting:
   $COL_CYAN mailtest $COL_MGREEN - Checks PHP Mail Function
   $COL_CYAN slowmysql $COL_MGREEN- Displays Slow MySQL Queries
@@ -2098,6 +2099,29 @@ echo -e "$COL_MAGENTA
 WARNING:
 No wp-config.php file found. Make sure you are in a working WordPress directory! $COL_RESET"
 fi
+}
+
+### Handy Extraction Program ###
+function ext(){
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xvjf $1     ;;
+            *.tar.gz)    tar xvzf $1     ;;
+            *.bz2)       bunzip2 $1      ;;
+            *.rar)       unrar x $1      ;;
+            *.gz)        gunzip $1       ;;
+            *.tar)       tar xvf $1      ;;
+            *.tbz2)      tar xvjf $1     ;;
+            *.xz)        tar xvJf $1     ;;
+            *.tgz)       tar xvzf $1     ;;
+            *.zip)       unzip $1        ;;
+            *.Z)         uncompress $1   ;;
+            *.7z)        7z x $1         ;;
+            *)           echo "$COL_CYAN\nWarning:$COL_RESET'$1' Cannot be extracted! Supported formats are .tar.bz2, .tar.gz, .bz2, .rar, .gz, .tar, .tbz2, .xz, .tgz, .zip, .Z, .7z" ;;
+        esac
+    else
+        echo "'$1' is not a valid file! Syntax:$COL_CYAN ext filename.extention$COL_RESET or$COL_CYAN ext example.tar.gz $COL_RESET"
+    fi
 }
 
 function wpcolors(){
