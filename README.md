@@ -1,4 +1,14 @@
-[![Donate](https://img.shields.io/badge/Support_Through:-PayPal-blue.svg?style=flat)](https://paypal.me/rowdya22)
+[![Donate](https://img.shields.io/badge/Support_With:-PayPal-blue.svg?style=flat)](https://paypal.me/rowdya22/5)
+[![Donate](https://img.shields.io/badge/Buy_Junk_Food:-PayPal-green.svg?style=flat)](https://paypal.me/rowdya22/3.5)
+[![Donate](https://img.shields.io/badge/Buy_Dr_Pepper:-PayPal-red.svg?style=flat)](https://paypal.me/rowdya22/1.5)
+
+[![Github All Releases](https://img.shields.io/github/downloads/atom/atom/total.svg)](https://github.com/rowdya22/Quick-WP-CLI/blob/master/qwpcli)
+
+[![WordPress](https://img.shields.io/wordpress/v/akismet.svg)]()
+
+[![GitHub watchers](https://img.shields.io/github/watchers/badges/shields.svg?style=social&label=Watch)](https://github.com/rowdya22/Quick-WP-CLI/subscription)
+[![GitHub stars](https://img.shields.io/github/stars/badges/shields.svg?style=social&label=Star)](https://github.com/rowdya22/Quick-WP-CLI)
+
 
 WARNING: THE CREATOR(S) OF THIS SCRIPT ARE NOT LIABLE FOR DAMAGES OF ANY KIND. IF YOU DO NOT KNOW WHAT YOU ARE DOING, DON'T DO IT.
 
