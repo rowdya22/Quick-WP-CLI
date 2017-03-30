@@ -1,3 +1,5 @@
+[![Donate](https://img.shields.io/badge/Support_Through:-PayPal-blue.svg?style=flat)](https://paypal.me/rowdya22)
+
 WARNING: THE CREATOR(S) OF THIS SCRIPT ARE NOT LIABLE FOR DAMAGES OF ANY KIND. IF YOU DO NOT KNOW WHAT YOU ARE DOING, DON'T DO IT.
 
 
