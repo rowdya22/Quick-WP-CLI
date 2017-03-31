@@ -4,10 +4,6 @@
 
 [![WordPress](https://img.shields.io/wordpress/v/akismet.svg)]()
 
-[![GitHub watchers](https://img.shields.io/github/watchers/badges/shields.svg?style=social&label=Watch)](https://github.com/rowdya22/Quick-WP-CLI/subscription)
-[![GitHub stars](https://img.shields.io/github/stars/badges/shields.svg?style=social&label=Star)](https://github.com/rowdya22/Quick-WP-CLI)
-
-
 WARNING: THE CREATOR(S) OF THIS SCRIPT ARE NOT LIABLE FOR DAMAGES OF ANY KIND. IF YOU DO NOT KNOW WHAT YOU ARE DOING, DON'T DO IT.
 
 
@@ -327,5 +323,3 @@ WP Optimization
     (7) Install Recommended Plugins (Manual Setup)
     (8) Install Endurance Caching (No Configuration Required)
     (9) Exit
-
-
