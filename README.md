@@ -9,9 +9,9 @@ WARNING: THE CREATOR(S) OF THIS SCRIPT ARE NOT LIABLE FOR DAMAGES OF ANY KIND. I
 
 DEPENDENCIES
 ------------
- 1. [Quick WP-CLI requires WP-CLI to be installed in order to function](http://wp-cli.org/)
- 2. [Integrates with wp-tools](https://github.com/bluehost/wp-tools)
- 3. [Pulls from wpspeed](https://github.com/miles-cm/wpspeed)
+ 1. Requires [WP-CLI](http://wp-cli.org/) to be installed in order to function, install using: `wpcliinstall`
+ 2. Allows for commandline action with [wp-tools](https://github.com/bluehost/wp-tools)
+ 3. Utilizes forked version of [wpspeed](https://github.com/miles-cm/wpspeed)
 
 Quick-WP-CLI
 ============
@@ -79,7 +79,7 @@ wpstats - Show Version, URL, DB Info, Number of Available Updates
     Database Prfx:  wp_ 
 
     PHP Version:    #.#.#   	 Max Input Vars:  6000 
-    Core Updates:   #  		     Memory Limit:    256M 
+    Core Updates:   #  		 Memory Limit:    256M 
     Plugin Updates: # of #  	 Post Max Size:   256M 
     Theme Updates:  # of #  	 Upload Max Size: 256M
 
@@ -196,7 +196,7 @@ wpupdate - Check For or Run Updates, Configure Auto Updates
     
     	Selection: 
 
-wpbackup - Backup Site and Database to Folder or tar.gz
+wpconfig - Edit WordPress wp-config.php options
 -------------------------------------------------------
     Which configuration changes would you like to make?
       Select Options:
@@ -259,10 +259,12 @@ wpmore - More Commands (Global Actions, WP Tools, DB List)
        wpcheck   - Perl Based Plugin/Theme Check
        wpcleanup - Remove All QWPCLI Generated Files
     Helpful Functions:
+       phpver    - Change PHP AddHandler
        fcount    - Lists Number of Files in Current Directory
        dirsize   - Sorts Directory Contents by Size
        editini   - Push Common Settings to php.ini
        editinisr - Search/Replace Values in the php.ini
+       ext       - Handy Extraction Program (ext file.ext)
     Troubleshooting:
        mailtest  - Checks PHP Mail Function
        slowmysql - Displays Slow MySQL Queries
