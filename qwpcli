@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   03 Apr 2017   #
+#   Updated on:   11 Apr 2017   #
 #                               #
 #################################
 
@@ -42,7 +42,7 @@ echo -e "$COL_GREEN
 $COL_CHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 03 Apr 2017
+What would you like to work on?                           $COL_GREEN Updated: 11 Apr 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -1091,6 +1091,18 @@ case $comingSoonSelect in
         *)          wp --skip-plugins --skip-themes option set mm_coming_soon false; echo -e "$COL_GREEN\rNotice: Coming Soon page inactive.$COL_RESET ";;
 esac
 wp --skip-plugins --skip-themes option set jpo_firstrun 1
+}
+
+function mojotoggle(){
+mojoState=$(wp --skip-plugins --skip-themes option get mm_coming_soon)
+
+if [ $mojoState == "false" ] ; then
+wp --skip-plugins --skip-themes option set mm_coming_soon true
+fi
+
+if [ $mojoState == "true" ] ; then
+wp --skip-plugins --skip-themes option set mm_coming_soon false
+fi
 }
 
 function wpEnduranceCache(){
