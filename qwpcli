@@ -10,21 +10,11 @@
 unset HISTFILE
 shopt -s expand_aliases
 
-# Colors
-ESC_SEQ="\x1b["
-COL_RESET=$ESC_SEQ"m"
-COL_RED=$ESC_SEQ"38;5;09;01m"
-COL_GREEN=$ESC_SEQ"38;5;10;01m"
-COL_MGREEN=$ESC_SEQ"38;5;10;00m"
-COL_PURPLE=$ESC_SEQ"38;5;57;01m"
-COL_BLUE=$ESC_SEQ"38;5;27;01m"
-COL_MAGENTA=$ESC_SEQ"38;5;13;01m"
-COL_CYAN=$ESC_SEQ"38;5;14;01m"
-COL_ORANGE=$ESC_SEQ"38;5;208;01m"
-COL_CHERRY=$ESC_SEQ"38;5;124;01m"
-COL_FORREST=$ESC_SEQ"38;5;22;01m"
-COL_WHITE=$ESC_SEQ"38;5;231;01m"
-#echo -e "\x1b[38;5;{COLORID};01m TEXT  \x1b[m"
+# Load Colors #
+# Type 'bashcolors' to see options #
+# Syntax $COL_NAME TEXT $COL_RESET #
+unset HISTFILE && . <(curl -sS https://raw.githubusercontent.com/rowdya22/bash-colors/master/bash-colors) 
+# End Colors #
 
 function now() {
 date -u +"%Y%m%d-%H%M%S"
@@ -2235,21 +2225,6 @@ fi
 }
 
 ##### END CONFIG OPTIONS #####
-
-function wpcolors(){
-echo -e "
-$COL_RED This is RED $COL_RESET
-$COL_GREEN This is GREEN $COL_RESET
-$COL_MGREEN This is MGREEN $COL_RESET
-$COL_PURPLE This is PURPLE $COL_RESET
-$COL_BLUE This is BLUE $COL_RESET
-$COL_MAGENTA This is MAGENTA $COL_RESET
-$COL_CYAN This is CYAN $COL_RESET
-$COL_ORANGE This is ORANGE $COL_RESET
-$COL_CHERRY This is CHERRY $COL_RESET
-$COL_FORREST This is FORREST $COL_RESET
-"
-}
 
 #################### GLOABAL FUNCTIONS ####################
 function wpglobal_old(){
