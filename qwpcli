@@ -26,10 +26,10 @@ function qwpcli(){
 clear
 echo -e "$COL_GREEN
     ___       _     __     _      _____      _______   ____
-  / __ \__ __(_)___/ /__  | | /| / / _ \____/ ___/ /  /  _/
- / /_/ / // / / __/  '_/  | |/ |/ / ___/___/ /__/ /___/ /
- \___\_\_,_/_/\__/_/\_\   |__/|__/_/       \___/____/___/
-$COL_CHERRY
+  / __ \__ __(_)___/ /__  | | /| / / _ \____/ ___/ /  /  _/ 
+ / /_/ / // / / __/  '_/  | |/ |/ / ___/___/ /__/ /___/ /  $COL_MORANGE Donations Accepted $COL_GREEN
+ \___\_\_,_/_/\__/_/\_\   |__/|__/_/       \___/____/___/      $COL_MORANGE on Github $COL_GREEN
+$COL_MCHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
 What would you like to work on?                           $COL_GREEN Updated: 18 Apr 2017
@@ -87,7 +87,7 @@ Troubleshooting:
 
 ### Core Menu ###
 function wpcore() {
-echo -e "$COL_GREEN
+echo -e "$COL_MGREEN
 $(wp --skip-plugins --skip-themes core version --extra)
 $COL_RESET
 Core Options:
@@ -114,7 +114,7 @@ function wpdb() {
 # Get info from the wp globals
 getWPinfo
 
-echo -e "$COL_GREEN"
+echo -e "$COL_MGREEN"
 ###START DB CONNECTION TEST
 wpconfigCheck 
 mysql -u $dbuser -p"$dbpass" -e ";" >/dev/null 2>&1 && printf "DB Conn: Success" || printf "DB Conn:$COL_MAGENTA Failure $COL_GREEN"
@@ -151,7 +151,7 @@ PLUGNUM=$(wp --skip-plugins --skip-themes plugin list | wc -l)
 ACTIVEPLUG=$(wp --skip-plugins --skip-themes plugin list | grep -w active | wc -l)
 TOTALPLUG=$(wp --skip-plugins --skip-themes plugin list | grep -w -E "inactive|active|must-use" | wc -l)
 
-echo -e "$COL_GREEN
+echo -e "$COL_MGREEN
 Active Plugins: $ACTIVEPLUG
 Total Plugins:  $TOTALPLUG
 $COL_RESET
@@ -182,7 +182,7 @@ esac
 }
 ### Theme Menu ###
 function wptheme() {
-echo -e "$COL_GREEN
+echo -e "$COL_MGREEN
 Template: $(wp --skip-plugins --skip-themes option get template)
 Stylesheet: $(wp --skip-plugins --skip-themes option get stylesheet)
 $COL_RESET
@@ -207,7 +207,7 @@ esac
 }
 ### URL Menu ###
 function wpurl() {
-echo -e "$COL_GREEN
+echo -e "$COL_MGREEN
 Site URL: $(wp --skip-plugins --skip-themes option get siteurl)
 $COL_RESET
 URL Options:
@@ -536,7 +536,7 @@ wp --skip-plugins --skip-themes theme list
 }
 ### ACTIVATE THEME ###
 function wpThemeActivate(){
-echo -e "$COL_GREEN"
+echo -e "$COL_MGREEN"
 wpThemeList
 echo -e "$COL_RESET
 What theme would you like to activate?"
@@ -549,7 +549,7 @@ wp --skip-plugins --skip-themes theme install twentyseventeen --force --activate
 }
 ### INSTALL THEMES ###
 function wpThemeInstall() {
-echo -e "$COL_GREEN
+echo -e "$COL_MGREEN
 Recommended Themes:
    twentyseventeen
    hueman
@@ -574,7 +574,7 @@ dbexport
 echo -e "$COL_GREEN
 Site: $(wp --skip-plugins --skip-themes option get siteurl)
 $COL_MAGENTA
-WARNING! Old and New URL Prefix should match! For best results only enter domain.com NOT www or http://
+WARNING!$COL_MMAGENTA Old and New URL Prefix should match! For best results only enter domain.com NOT www or http://
 
 REMEMBER: This is a SEARCH AND REPLACE tool, taking the first value and replacing it with the second
 $COL_RESET
@@ -601,7 +601,7 @@ function wpUserCreate(){
 URL=$(wp --skip-plugins --skip-themes option get siteurl)
 NEWPASS="$(wp --skip-plugins --skip-themes user create HostAdmin HostAdmin@example.com --role=administrator | tail -1 | awk -F ':' '{ print $2 }')"
 
-echo -e "$COL_GREEN
+echo -e "$COL_MGREEN
 Delete the user when done by running$COL_CYAN wpuserr$COL_RESET!
 $COL_RESET
 $URL/wp-admin/
@@ -622,7 +622,7 @@ function wpChangePass() {
 # Get info from wp globals
 getWPinfo
 
-echo -e "$COL_GREEN"
+echo -e "$COL_MGREEN"
 wp --skip-plugins --skip-themes user list --role=administrator --fields=ID,user_login,display_name,user_email,roles
 echo -e "$COL_RESET
 User ID: "; read USERID
@@ -1055,7 +1055,7 @@ wp --skip-plugins --skip-themes plugin install https://github.com/mojoness/mojo-
 ###########################
  
 # view options by running wp mojo branding --update=
-echo -e "$COL_GREEN
+echo -e "$COL_MGREEN
 Choose a brand for the Mojo Plugin below:
 BlueHost
 iPower
@@ -1078,7 +1078,7 @@ Enable Coming Soon page? y/n $COL_RESET";
 read comingSoonSelect && echo ''
 case $comingSoonSelect in
         [Yy])       wp --skip-plugins --skip-themes option set mm_coming_soon true;;
-        *)          wp --skip-plugins --skip-themes option set mm_coming_soon false; echo -e "$COL_GREEN\rNotice: Coming Soon page inactive.$COL_RESET ";;
+        *)          wp --skip-plugins --skip-themes option set mm_coming_soon false; echo -e "$COL_MGREEN\rNotice: Coming Soon page inactive.$COL_RESET ";;
 esac
 wp --skip-plugins --skip-themes option set jpo_firstrun 1
 }
@@ -2251,8 +2251,8 @@ What global actions would you like to take?
 (8) Check Theme/Plugin Conflicts
 (9) Overhaul (Replace Core, Flush Permalinks, Flush Cache, Media Regenerate, Opt & Repair DB)
 (0) Exit
-$COL_MAGENTA
-Want to run another command? use$COL_CYAN gcmd [COMMAND]$COL_MAGENTA to run any command in all WordPress directories!
+$COL_MMAGENTA
+Want to run another command? use$COL_CYAN gcmd [COMMAND]$COL_MMAGENTA to run any command in all WordPress directories!
 $COL_RESET
 \tSelection: \c" ;
 read globalSelect && echo ''
@@ -2413,7 +2413,7 @@ echo -e "$COL_GREEN
 This setup will guide you through a manual WordPress install.
 
 Make sure you are in the folder you want to install WordPress and\nthere are no existing WordPress files.\n
-$COL_MAGENTA
+$COL_MMAGENTA
 ---To begin create a database in cPanel and then enter the needed information--- $COL_RESET
 
 Have you created a database in cPanel? (y) or (n)"
