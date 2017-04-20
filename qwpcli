@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   18 Apr 2017   #
+#   Updated on:   20 Apr 2017   #
 #                               #
 #################################
 
@@ -24,15 +24,15 @@ date -u +"%Y%m%d-%H%M%S"
 #################### START ####################
 function qwpcli(){
 clear
-echo -e "$COL_GREEN
+echo -e "$COL_MGREEN
     ___       _     __     _      _____      _______   ____
   / __ \__ __(_)___/ /__  | | /| / / _ \____/ ___/ /  /  _/ 
- / /_/ / // / / __/  '_/  | |/ |/ / ___/___/ /__/ /___/ /  $COL_MORANGE Donations Accepted $COL_GREEN
- \___\_\_,_/_/\__/_/\_\   |__/|__/_/       \___/____/___/      $COL_MORANGE on Github $COL_GREEN
+ / /_/ / // / / __/  '_/  | |/ |/ / ___/___/ /__/ /___/ /  $COL_MORANGE Donations Accepted $COL_MGREEN
+ \___\_\_,_/_/\__/_/\_\   |__/|__/_/       \___/____/___/      $COL_MORANGE on Github $COL_MGREEN
 $COL_MCHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 18 Apr 2017
+What would you like to work on?                           $COL_GREEN Updated: 20 Apr 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -78,7 +78,7 @@ Helpful Functions:
   $COL_CYAN ext $COL_MGREEN      - Handy Extraction Program (ext file.ext)
 Troubleshooting:
   $COL_CYAN mailtest $COL_MGREEN - Checks PHP Mail Function
-  $COL_CYAN slowmysql $COL_MGREEN- Displays Slow MySQL Queries
+  $COL_CYAN slowmysql $COL_MGREEN- Displays Slow MySQL Queries $COL_RESET
 "
 }
 #################### END START ####################
@@ -87,7 +87,7 @@ Troubleshooting:
 
 ### Core Menu ###
 function wpcore() {
-echo -e "$COL_MGREEN
+echo -e "$COL_GREEN
 $(wp --skip-plugins --skip-themes core version --extra)
 $COL_RESET
 Core Options:
@@ -114,7 +114,7 @@ function wpdb() {
 # Get info from the wp globals
 getWPinfo
 
-echo -e "$COL_MGREEN"
+echo -e "$COL_GREEN"
 ###START DB CONNECTION TEST
 wpconfigCheck 
 mysql -u $dbuser -p"$dbpass" -e ";" >/dev/null 2>&1 && printf "DB Conn: Success" || printf "DB Conn:$COL_MAGENTA Failure $COL_GREEN"
@@ -151,7 +151,7 @@ PLUGNUM=$(wp --skip-plugins --skip-themes plugin list | wc -l)
 ACTIVEPLUG=$(wp --skip-plugins --skip-themes plugin list | grep -w active | wc -l)
 TOTALPLUG=$(wp --skip-plugins --skip-themes plugin list | grep -w -E "inactive|active|must-use" | wc -l)
 
-echo -e "$COL_MGREEN
+echo -e "$COL_GREEN
 Active Plugins: $ACTIVEPLUG
 Total Plugins:  $TOTALPLUG
 $COL_RESET
@@ -182,7 +182,7 @@ esac
 }
 ### Theme Menu ###
 function wptheme() {
-echo -e "$COL_MGREEN
+echo -e "$COL_GREEN
 Template: $(wp --skip-plugins --skip-themes option get template)
 Stylesheet: $(wp --skip-plugins --skip-themes option get stylesheet)
 $COL_RESET
@@ -207,7 +207,7 @@ esac
 }
 ### URL Menu ###
 function wpurl() {
-echo -e "$COL_MGREEN
+echo -e "$COL_GREEN
 Site URL: $(wp --skip-plugins --skip-themes option get siteurl)
 $COL_RESET
 URL Options:
@@ -304,12 +304,12 @@ HACK=$(wp --skip-plugins --skip-themes core verify-checksums 2>&1 | wc -l)
 if [ $HACK == '1' ]; then
         echo -e "$COL_GREEN\rChecksums:$COL_CYAN      [OK] $COL_GREEN"
 else
-        echo -e "$COL_GREEN\rChecksums:$COL_MAGENTA      [FAILED]   $HACK Files Do Not Verify $COL_GREEN"
+        echo -e "$COL_GREEN\rChecksums:$COL_MAGENTA      [FAILED]   $HACK Files Do Not Verify"
 fi
 
 ### EVAL PLUGINS/THEMES LOOKING FOR ERRORS
-wp --skip-plugins eval 'echo "Eval Plugins: \x1b[36;01m  [CHECK]\n \x1b[39;49;00m";'
-wp --skip-themes eval 'echo "\x1b[32;01m\rEval Themes: \x1b[36;01m   [CHECK]\n \x1b[39;49;00m";'
+wp --skip-plugins eval 'echo "\x1b[38;5;10;01m\rEval Plugins: \x1b[38;5;14;01m  [CHECK]\n \x1b[m";'
+wp --skip-themes eval 'echo "\x1b[38;5;10;01m\rEval Themes: \x1b[38;5;14;01m   [CHECK]\n \x1b[m";'
 ### END SITE TESTS ###
 
 ### START GENERAL INFO ###
@@ -536,7 +536,7 @@ wp --skip-plugins --skip-themes theme list
 }
 ### ACTIVATE THEME ###
 function wpThemeActivate(){
-echo -e "$COL_MGREEN"
+echo -e "$COL_GREEN"
 wpThemeList
 echo -e "$COL_RESET
 What theme would you like to activate?"
@@ -549,7 +549,7 @@ wp --skip-plugins --skip-themes theme install twentyseventeen --force --activate
 }
 ### INSTALL THEMES ###
 function wpThemeInstall() {
-echo -e "$COL_MGREEN
+echo -e "$COL_GREEN
 Recommended Themes:
    twentyseventeen
    hueman
@@ -575,8 +575,8 @@ echo -e "$COL_GREEN
 Site: $(wp --skip-plugins --skip-themes option get siteurl)
 $COL_MAGENTA
 WARNING!$COL_MMAGENTA Old and New URL Prefix should match! For best results only enter domain.com NOT www or http://
-
-REMEMBER: This is a SEARCH AND REPLACE tool, taking the first value and replacing it with the second
+$COL_MAGENTA
+REMEMBER:$COL_MMAGENTA This is a SEARCH AND REPLACE tool, taking the first value and replacing it with the second
 $COL_RESET
 Enter Old URL: "
 read OLDURL
@@ -601,7 +601,7 @@ function wpUserCreate(){
 URL=$(wp --skip-plugins --skip-themes option get siteurl)
 NEWPASS="$(wp --skip-plugins --skip-themes user create HostAdmin HostAdmin@example.com --role=administrator | tail -1 | awk -F ':' '{ print $2 }')"
 
-echo -e "$COL_MGREEN
+echo -e "$COL_GREEN
 Delete the user when done by running$COL_CYAN wpuserr$COL_RESET!
 $COL_RESET
 $URL/wp-admin/
@@ -622,7 +622,7 @@ function wpChangePass() {
 # Get info from wp globals
 getWPinfo
 
-echo -e "$COL_MGREEN"
+echo -e "$COL_GREEN"
 wp --skip-plugins --skip-themes user list --role=administrator --fields=ID,user_login,display_name,user_email,roles
 echo -e "$COL_RESET
 User ID: "; read USERID
@@ -1055,7 +1055,7 @@ wp --skip-plugins --skip-themes plugin install https://github.com/mojoness/mojo-
 ###########################
  
 # view options by running wp mojo branding --update=
-echo -e "$COL_MGREEN
+echo -e "$COL_GREEN
 Choose a brand for the Mojo Plugin below:
 BlueHost
 iPower
@@ -2238,7 +2238,7 @@ echo -e "$COL_GREEN
   / ___/ /__  / /  ___ _/ / / _ |____/ /_(_)__  ___  ___
  / (_ / / _ \/ _ \/ _  / / / __ / __/ __/ / _ \/ _ \(_-<
  \___/_/\___/_.__/\_,_/_/ /_/ |_\__/\__/_/\___/_//_/___/
-$COL_MGREEN
+$COL_RESET
 What global actions would you like to take?
 
 (1) Replace Core With Existing Version
