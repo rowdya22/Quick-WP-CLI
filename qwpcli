@@ -1128,8 +1128,9 @@ fi
 # EBC merged with EPC. Old Versions conflict, so remove.
 if [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
 rm -rf wp-content/mu-plugins/endurance-browser-cache.php
+echo -e "$COL_GREEN\nSuccess:$COL_RESET EBC removed as it mergeged with EPC"
+wpEnduranceCacheClear
 wpfix
-echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Browser Cache removed as it mergeged with Page Cache"
 fi
 
 if [ "$EC_INSTALL" == "1" ]; then
@@ -1162,8 +1163,9 @@ fi
 # EBC merged with EPC. Old Versions conflict, so remove.
 if [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
 rm -rf wp-content/mu-plugins/endurance-browser-cache.php
+echo -e "$COL_GREEN\nSuccess:$COL_RESET EBC removed as it mergeged with EPC"
+wpEnduranceCacheClear
 wpfix
-echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Browser Cache removed as it mergeged with Page Cache"
 fi
 
 if [ "$EC_UPDATE" == "1" ]; then
