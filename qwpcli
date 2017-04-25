@@ -1116,7 +1116,7 @@ if [ ! -d wp-content/mu-plugins/ ]; then
 mkdir wp-content/mu-plugins/
 fi
 
-if [ -f wp-content/mu-plugins/endurance-page-cache.php ] || [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
+if [ -f wp-content/mu-plugins/endurance-page-cache.php ]; then
 wpEnduranceCacheUpdate
 fi
 
@@ -1125,9 +1125,11 @@ wget https://raw.githubusercontent.com/bluehost/endurance-page-cache/production/
 EC_INSTALL="1"
 fi
 
-if [ ! -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
-wget https://raw.githubusercontent.com/bluehost/endurance-browser-cache/production/endurance-browser-cache.php -O wp-content/mu-plugins/endurance-browser-cache.php;
-EC_INSTALL="1"
+# EBC merged with EPC. Old Versions conflict, so remove.
+if [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
+rm -rf wp-content/mu-plugins/endurance-browser-cache.php
+wpfix
+echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Browser Cache removed as it mergeged with Page Cache"
 fi
 
 if [ "$EC_INSTALL" == "1" ]; then
@@ -1135,7 +1137,7 @@ echo -e "$COL_GREEN\nSuccess:$COL_RESET Caching Downloaded/Updated $COL_CYAN
 Warning:$COL_RESET Permalinks will now be flushed..."
 sleep 3
 wpfix
-echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Cache activated"
+echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Page Cache activated"
 fi
 fi
 }
@@ -1156,19 +1158,13 @@ EPC_CUR=$(wp --skip-plugins --skip-themes plugin list --name=endurance-page-cach
 	echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Page Cache already at the latest version: $EPC_CUR"
 	fi
 fi
-if [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
-EBC_LATEST=$(curl -s https://api.mojomarketplace.com/mojo-plugin-assets/json/mu-plugins.json | awk -v k="text" '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' | sed '/^$/d' | sed -e 's/^[ \t]*//' | sed 's/\"//g'| sed 's/[{}]//g' | grep -A1 EBC_VERSION | grep -v EBC_VERSION | tr -d ' ' | tail -c 4)
-EBC_CUR=$(wp --skip-plugins --skip-themes plugin list --name=endurance-browser-cache --fields=version --format=csv | grep -v version)
 
-        if (( $(echo "$EBC_LATEST >  $EBC_CUR" | bc -l)  )); then
-        rm -rf wp-content/mu-plugins/endurance-browser-cache.php
-        wget https://raw.githubusercontent.com/bluehost/endurance-browser-cache/production/endurance-browser-cache.php -O wp-content/mu-plugins/endurance-browser-cache.php;
-	EC_UPDATE="1"
-        echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Browser Cache updated from $EBC_CUR to $EBC_LATEST"
-        fi
-        if (( $(echo "$EBC_LATEST <=  $EBC_CUR" | bc -l)  )); then
-        echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Browser Cache already at the latest version: $EBC_CUR"
-        fi
+# EBC merged with EPC. Old Versions conflict, so remove.
+if [ -f wp-content/mu-plugins/endurance-browser-cache.php ]; then
+rm -rf wp-content/mu-plugins/endurance-browser-cache.php
+wpfix
+echo -e "$COL_GREEN\nSuccess:$COL_RESET Endurance Browser Cache removed as it mergeged with Page Cache"
+fi
 fi
 
 if [ "$EC_UPDATE" == "1" ]; then
