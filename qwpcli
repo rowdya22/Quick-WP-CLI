@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   04 May 2017   #
+#   Updated on:   15 May 2017   #
 #                               #
 #################################
 
@@ -32,7 +32,7 @@ echo -e "$COL_MGREEN
 $COL_MCHERRY
 What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
 
-What would you like to work on?                           $COL_GREEN Updated: 04 May 2017
+What would you like to work on?                           $COL_GREEN Updated: 15 May 2017
 
   $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
   $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
@@ -2124,7 +2124,7 @@ function ext(){
 }
 
 function wpcleanback(){
-find -maxdepth 5 -mtime +30 \( -name "backwpup_*.tar.gz*" -o -name "backwpup_*.zip*" -o -name "backwpup_*.gz*" \) -exec rm -rv {} \;
+find -maxdepth 5 -mtime +30 \( -name "backwpup_*.tar.gz*" -o -name "backwpup_*.zip*" -o -name "backwpup_*.gz*" -o -name "backwpup_*.zi*" \) -exec rm -rv {} \;
 
 if [ -d wp-content/uploads/backupbuddy_backups/ ] ; then
 find wp-content/uploads/backupbuddy_backups/ -mtime +30 \( -name "*.zip*" -o -name "*.tar.gz*" -o -name "*.gz*" -o -name "zi*" \) -exec rm -rfv {} \;
@@ -2160,6 +2160,10 @@ fi
 
 if [ -d wp-content/uploads/backup-guard/ ] ; then
 find wp-content/uploads/backup-guard/ -mtime +30 \( -name "*.zip*" -o -name "*.tar.gz*" -o -name "*.gz*" -o -name "*.sgbp*" -o -name "zi*" \) -exec rm -rfv {} \;
+fi
+
+if [ -d wp-backup/ ] ; then
+find wp-backup/ -mtime +30 \( -name "*.zip*" -o -name "*.tar.gz*" -o -name "*.gz*" -o -name "zi*" \) -exec rm -rfv {} \;
 fi
 }
 
