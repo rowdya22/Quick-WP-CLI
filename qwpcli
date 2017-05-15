@@ -2175,7 +2175,7 @@ find ~/mail/*/*/.Sent*/*/ -mtime +120 -exec rm -rv {} \;
 function wpreinstall(){
 wpReplaceCore
 wp --skip-plugins --skip-themes plugin install $(wp --skip-plugins --skip-themes plugin list --field=name) --force
-wp --skip-plugins --skip-themes theme install $(wp --skip-plugins --skip-themes theme list --filed=name) --force
+wp --skip-plugins --skip-themes theme install $(wp --skip-plugins --skip-themes theme list --field=name) --force
 }
 
 function wpbye(){
