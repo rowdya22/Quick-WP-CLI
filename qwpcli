@@ -3,7 +3,7 @@
 #################################
 #                               #
 #   Developed by: Rowdy Wapuu   #
-#   Updated on:   24 May 2017   #
+#   Updated on:   09 Oct 2017   #
 #                               #
 #################################
 
@@ -2034,6 +2034,20 @@ trap remove_cli_file EXIT
 elif [ $input != 'y' ]; then
 echo -e "$COL_CYAN\nWarning:$COL_RESET WP-CLI was not installed"
 fi
+else
+echo -e "$COL_CYAN\nWarning:$COL_RESET WP-CLI is already installed"
+fi
+}
+
+function wpcliinstallauto(){
+if [ ! -f ~/QWPCLI_cli ]; then
+workingDir=$(pwd)
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x wp-cli.phar && mv wp-cli.phar ~/QWPCLI_cli && cd && alias wp="$(pwd)/QWPCLI_cli" && cd $workingDir && echo -e "$COL_GREEN\nSuccess: $COL_RESET WP-CLI Installed"
+
+#Automatically remove generated files when session ends
+remove_cli_file () { rm -rf ~/QWPCLI_cli; }
+trap remove_cli_file EXIT
+
 else
 echo -e "$COL_CYAN\nWarning:$COL_RESET WP-CLI is already installed"
 fi
