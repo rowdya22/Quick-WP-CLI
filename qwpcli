@@ -507,7 +507,7 @@ wp --skip-plugins --skip-themes plugin activate $ACTIVEPLUGINS
 echo -e "$COL_GREEN\rAttempted plugin reactivation. If errors exist review .QWPCLI_ACTIVEPLUGINS.txt and activate manually. $COL_RESET"
 #Automatically remove generated files when session ends
 remove_plug_file () { gcmd rm -rf .QWPCLI_ACTIVEPLUGINS.txt; }
-trap remove_plug_file EXIT
+( sleep 30m; echo -e "$COL_MAGENTA\nAuto Removal Plugin History File...$COL_RESET"; remove_plug_file ; echo -e "$COL_MAGENTA\nCompleted. Press Enter to Continue...$COL_RESET"; ) &
 }
 ### INSTALL PLUGINS ###
 function wpPluginInstall(){
@@ -610,7 +610,7 @@ UN:$COL_MAGENTA HostAdmin$COL_RESET
 PW:$COL_MAGENTA$NEWPASS $COL_RESET\n"
 #create cleanup job to remove created user globally
 remove_temp_user () { gcmd wpuserr; }
-trap remove_temp_user EXIT
+( sleep 30m; echo -e "$COL_MAGENTA\nAuto Removal of Temp User Beginning...$COL_RESET"; wpuserr ; echo -e "$COL_MAGENTA\nCompleted. Press Enter to Continue...$COL_RESET"; ) &
 }
 
 ### REMOVE TEMP USER HOSTADMIN ###
@@ -1441,7 +1441,7 @@ echo -e "$COL_GREEN \nLatest troubleshoot.pl downloaded $COL_RESET"
 fi
 
 clean_up_files () { find ~/public_html*/ -maxdepth 5 \( -name "troubleshoot.pl" -o -name "qwpcli.md5" \)|xargs rm -rf; }
-trap clean_up_files EXIT
+( sleep 30m; echo -e "$COL_MAGENTA\nAuto Cleanup of Files...$COL_RESET"; clean_up_files ; echo -e "$COL_MAGENTA\nCompleted. Press Enter to Continue...$COL_RESET"; ) &
 }
 
 function wpcheck(){
@@ -2029,7 +2029,8 @@ curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.pha
 
 #Automatically remove generated files when session ends
 remove_cli_file () { rm -rf ~/QWPCLI_cli; }
-trap remove_cli_file EXIT
+( sleep 30m; echo -e "$COL_MAGENTA\nAuto Removal of cli Files Beginning...$COL_RESET"; remove_cli_file ; echo -e "$COL_MAGENTA\nCompleted. Press Enter to Continue...$COL_RESET"; ) &
+
 
 elif [ $input != 'y' ]; then
 echo -e "$COL_CYAN\nWarning:$COL_RESET WP-CLI was not installed"
@@ -2046,7 +2047,7 @@ curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.pha
 
 #Automatically remove generated files when session ends
 remove_cli_file () { rm -rf ~/QWPCLI_cli; }
-trap remove_cli_file EXIT
+( sleep 30m; echo -e "$COL_MAGENTA\nAuto Removal of cli Files Beginning...$COL_RESET"; remove_cli_file ; echo -e "$COL_MAGENTA\nCompleted. Press Enter to Continue...$COL_RESET"; ) &
 
 else
 echo -e "$COL_CYAN\nWarning:$COL_RESET WP-CLI is already installed"
