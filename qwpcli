@@ -24,28 +24,28 @@ date -u +"%Y%m%d-%H%M%S"
 #################### START ####################
 function qwpcli(){
 clear
-echo -e "$COL_MGREEN
+echo -e "$COL_GREEN
     ___       _     __     _      _____      _______   ____
   / __ \__ __(_)___/ /__  | | /| / / _ \____/ ___/ /  /  _/ 
- / /_/ / // / / __/  '_/  | |/ |/ / ___/___/ /__/ /___/ /  $COL_MORANGE Donations Accepted $COL_MGREEN
- \___\_\_,_/_/\__/_/\_\   |__/|__/_/       \___/____/___/      $COL_MORANGE on Github $COL_MGREEN
-$COL_MCHERRY
-What would you like added to QWPCLI? Let me know!$COL_PURPLE https://github.com/rowdya22$COL_MGREEN\nType$COL_CYAN qwpcli$COL_MGREEN to return to this menu:
+ / /_/ / // / / __/  '_/  | |/ |/ / ___/___/ /__/ /___/ /  $COL_ORANGE Donations Accepted $COL_GREEN
+ \___\_\_,_/_/\__/_/\_\   |__/|__/_/       \___/____/___/      $COL_ORANGE on Github $COL_GREEN
+
+What would you like added to QWPCLI? Let me know!$COL_ORANGE https://github.com/rowdya22$COL_GREEN\nType$COL_CYAN qwpcli$COL_GREEN to return to this menu:
 
 What would you like to work on?                           $COL_GREEN Updated: 24 May 2017
 
-  $COL_CYAN wpstats $COL_MGREEN  - Show Version, URL, DB Info, Number of Available Updates
-  $COL_CYAN wpcore $COL_MGREEN   - Check Versions, Verify Checksums, Replace Core Files
-  $COL_CYAN wpdb $COL_MGREEN     - Optimize and Repair, URL Rewrite
-  $COL_CYAN wpplugin $COL_MGREEN - List, (De)activate, Update, Install
-  $COL_CYAN wptheme $COL_MGREEN  - List, Change, Update, Install
-  $COL_CYAN wpurl $COL_MGREEN    - List and Change URLs
-  $COL_CYAN wpuser $COL_MGREEN   - Create User, Set Passwords, Change Roles
-  $COL_CYAN wpupdate $COL_MGREEN - Check For or Run Updates, Configure Auto Updates
-  $COL_CYAN wpconfig $COL_MGREEN - Configure wp-config.php Options
-  $COL_CYAN wpwsod $COL_MGREEN   - Guided Walkthrough to Fix WSOD
-  $COL_CYAN wpglobal $COL_MGREEN - Run Commands Across All WordPress Installs (Advanced)
-  $COL_CYAN wpmore $COL_MGREEN   - More Commands (Global Actions, WP Tools, DB List)
+  $COL_CYAN wpstats $COL_GREEN  - Show Version, URL, DB Info, Number of Available Updates
+  $COL_CYAN wpcore $COL_GREEN   - Check Versions, Verify Checksums, Replace Core Files
+  $COL_CYAN wpdb $COL_GREEN     - Optimize and Repair, URL Rewrite
+  $COL_CYAN wpplugin $COL_GREEN - List, (De)activate, Update, Install
+  $COL_CYAN wptheme $COL_GREEN  - List, Change, Update, Install
+  $COL_CYAN wpurl $COL_GREEN    - List and Change URLs
+  $COL_CYAN wpuser $COL_GREEN   - Create User, Set Passwords, Change Roles
+  $COL_CYAN wpupdate $COL_GREEN - Check For or Run Updates, Configure Auto Updates
+  $COL_CYAN wpconfig $COL_GREEN - Configure wp-config.php Options
+  $COL_CYAN wpwsod $COL_GREEN   - Guided Walkthrough to Fix WSOD
+  $COL_CYAN wpglobal $COL_GREEN - Run Commands Across All WordPress Installs (Advanced)
+  $COL_CYAN wpmore $COL_GREEN   - More Commands (Global Actions, WP Tools, DB List)
 $COL_RESET"
 
 qwpcliChecks
@@ -55,30 +55,30 @@ maintCheck
 
 function wpmore(){
 clear
-echo -e "$COL_MGREEN
+echo -e "$COL_GREEN
 WordPress Specific:
-  $COL_CYAN wpboost $COL_MGREEN  - Boost Memory Limits and php.ini Values
-  $COL_CYAN wpworks $COL_MGREEN  - Install Updates, Optimize DB, Run Fixes
-  $COL_CYAN wpfix $COL_MGREEN    - Run Fixes (Flush Permalinks/Cache, DB Cleanup)
-  $COL_CYAN wpbackup $COL_MGREEN - Backup Files and Database to Folder or tar.gz
-  $COL_CYAN wpmigrate $COL_MGREEN- Move WordPress to Another Directory
-  $COL_CYAN dblist $COL_MGREEN   - Lists Database Names and wp-config.php Locations
-  $COL_CYAN wpspeed $COL_MGREEN  - Runs WordPress Speed Checks
-  $COL_CYAN wpopt $COL_MGREEN    - Basic Site Optimization and Suggestions
-  $COL_CYAN wpinstall $COL_MGREEN- Install WordPress From Scratch
-  $COL_CYAN wptools $COL_MGREEN  - Show WordPress Tools Functions
-  $COL_CYAN wpcheck $COL_MGREEN  - Perl Based Plugin/Theme Check
-  $COL_CYAN wpcleanup $COL_MGREEN- Remove All QWPCLI Generated Files
+  $COL_CYAN wpboost $COL_GREEN  - Boost Memory Limits and php.ini Values
+  $COL_CYAN wpworks $COL_GREEN  - Install Updates, Optimize DB, Run Fixes
+  $COL_CYAN wpfix $COL_GREEN    - Run Fixes (Flush Permalinks/Cache, DB Cleanup)
+  $COL_CYAN wpbackup $COL_GREEN - Backup Files and Database to Folder or tar.gz
+  $COL_CYAN wpmigrate $COL_GREEN- Move WordPress to Another Directory
+  $COL_CYAN dblist $COL_GREEN   - Lists Database Names and wp-config.php Locations
+  $COL_CYAN wpspeed $COL_GREEN  - Runs WordPress Speed Checks
+  $COL_CYAN wpopt $COL_GREEN    - Basic Site Optimization and Suggestions
+  $COL_CYAN wpinstall $COL_GREEN- Install WordPress From Scratch
+  $COL_CYAN wptools $COL_GREEN  - Show WordPress Tools Functions
+  $COL_CYAN wpcheck $COL_GREEN  - Perl Based Plugin/Theme Check
+  $COL_CYAN wpcleanup $COL_GREEN- Remove All QWPCLI Generated Files
 Helpful Functions:
-  $COL_CYAN phpver $COL_MGREEN   - Change PHP AddHandler
-  $COL_CYAN fcount $COL_MGREEN   - Lists Number of Files in Current Directory
-  $COL_CYAN dirsize $COL_MGREEN  - Sorts Directory Contents by Size
-  $COL_CYAN editini $COL_MGREEN  - Push Common Settings to php.ini
-  $COL_CYAN editinisr $COL_MGREEN- Search/Replace Values in the php.ini
-  $COL_CYAN ext $COL_MGREEN      - Handy Extraction Program (ext file.ext)
+  $COL_CYAN phpver $COL_GREEN   - Change PHP AddHandler
+  $COL_CYAN fcount $COL_GREEN   - Lists Number of Files in Current Directory
+  $COL_CYAN dirsize $COL_GREEN  - Sorts Directory Contents by Size
+  $COL_CYAN editini $COL_GREEN  - Push Common Settings to php.ini
+  $COL_CYAN editinisr $COL_GREEN- Search/Replace Values in the php.ini
+  $COL_CYAN ext $COL_GREEN      - Handy Extraction Program (ext file.ext)
 Troubleshooting:
-  $COL_CYAN mailtest $COL_MGREEN - Checks PHP Mail Function
-  $COL_CYAN slowmysql $COL_MGREEN- Displays Slow MySQL Queries $COL_RESET
+  $COL_CYAN mailtest $COL_GREEN - Checks PHP Mail Function
+  $COL_CYAN slowmysql $COL_GREEN- Displays Slow MySQL Queries $COL_RESET
 "
 }
 #################### END START ####################
@@ -424,7 +424,7 @@ if [[ -z "$wpfiles" ]]; then
 	echo -e "No existing WordPress files found..."
 	else
 	oldWP="QWPCLI_CORE_$temp"
-	echo -e "Old WordPress files found! Moving them to$COL_BLUE $oldWP... $COL_RESET"
+	echo -e "Old WordPress files found! Moving them to$COL_WHITE $oldWP... $COL_RESET"
 	mkdir "$oldWP"
 	while read -r f; do mv "$f" "$oldWP"; done <<< "$wpfiles"
 fi
@@ -446,7 +446,7 @@ if [[ -f "$oldWP/wp-config.php" ]]; then
 	cp wp-config-sample.php wp-config.php
 	echo -e "$COL_CYAN\rWarning:$COL_RESET No previous wp-config.php found! Used wp-config-sample.php..."
 fi
-echo -e "\nCompressing old WordPress core...$COL_GREEN" && tar -zcf "$oldWP".tar.gz "$oldWP" --remove-files && echo -e "Success:$COL_RESET Old WordPress files located$COL_BLUE $oldWP.tar.gz $COL_RESET"
+echo -e "\nCompressing old WordPress core...$COL_GREEN" && tar -zcf "$oldWP".tar.gz "$oldWP" --remove-files && echo -e "Success:$COL_RESET Old WordPress files located$COL_WHITE $oldWP.tar.gz $COL_RESET"
 wp --skip-plugins --skip-themes core update-db --quiet
 }
 ### HTACCESS ###
@@ -574,9 +574,9 @@ dbexport
 echo -e "$COL_GREEN
 Site: $(wp --skip-plugins --skip-themes option get siteurl)
 $COL_MAGENTA
-WARNING!$COL_MMAGENTA Old and New URL Prefix should match! For best results only enter domain.com NOT www or http://
+WARNING!$COL_MAGENTA Old and New URL Prefix should match! For best results only enter domain.com NOT www or http://
 $COL_MAGENTA
-REMEMBER:$COL_MMAGENTA This is a SEARCH AND REPLACE tool, taking the first value and replacing it with the second
+REMEMBER:$COL_MAGENTA This is a SEARCH AND REPLACE tool, taking the first value and replacing it with the second
 $COL_RESET
 Enter Old URL: "
 read OLDURL
@@ -904,7 +904,7 @@ Success:$COL_RESET Rewrite Flushed."
 ### GENERAL FIXES ###
 
 function wpfix(){
-echo -e "$COL_BLUE
+echo -e "$COL_WHITE
 This could take a moment....$COL_RESET"
 wp --skip-plugins --skip-themes transient delete-expired
 # wp --skip-plugins --skip-themes media regenerate --yes --quiet
@@ -969,7 +969,7 @@ if [[ -z "$wpfiles" ]]; then
 	echo -e "No existing WordPress files found..."
 	else
 	oldWP="QWPCLI_CORE_$temp"
-	echo -e "Old WordPress files found! Moving them to$COL_BLUE $oldWP... $COL_RESET"
+	echo -e "Old WordPress files found! Moving them to$COL_WHITE $oldWP... $COL_RESET"
 	mkdir "$oldWP"
 	while read -r f; do mv "$f" "$oldWP"; done <<< "$wpfiles"
 fi
@@ -991,7 +991,7 @@ if [[ -f "$oldWP/wp-config.php" ]]; then
 	cp wp-config-sample.php wp-config.php
 	echo -e "$COL_CYAN\rWarning:$COL_RESET No previous wp-config.php found! Used wp-config-sample.php..."
 fi
-echo -e "\nCompressing old WordPress core...$COL_GREEN" && tar -zcf "$oldWP".tar.gz "$oldWP" --remove-files && echo -e "Success:$COL_RESET Old WordPress files located$COL_BLUE $oldWP.tar.gz $COL_RESET"
+echo -e "\nCompressing old WordPress core...$COL_GREEN" && tar -zcf "$oldWP".tar.gz "$oldWP" --remove-files && echo -e "Success:$COL_RESET Old WordPress files located$COL_WHITE $oldWP.tar.gz $COL_RESET"
 wp --skip-plugins --skip-themes core update-db --quiet
 }
 ### WGET LATEST ###
@@ -1019,7 +1019,7 @@ if [[ -z "$wpfiles" ]]; then
 	echo -e "No existing WordPress files found..."
 	else
 	oldWP="QWPCLI_CORE_$temp"
-	echo -e "Old WordPress files found! Moving them to$COL_BLUE $oldWP... $COL_RESET"
+	echo -e "Old WordPress files found! Moving them to$COL_WHITE $oldWP... $COL_RESET"
 	mkdir "$oldWP"
 	while read -r f; do mv "$f" "$oldWP"; done <<< "$wpfiles"
 fi
@@ -1041,7 +1041,7 @@ if [[ -f "$oldWP/wp-config.php" ]]; then
 	cp wp-config-sample.php wp-config.php
 	echo -e "$COL_CYAN\rWarning:$COL_RESET No previous wp-config.php found! Used wp-config-sample.php..."
 fi
-echo -e "\nCompressing old WordPress core...$COL_GREEN" && tar -zcf "$oldWP".tar.gz "$oldWP" --remove-files && echo -e "Success:$COL_RESET Old WordPress files located$COL_BLUE $oldWP.tar.gz $COL_RESET"
+echo -e "\nCompressing old WordPress core...$COL_GREEN" && tar -zcf "$oldWP".tar.gz "$oldWP" --remove-files && echo -e "Success:$COL_RESET Old WordPress files located$COL_WHITE $oldWP.tar.gz $COL_RESET"
 wp --skip-plugins --skip-themes core update-db --quiet
 }
 
@@ -1078,7 +1078,7 @@ Enable Coming Soon page? y/n $COL_RESET";
 read comingSoonSelect && echo ''
 case $comingSoonSelect in
         [Yy])       wp --skip-plugins --skip-themes option set mm_coming_soon true;;
-        *)          wp --skip-plugins --skip-themes option set mm_coming_soon false; echo -e "$COL_MGREEN\rNotice: Coming Soon page inactive.$COL_RESET ";;
+        *)          wp --skip-plugins --skip-themes option set mm_coming_soon false; echo -e "$COL_GREEN\rNotice: Coming Soon page inactive.$COL_RESET ";;
 esac
 wp --skip-plugins --skip-themes option set jpo_firstrun 1
 }
@@ -1731,7 +1731,7 @@ do
     case $choice in
 ### BEGIN AUTOSAVE_INTERVAL ###
         1)
-	echo -e "\n$COL_BLUE----- AUTOSAVE_INTERVAL -----$COL_RESET"
+	echo -e "\n$COL_WHITE----- AUTOSAVE_INTERVAL -----$COL_RESET"
 	echo -e "When editing a post, WordPress uses Ajax to auto-save revisions to the post as you edit. You may want to increase this setting for longer delays in between auto-saves, or decrease the setting to make sure you never lose changes.$COL_CYAN The default is 60 seconds$COL_RESET"
 
 	#CHECK FOR CORRECT ENTRY
@@ -1752,7 +1752,7 @@ do
 ### END AUTOSAVE_INTERVAL ###
 ### BEGIN DISALLOW_FILE_EDIT ###
 	2)
-	echo -e "\n$COL_BLUE----- DISALLOW_FILE_EDIT -----$COL_RESET"
+	echo -e "\n$COL_WHITE----- DISALLOW_FILE_EDIT -----$COL_RESET"
 	echo -e "Occasionally you may wish to disable the plugin or theme editor to prevent overzealous users from being able to edit sensitive files and potentially crash the site. Disabling these also provides an additional layer of security if a hacker gains access to a well-privileged user account.\n\n$COL_GREEN Please note:$COL_RESET the functionality of some plugins may be affected by the use of current_user_can('edit_plugins') in their code. Plugin authors should avoid checking for this capability, or at least check if this constant is set and display an appropriate error message. Be aware that if a plugin is not working this may be the cause.$COL_CYAN Default option is false$COL_RESET
 Set what value (true/false) for$COL_CYAN DISALLOW_FILE_EDIT$COL_RESET?"
         read VALUE;
@@ -1764,7 +1764,7 @@ Set what value (true/false) for$COL_CYAN DISALLOW_FILE_EDIT$COL_RESET?"
 ### END DISALLOW_FILE_EDIT ###
 ### BEGIN EMPTY_TRASH_DAYS ###
 	3)
-	echo -e "\n$COL_BLUE----- EMPTY_TRASH_DAYS -----$COL_RESET"
+	echo -e "\n$COL_WHITE----- EMPTY_TRASH_DAYS -----$COL_RESET"
 	echo -e "This constant controls the number of days before WordPress permanently deletes posts, pages, attachments, and comments, from the trash bin.$COL_CYAN The default is 30 days.$COL_RESET\nTo disable trash set the number of days to zero. Note that WordPress will not ask for confirmation when someone clicks on \"Delete Permanently\"."
 
         #CHECK FOR CORRECT ENTRY
@@ -1785,7 +1785,7 @@ Set what value (true/false) for$COL_CYAN DISALLOW_FILE_EDIT$COL_RESET?"
 ### END EMPTY_TRASH_DAYS ###
 ### BEGIN NOBLOGREDIRECT ###
 	4)
-	echo -e "\n$COL_BLUE----- NOBLOGREDIRECT -----$COL_RESET"
+	echo -e "\n$COL_WHITE----- NOBLOGREDIRECT -----$COL_RESET"
 	echo -e "NOBLOGREDIRECT can be used to redirect the browser if the visitor tries to access a nonexistent site using either a subdomain or a subfolder.$COL_CYAN\nE.g., http://nonexistent.example.com or http://example.com/nonexistent/ $COL_RESET
 Set what value (as URL) for$COL_CYAN NOBLOGREDIRECT$COL_RESET?"
         read foo;
@@ -1798,7 +1798,7 @@ Set what value (as URL) for$COL_CYAN NOBLOGREDIRECT$COL_RESET?"
 ### END NOBLOGREDIRECT ###
 ### BEGIN WP_AUTO_UPDATE_CORE ###
 	5)
-	echo -e "\n$COL_BLUE----- WP_AUTO_UPDATE_CORE -----$COL_RESET"
+	echo -e "\n$COL_WHITE----- WP_AUTO_UPDATE_CORE -----$COL_RESET"
 	echo -e "The easiest way to manipulate core updates is with the WP_AUTO_UPDATE_CORE constant.$COL_CYAN\ntrue$COL_RESET - Enable all core updates, including minor and major $COL_CYAN\nfalse$COL_RESET - Disable all core updates $COL_CYAN\nminor$COL_RESET - Enable core updates for minor releases (default)
 Set what value (true/false/minor) for$COL_CYAN WP_AUTO_UPDATE_CORE$COL_RESET?"
 	read foo;
@@ -1815,7 +1815,7 @@ Set what value (true/false/minor) for$COL_CYAN WP_AUTO_UPDATE_CORE$COL_RESET?"
 ### END WP_AUTO_UPDATE_CORE ###
 ### BEGIN WP_DEBUG ###
 	6)
-	echo -e "\n$COL_BLUE----- WP_DEBUG -----$COL_RESET"
+	echo -e "\n$COL_WHITE----- WP_DEBUG -----$COL_RESET"
 	echo -e "The WP_DEBUG option, controls the reporting of some errors and warnings and enables use of the WP_DEBUG_DISPLAY and WP_DEBUG_LOG settings.$COL_CYAN The default value is false.$COL_RESET
 Set what value (true/false) for$COL_CYAN WP_DEBUG$COL_RESET?"
 	read VALUE;
@@ -1826,7 +1826,7 @@ Set what value (true/false) for$COL_CYAN WP_DEBUG$COL_RESET?"
 ### END WP_DEBUG ###
 ### BEGIN WP_MAX_MEMORY_LIMIT ###
 	7)
-	echo -e "\n$COL_BLUE----- WP_MAX_MEMORY_LIMIT -----$COL_RESET"
+	echo -e "\n$COL_WHITE----- WP_MAX_MEMORY_LIMIT -----$COL_RESET"
 	echo -e "Administration tasks require much memory than usual operation. When in the administration area, the memory can be increased or decreased from the WP_MEMORY_LIMIT by defining WP_MAX_MEMORY_LIMIT."
 
 	#CHECK FOR CORRECT ENTRY
@@ -1848,7 +1848,7 @@ Set what value (true/false) for$COL_CYAN WP_DEBUG$COL_RESET?"
 ### END WP_MAX_MEMORY_LIMIT ###
 ### BEGIN WP_MEMORY_LIMIT ###
 	8)
-	echo -e "\n$COL_BLUE----- WP_MEMORY_LIMIT -----$COL_RESET"
+	echo -e "\n$COL_WHITE----- WP_MEMORY_LIMIT -----$COL_RESET"
 	echo -e "The WP_MEMORY_LIMIT option allows you to specify the maximum amount of memory that can be consumed by PHP. This setting may be necessary in the event you receive a message such as \"Allowed memory size of xxxxxx bytes exhausted.\""
 
 	#CHECK FOR CORRECT ENTRY
@@ -1870,7 +1870,7 @@ Set what value (true/false) for$COL_CYAN WP_DEBUG$COL_RESET?"
 ### END WP_MEMORY_LIMIT ###
 ### BEGIN WP_POST_REVISIONS ###
 	9)
-	echo -e "\n$COL_BLUE----- WP_POST_REVISIONS -----$COL_RESET"
+	echo -e "\n$COL_WHITE----- WP_POST_REVISIONS -----$COL_RESET"
 	echo -e "WordPress, by default, will save copies of each edit made to a post or page, allowing the possibility of reverting to a previous version of that post or page. The saving of revisions can be disabled by setting the value to$COL_CYAN false$COL_RESET, or a maximum$COL_CYAN number$COL_RESET of revisions per post or page can be specified."
 
         #CHECK FOR CORRECT ENTRY
@@ -2229,19 +2229,19 @@ clear
 for choice in $choices
 do
     case $choice in
-	1) echo -e "\n$COL_BLUE----- wpfix -----$COL_RESET" && gcmd wpfix
+	1) echo -e "\n$COL_WHITE----- wpfix -----$COL_RESET" && gcmd wpfix
 	;;
-	2) echo -e "\n$COL_BLUE----- wpUpdateInstall -----$COL_RESET" && gcmd wpUpdateInstall
+	2) echo -e "\n$COL_WHITE----- wpUpdateInstall -----$COL_RESET" && gcmd wpUpdateInstall
 	;;
-        3) echo -e "\n$COL_BLUE----- wpboostauto -----$COL_RESET" && gcmd wpboostauto
+        3) echo -e "\n$COL_WHITE----- wpboostauto -----$COL_RESET" && gcmd wpboostauto
         ;;
-        4) echo -e "\n$COL_BLUE----- wpReplaceCore -----$COL_RESET" && gcmd wpReplaceCore
+        4) echo -e "\n$COL_WHITE----- wpReplaceCore -----$COL_RESET" && gcmd wpReplaceCore
         ;;
-        5) echo -e "\n$COL_BLUE----- wpRewriteFlush -----$COL_RESET" && gcmd wpRewriteFlush
+        5) echo -e "\n$COL_WHITE----- wpRewriteFlush -----$COL_RESET" && gcmd wpRewriteFlush
         ;;
-        6) echo -e "\n$COL_BLUE----- wpcleanback -----$COL_RESET" && gcmd wpcleanback
+        6) echo -e "\n$COL_WHITE----- wpcleanback -----$COL_RESET" && gcmd wpcleanback
         ;;
-	7) echo -e "\n$COL_BLUE----- rmsentmail -----$COL_RESET" && rmsentmail
+	7) echo -e "\n$COL_WHITE----- rmsentmail -----$COL_RESET" && rmsentmail
 	;;
         *) echo "Something Weird Happened"
         ;;
@@ -2281,8 +2281,8 @@ What global actions would you like to take?
 (8) Check Theme/Plugin Conflicts
 (9) Overhaul (Replace Core, Flush Permalinks, Flush Cache, Media Regenerate, Opt & Repair DB)
 (0) Exit
-$COL_MMAGENTA
-Want to run another command? use$COL_CYAN gcmd [COMMAND]$COL_MMAGENTA to run any command in all WordPress directories!
+$COL_MAGENTA
+Want to run another command? use$COL_CYAN gcmd [COMMAND]$COL_MAGENTA to run any command in all WordPress directories!
 $COL_RESET
 \tSelection: \c" ;
 read globalSelect && echo ''
@@ -2342,7 +2342,7 @@ fi
 
 ### Change to the WordPress location
 cd ~/public_html${loc##/home*public_html}
-echo -e "\n$COL_BLUE----- Updating $(pwd) -----$COL_RESET"
+echo -e "\n$COL_WHITE----- Updating $(pwd) -----$COL_RESET"
 ### Start Global Actions ###
 }
 ############################################################
@@ -2421,7 +2421,7 @@ DIRS=$(find ~/public_html* -maxdepth 5 -type f -name 'wp-config.php')
 for DIR in $DIRS; do
     CDIR=$(dirname $DIR)
     cd $CDIR;
-    echo -e "\n$COL_BLUE----- Updating $(pwd) -----$COL_RESET"
+    echo -e "\n$COL_WHITE----- Updating $(pwd) -----$COL_RESET"
     $@;
     cd - >/dev/null
 done
@@ -2443,7 +2443,7 @@ echo -e "$COL_GREEN
 This setup will guide you through a manual WordPress install.
 
 Make sure you are in the folder you want to install WordPress and\nthere are no existing WordPress files.\n
-$COL_MMAGENTA
+$COL_MAGENTA
 ---To begin create a database in cPanel and then enter the needed information--- $COL_RESET
 
 Have you created a database in cPanel? (y) or (n)"
@@ -2679,10 +2679,10 @@ echo -e "$COL_GREEN
  | | /| / / _ \  /_  __/__  ___  / /__
  | |/ |/ / ___/   / / / _ \/ _ \/ (_-<
  |__/|__/_/      /_/  \___/\___/_/___/
-$COL_MGREEN
+$COL_GREEN
 This menu allows you to tap into the power of WordPress Tools. To skip the menu,
-type$COL_CYAN wptools$COL_MGREEN and press tab twice to view options.$COL_MAGENTA All actions viewable in the
-WordPress Tools GUI.$COL_MGREEN Choose a Function below:$COL_RESET
+type$COL_CYAN wptools$COL_GREEN and press tab twice to view options.$COL_MAGENTA All actions viewable in the
+WordPress Tools GUI.$COL_GREEN Choose a Function below:$COL_RESET
 
 (1) Backup  - Backup site through WordPress Tools (May not include all content)
 (2) Restore - Restore site & database from existing WordPress Tools backup
@@ -2852,7 +2852,7 @@ clear
 for choice in $choices
 do
     case $choice in
-        1) echo -e "\n$COL_BLUE----- Toggle Comments -----$COL_RESET"
+        1) echo -e "\n$COL_WHITE----- Toggle Comments -----$COL_RESET"
 		echo -e "$COL_GREEN\rTurn Comments for future posts ON or OFF?\n1) ON\n2) OFF\n3) Disable Comments on ALL Content\n4) Exit\n $COL_RESET" ; read select;
                 case $select in
                         1) wp --skip-plugins --skip-themes option update default_comment_status open
@@ -2868,7 +2868,7 @@ do
                         *) invalidOption;;
                 esac
         ;;
-	2) echo -e "\n$COL_BLUE----- Toggle User Registration -----$COL_RESET"
+	2) echo -e "\n$COL_WHITE----- Toggle User Registration -----$COL_RESET"
 		echo -e "$COL_GREEN\rTurn user registration ON or OFF?\n1) ON\n2) OFF\n3) Exit\n $COL_RESET" ; read select;
 		case $select in
 			1) wp --skip-plugins --skip-themes option update users_can_register 1
@@ -2880,33 +2880,33 @@ do
 			*) invalidOption;;
 		esac
 	;;
-        3) echo -e "\n$COL_BLUE----- Enable/Update Endurance Caching -----$COL_RESET"
+        3) echo -e "\n$COL_WHITE----- Enable/Update Endurance Caching -----$COL_RESET"
 		wpEnduranceCache
 	;;
-        4) echo -e "\n$COL_BLUE----- Install/Update Mojo Plugin -----$COL_RESET"
+        4) echo -e "\n$COL_WHITE----- Install/Update Mojo Plugin -----$COL_RESET"
 		wpMojoInstall
 	;;
-        5) echo -e "\n$COL_BLUE----- Update Core/Plugins/Themes/Disable -----$COL_RESET"
+        5) echo -e "\n$COL_WHITE----- Update Core/Plugins/Themes/Disable -----$COL_RESET"
 		wpupdate
 	;;
-        6) echo -e "\n$COL_BLUE----- Optimize/Repair DB -----$COL_RESET"
+        6) echo -e "\n$COL_WHITE----- Optimize/Repair DB -----$COL_RESET"
 		wpfix
 	;;
-        7) echo -e "\n$COL_BLUE----- Adjust Posts Per Page -----$COL_RESET"
+        7) echo -e "\n$COL_WHITE----- Adjust Posts Per Page -----$COL_RESET"
 		echo -e "$COL_GREEN\rSet value for posts per page$COL_MAGENTA (numeric value only!)$COL_RESET\nPosts Per Page: "; read NUM
 		wp option update posts_per_page $NUM
 	;;
-        8) echo -e "\n$COL_BLUE----- Update PHP Version -----$COL_RESET"
+        8) echo -e "\n$COL_WHITE----- Update PHP Version -----$COL_RESET"
 		#Add prompt for version and run silently
 		phpver
 	;;
-        9) echo -e "\n$COL_BLUE----- Edit php.ini -----$COL_RESET"
+        9) echo -e "\n$COL_WHITE----- Edit php.ini -----$COL_RESET"
 		editini
 	;;
-        10) echo -e "\n$COL_BLUE----- Speed Test -----$COL_RESET"
+        10) echo -e "\n$COL_WHITE----- Speed Test -----$COL_RESET"
           	echo "Speed Test Comming Soon!"
 	;;
-	11) echo -e "\n$COL_BLUE----- Backup Files & DB -----$COL_RESET"
+	11) echo -e "\n$COL_WHITE----- Backup Files & DB -----$COL_RESET"
 		wpbackup
 	;;
         *) echo "Something Weird Happened"
